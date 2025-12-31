@@ -37,6 +37,54 @@
             padding: 0 24px;
         }
         
+        /* Navigation */
+        nav {
+            padding: 24px 0;
+            border-bottom: 2px solid var(--dark);
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            transition: opacity 0.3s;
+        }
+        
+        .logo-link:hover {
+            opacity: 0.8;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--dark);
+            text-transform: uppercase;
+        }
+        
         /* Hero Section */
         .hero {
             padding: 120px 0 100px;
@@ -337,10 +385,39 @@
             .methodology::before {
                 display: none;
             }
+            
+            nav {
+                padding: 16px 0;
+            }
+            
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .logo-text {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo-link">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- First arrow: longer, pointing diagonally up-right -->
+                        <path d="M 15 85 L 50 50 L 45 45 L 70 20 L 80 30 L 55 55 L 60 60 Z" fill="#0047AB"/>
+                        <!-- Second arrow: shorter, pointing diagonally up-left, intersecting from midpoint -->
+                        <path d="M 50 50 L 20 20 L 30 10 L 60 40 L 50 50 L 40 60 L 30 50 Z" fill="#0047AB"/>
+                    </svg>
+                    <span class="logo-text">EXIT ENGINE</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+    
     <section class="hero">
         <div class="container">
             <h1>Investors hate heroes.<br>They buy systems.</h1>
