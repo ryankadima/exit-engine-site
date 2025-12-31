@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kadima Marketing – The Exit Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --blueprint-blue: #0047AB;
+            --dark: #0a0a0a;
+            --gray: #666;
+            --light-gray: #f5f5f5;
+            --border: #e0e0e0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        header {
+            padding: 32px 0;
+            border-bottom: 2px solid var(--dark);
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--dark);
+            text-transform: uppercase;
+        }
+        
+        .logo span {
+            color: var(--blueprint-blue);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 100px;
+            text-align: center;
+            background: var(--light-gray);
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: var(--blueprint-blue);
+        }
+        
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 32px;
+            color: var(--dark);
+            letter-spacing: -0.03em;
+        }
+        
+        .hero .subheadline {
+            font-size: 21px;
+            line-height: 1.6;
+            color: var(--gray);
+            max-width: 820px;
+            margin: 0 auto 48px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--blueprint-blue);
+            color: #fff;
+            padding: 20px 48px;
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid var(--blueprint-blue);
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            background: transparent;
+            color: var(--blueprint-blue);
+        }
+        
+        .trust-anchor {
+            margin-top: 80px;
+            padding: 48px 56px;
+            background: #fff;
+            border-left: 4px solid var(--blueprint-blue);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .trust-anchor blockquote {
+            font-size: 22px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+        
+        .trust-anchor cite {
+            font-size: 15px;
+            font-style: normal;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+        
+        section h2 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        section p {
+            font-size: 19px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            color: var(--gray);
+        }
+        
+        section p strong {
+            color: var(--dark);
+        }
+        
+        .problem {
+            background: #fff;
+            border-top: 1px solid var(--border);
+        }
+        
+        .methodology {
+            background: var(--light-gray);
+            position: relative;
+        }
+        
+        .methodology::before {
+            content: 'SYSTEMATIC APPROACH';
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--blueprint-blue);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .phase {
+            margin-bottom: 56px;
+            padding: 40px;
+            background: #fff;
+            border-left: 3px solid var(--blueprint-blue);
+            position: relative;
+        }
+        
+        .phase::before {
+            content: attr(data-phase);
+            position: absolute;
+            top: -12px;
+            left: 40px;
+            background: var(--blueprint-blue);
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .phase h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .phase h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--blueprint-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .phase p {
+            margin-bottom: 0;
+        }
+        
+        .model {
+            background: #fff;
+            border-top: 1px solid var(--border);
+        }
+        
+        .model h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        
+        .outcome {
+            background: var(--light-gray);
+        }
+        
+        .outcome h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        
+        .closing {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 120px 0;
+            position: relative;
+        }
+        
+        .closing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: var(--blueprint-blue);
+        }
+        
+        .closing h2 {
+            color: #fff;
+            margin-bottom: 24px;
+        }
+        
+        .closing p {
+            color: #999;
+            font-size: 21px;
+            margin-bottom: 48px;
+        }
+        
+        .closing .cta-button {
+            background: var(--blueprint-blue);
+            color: #fff;
+            border-color: var(--blueprint-blue);
+        }
+        
+        .closing .cta-button:hover {
+            background: #fff;
+            color: var(--dark);
+            border-color: #fff;
+        }
+        
+        /* FAQ */
+        .faq {
+            background: #fff;
+            padding: 100px 0;
+            border-top: 1px solid var(--border);
+        }
+        
+        .faq h2 {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+        
+        .faq-item {
+            margin-bottom: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-item h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .faq-item p {
+            font-size: 18px;
+            color: var(--gray);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 48px 0;
+            text-align: center;
+            border-top: 2px solid var(--blueprint-blue);
+        }
+        
+        footer p {
+            color: #666;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            
+            .hero .subheadline {
+                font-size: 18px;
+            }
+            
+            section h2 {
+                font-size: 36px;
+            }
+            
+            section p {
+                font-size: 17px;
+            }
+            
+            .phase {
+                padding: 32px 24px;
+            }
+            
+            .methodology::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Kadima Marketing – <span>The Exit Engine</span></div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Investors hate heroes. They buy systems.</h1>
+            <p class="subheadline">Buyers, including Private Equity firms, don't pay a premium for "potential." They pay for predictable revenue engines. If your business still relies on founder hustle, keep reading.</p>
+            <a href="#contact" class="cta-button">Book Your Strategy Session</a>
+            
+            <div class="trust-anchor">
+                <blockquote>"Ryan didn't just run ads. He built the GTM engine that took us from zero to an 8-figure exit to Shore Capital Partners."</blockquote>
+                <cite>— Roaming Hunger | Shore Capital | Help With My Loan</cite>
+            </div>
+        </div>
+    </section>
+
+    <section class="problem">
+        <div class="container">
+            <h2>You are the risk factor.</h2>
+            <p>You built the company on grit, personality, and brute force.<br>
+            Investors don't buy grit. They buy systems.</p>
+            
+            <p>Right now, your growth has hit a ceiling. You've tried agencies. You've hired juniors. The needle isn't moving, and you're running out of excuses.</p>
+            
+            <p><strong>You're leaving millions on the table.</strong></p>
+            
+            <p>Private Equity pays for predictability. Your revenue looks improvised. Without a documented, automated acquisition engine, you will get a lowball offer.<br>
+            Or no offer at all.</p>
+        </div>
+    </section>
+
+    <section class="methodology">
+        <div class="container">
+            <h2>Stop guessing. We're the Exit Engine.</h2>
+            <p>The process is simple, iterative, and successful. It's the Theory of Constraints applied to Revenue Operations.</p>
+            
+            <p>Most founders try to fix everything at once — marketing, sales, retention — and end up fixing nothing. We do it sequentially to maximize EBITDA efficiency:</p>
+            
+            <div class="phase" data-phase="PHASE 01">
+                <h3>Phase 1: The Audit (Days 1–30)</h3>
+                <h4>We find the leak.</h4>
+                <p>We dig into your CRM and financials to find the single primary constraint limiting your growth. We don't guess; we let the data tell us where the money is stuck.</p>
+            </div>
+            
+            <div class="phase" data-phase="PHASE 02">
+                <h3>Phase 2: The Build (Days 31–90)</h3>
+                <h4>We build the fix.</h4>
+                <p>I design the specific process to break that constraint. I don't just advise; I install the tech stack, write the playbooks, and train your team.</p>
+            </div>
+            
+            <div class="phase" data-phase="PHASE 03">
+                <h3>Phase 3: The Handover (Day 91+)</h3>
+                <h4>We hand over the keys.</h4>
+                <p>Once the data proves the constraint is broken, I document the engine. You get a "Transferable Asset"—a system that runs without your daily input, ready for due diligence.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="model">
+        <div class="container">
+            <h2>Not an Agency. A General Contractor for your Exit.</h2>
+            <p>Agencies make money on headcount and recommendations. I make money on outcomes.</p>
+            
+            <h3>I'm the Architect.</h3>
+            <p>I design the strategy, install the system, and own the result.</p>
+            
+            <h3>I bring the Subcontractors.</h3>
+            <p>If we need a HubSpot integration or a new ad creative, I bring in a senior specialist from my vetted network to do it.</p>
+            
+            <p>You don't manage the talent; I do. You never pay a markup on their hours, and you never have to teach a junior employee how your industry works.</p>
+        </div>
+    </section>
+
+    <section class="outcome">
+        <div class="container">
+            <h2>Board meetings become boring.</h2>
+            
+            <h3>Predictability is the product.</h3>
+            <p>Move your revenue engine from "hope" to "math."</p>
+            
+            <h3>Secure the premium.</h3>
+            <p>We turn "accidental" revenue into a predictable machine. When PE looks at your books, they won't see chaos. They'll see an asset.</p>
+            
+            <p>Stop explaining why you missed the number. Start showing them the machine that hits it every time.</p>
+        </div>
+    </section>
+
+    <section class="closing">
+        <div class="container">
+            <h2>Founders get tired. Systems don't.</h2>
+            <p>Build the company PE wants to buy.</p>
+            <a href="#contact" class="cta-button">Book Your Strategy Session</a>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2>FAQ</h2>
+            
+            <div class="faq-item">
+                <h3>Q: Do you know my industry?</h3>
+                <p>A: We work with many industries, except pharmaceuticals, law firms, and other industries where marketing is constrained by regulatory compliance.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Q: How fast does this work?</h3>
+                <p>A: We identify the primary constraint in 30 days. We usually fix it in 90.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Q: What is a "Fractional Executive"?</h3>
+                <p>A: It means I sit on your leadership team, not on the vendor list. I take ownership of the revenue number alongside you.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KADIMA MARKETING. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+</body>
+</html>
