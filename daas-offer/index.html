@@ -398,7 +398,7 @@
             <p class="subheadline">Get a ranked list of real buyers showing real intent — online and offline — in the next 72 hours.</p>
             <p class="subheadline"><strong>This is not another contact list.<br>This is decision-grade revenue intelligence you can act on immediately.</strong></p>
             <p class="price-tag">$1,000 · One-time · Delivered in 72 hours</p>
-            <a href="#" class="cta-button" onclick="openModal(); return false;">Get the Intent Intelligence Drop</a>
+            <a href="#" class="cta-button" id="ctaButton1">Get the Intent Intelligence Drop</a>
         </div>
     </section>
 
@@ -521,14 +521,14 @@
                 <li>No ongoing commitment</li>
             </ul>
             <p>Just clarity.</p>
-            <a href="#" class="cta-button" onclick="openModal(); return false;">Get the Intent Intelligence Drop</a>
+            <a href="#" class="cta-button" id="ctaButton1">Get the Intent Intelligence Drop</a>
         </div>
     </section>
 
     <!-- Modal -->
     <div id="applicationModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
             <div id="formContainer">
                 <h2>Get the Intent Intelligence Drop</h2>
                 <form id="applicationForm" onsubmit="handleSubmit(event)">
@@ -568,20 +568,67 @@
 
     <script>
         function openModal() {
-            document.getElementById('applicationModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            const modal = document.getElementById('applicationModal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
         
         function closeModal() {
-            document.getElementById('applicationModal').classList.remove('active');
-            document.body.style.overflow = '';
-            // Reset form
-            document.getElementById('applicationForm').reset();
-            document.getElementById('formContainer').style.display = 'block';
-            document.getElementById('thankYouMessage').classList.remove('show');
-            // Clear errors
-            document.querySelectorAll('.form-error').forEach(err => err.classList.remove('show'));
+            const modal = document.getElementById('applicationModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                // Reset form
+                const form = document.getElementById('applicationForm');
+                if (form) form.reset();
+                const formContainer = document.getElementById('formContainer');
+                if (formContainer) formContainer.style.display = 'block';
+                const thankYou = document.getElementById('thankYouMessage');
+                if (thankYou) thankYou.classList.remove('show');
+                // Clear errors
+                document.querySelectorAll('.form-error').forEach(err => err.classList.remove('show'));
+            }
         }
+        
+        // Add event listeners when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers to CTA buttons
+            const buttons = document.querySelectorAll('.cta-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openModal();
+                });
+            });
+            
+            // Add click handler to close button
+            const closeBtn = document.getElementById('modalCloseBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeModal();
+                });
+            }
+            
+            // Close modal when clicking outside
+            const modal = document.getElementById('applicationModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
         
         function validateEmail(email) {
             return email.includes('@') && email.length > 3;
@@ -635,18 +682,18 @@ ${data.email}`;
             
             // Using FormSubmit - works immediately, no setup required
             // Just sends email directly to ryan@gokadima.com
-            const formData = new FormData();
-            formData.append('_to', 'ryan@gokadima.com');
-            formData.append('_subject', 'New Intent Intelligence Drop Application');
-            formData.append('_replyto', data.email);
-            formData.append('What are you selling?', data.selling);
-            formData.append('Who is your customer?', data.customer);
-            formData.append('What is your industry?', data.industry);
-            formData.append('Work Email', data.email);
+            const submitFormData = new FormData();
+            submitFormData.append('_to', 'ryan@gokadima.com');
+            submitFormData.append('_subject', 'New Intent Intelligence Drop Application');
+            submitFormData.append('_replyto', data.email);
+            submitFormData.append('What are you selling?', data.selling);
+            submitFormData.append('Who is your customer?', data.customer);
+            submitFormData.append('What is your industry?', data.industry);
+            submitFormData.append('Work Email', data.email);
             
             fetch('https://formsubmit.co/ajax/ryan@gokadima.com', {
                 method: 'POST',
-                body: formData
+                body: submitFormData
             })
             .then(response => {
                 if (response.ok) {
@@ -680,20 +727,6 @@ ${data.email}`;
                 submitBtn.textContent = 'Submit';
             });
         }
-        
-        // Close modal when clicking outside
-        document.getElementById('applicationModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
     </script>
 </body>
 </html>
