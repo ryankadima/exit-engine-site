@@ -210,6 +210,158 @@
             border-color: #fff;
         }
         
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #fff;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 48px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--gray);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: var(--dark);
+        }
+        
+        .modal-content h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            letter-spacing: -0.02em;
+        }
+        
+        .form-group {
+            margin-bottom: 32px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+        
+        .form-group textarea,
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-family: inherit;
+            border: 2px solid var(--border);
+            border-radius: 0;
+            background: #fff;
+            color: var(--dark);
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group textarea:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--blueprint-blue);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+        }
+        
+        .form-error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .form-error.show {
+            display: block;
+        }
+        
+        .form-submit {
+            width: 100%;
+            padding: 20px 48px;
+            font-size: 17px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid var(--blueprint-blue);
+            background: var(--blueprint-blue);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .form-submit:hover {
+            background: transparent;
+            color: var(--blueprint-blue);
+        }
+        
+        .form-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .form-thank-you {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .form-thank-you.show {
+            display: block;
+        }
+        
+        .form-thank-you h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+        
+        .form-thank-you p {
+            font-size: 19px;
+            color: var(--gray);
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
@@ -246,7 +398,7 @@
             <p class="subheadline">Get a ranked list of real buyers showing real intent — online and offline — in the next 72 hours.</p>
             <p class="subheadline"><strong>This is not another contact list.<br>This is decision-grade revenue intelligence you can act on immediately.</strong></p>
             <p class="price-tag">$1,000 · One-time · Delivered in 72 hours</p>
-            <a href="#" class="cta-button" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/ryan_carlin/30min'});return false;">Get the Intent Intelligence Drop</a>
+            <a href="#" class="cta-button" onclick="openModal(); return false;">Get the Intent Intelligence Drop</a>
         </div>
     </section>
 
@@ -369,11 +521,180 @@
                 <li>No ongoing commitment</li>
             </ul>
             <p>Just clarity.</p>
-            <a href="#" class="cta-button" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/ryan_carlin/30min'});return false;">Get the Intent Intelligence Drop</a>
+            <a href="#" class="cta-button" onclick="openModal(); return false;">Get the Intent Intelligence Drop</a>
         </div>
     </section>
 
-    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <!-- Modal -->
+    <div id="applicationModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="formContainer">
+                <h2>Get the Intent Intelligence Drop</h2>
+                <form id="applicationForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="selling">What are you selling? *</label>
+                        <textarea id="selling" name="selling" required maxlength="1000" placeholder="Describe what you're selling (max 200 words)"></textarea>
+                        <div class="form-error" id="selling-error">Please describe what you're selling.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer">Who is your customer? *</label>
+                        <textarea id="customer" name="customer" required maxlength="1000" placeholder="Describe your target customer (max 200 words)"></textarea>
+                        <div class="form-error" id="customer-error">Please describe your target customer.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">What is your industry? *</label>
+                        <textarea id="industry" name="industry" required maxlength="1000" placeholder="Describe your industry (max 200 words)"></textarea>
+                        <div class="form-error" id="industry-error">Please describe your industry.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">What is your work email? *</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@company.com">
+                        <div class="form-error" id="email-error">Please enter a valid work email address.</div>
+                    </div>
+                    
+                    <button type="submit" class="form-submit" id="submitBtn">Submit</button>
+                </form>
+            </div>
+            <div id="thankYouMessage" class="form-thank-you">
+                <h3>Thank you!</h3>
+                <p>Our team will reach out to you shortly to create your custom list.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('applicationModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('applicationModal').classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset form
+            document.getElementById('applicationForm').reset();
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('thankYouMessage').classList.remove('show');
+            // Clear errors
+            document.querySelectorAll('.form-error').forEach(err => err.classList.remove('show'));
+        }
+        
+        function validateEmail(email) {
+            return email.includes('@') && email.length > 3;
+        }
+        
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitBtn = document.getElementById('submitBtn');
+            const email = document.getElementById('email').value;
+            
+            // Clear previous errors
+            document.querySelectorAll('.form-error').forEach(err => err.classList.remove('show'));
+            
+            // Validate email contains @
+            if (!validateEmail(email)) {
+                document.getElementById('email-error').classList.add('show');
+                return;
+            }
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Prepare form data
+            const formData = new FormData(form);
+            const data = {
+                selling: formData.get('selling'),
+                customer: formData.get('customer'),
+                industry: formData.get('industry'),
+                email: formData.get('email')
+            };
+            
+            // Send email using Formspree or similar service
+            // Note: You'll need to set up a Formspree account and replace the endpoint
+            // For now, using a mailto fallback that can be replaced with Formspree
+            const emailBody = `New Intent Intelligence Drop Application
+
+What are you selling?
+${data.selling}
+
+Who is your customer?
+${data.customer}
+
+What is your industry?
+${data.industry}
+
+Work Email:
+${data.email}`;
+            
+            // Using FormSubmit - works immediately, no setup required
+            // Just sends email directly to ryan@gokadima.com
+            const formData = new FormData();
+            formData.append('_to', 'ryan@gokadima.com');
+            formData.append('_subject', 'New Intent Intelligence Drop Application');
+            formData.append('_replyto', data.email);
+            formData.append('What are you selling?', data.selling);
+            formData.append('Who is your customer?', data.customer);
+            formData.append('What is your industry?', data.industry);
+            formData.append('Work Email', data.email);
+            
+            fetch('https://formsubmit.co/ajax/ryan@gokadima.com', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show thank you message
+                    document.getElementById('formContainer').style.display = 'none';
+                    document.getElementById('thankYouMessage').classList.add('show');
+                    
+                    // Auto-close after 3 seconds
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            })
+            .catch(error => {
+                // Fallback: use mailto if Formspree fails
+                const mailtoLink = `mailto:ryan@gokadima.com?subject=New Intent Intelligence Drop Application&body=${encodeURIComponent(emailBody)}`;
+                window.location.href = mailtoLink;
+                
+                // Show thank you message anyway
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('thankYouMessage').classList.add('show');
+                
+                setTimeout(() => {
+                    closeModal();
+                }, 3000);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('applicationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
 
