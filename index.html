@@ -47,7 +47,19 @@
         nav .container {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
+        }
+        
+        .nav-link {
+            font-size: 19px;
+            line-height: 1.8;
+            color: var(--dark);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-link:hover {
+            opacity: 0.7;
         }
         
         .logo-link {
@@ -391,6 +403,7 @@
                     <img src="https://gokadima.com/wp-content/uploads/exit-engine-logo.png" alt="EXIT ENGINE">
                 </div>
             </a>
+            <a href="/daas-offer/daas.html" class="nav-link">Offer</a>
         </div>
     </nav>
     
