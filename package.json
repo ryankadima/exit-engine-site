@@ -1,0 +1,16 @@
+{
+  "name": "exit-engine-site",
+  "version": "1.0.0",
+  "description": "Exit Engine Website",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/input.css -o ./staging.css --watch",
+    "build-css-prod": "tailwindcss -i ./src/input.css -o ./staging.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
+
