@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Preview Site",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Open Preview in Browser",
+      "type": "shell",
+      "command": "echo 'Preview running at http://localhost:8080'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Deploy to Live Site",
+      "type": "shell",
+      "command": "npm run build-css-prod && git add -A && git commit -m \"Deploy updates\" && git push origin main",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

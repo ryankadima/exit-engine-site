@@ -4,13 +4,15 @@
   "description": "Exit Engine Website",
   "scripts": {
     "build-css": "tailwindcss -i ./src/input.css -o ./staging.css --watch",
-    "build-css-prod": "tailwindcss -i ./src/input.css -o ./staging.css --minify"
+    "build-css-prod": "tailwindcss -i ./src/input.css -o ./staging.css --minify",
+    "preview": "live-server --port=8080 --no-browser",
+    "dev": "npm run build-css & npm run preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "live-server": "^1.2.2",
     "tailwindcss": "^3.4.1"
   }
 }
-

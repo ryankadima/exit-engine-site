@@ -1,0 +1,10 @@
+{
+  "statusBarItems": {
+    "preview": {
+      "text": "$(open-preview) Preview",
+      "tooltip": "Open local preview at localhost:8080",
+      "command": "simpleBrowser.api.open",
+      "arguments": ["http://localhost:8080"]
+    }
+  }
+}
