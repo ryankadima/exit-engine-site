@@ -48,7 +48,28 @@
         nav .container {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--blueprint-blue);
         }
         
         .logo-link {
@@ -392,6 +413,9 @@
                     <img src="https://gokadima.com/wp-content/uploads/exit-engine-logo.png" alt="EXIT ENGINE">
                 </div>
             </a>
+            <nav class="nav-links">
+                <a href="/gtm-dashboard/" class="nav-link">GTM Dashboard</a>
+            </nav>
         </div>
     </nav>
     
