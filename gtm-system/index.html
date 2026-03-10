@@ -361,19 +361,19 @@
   <span class="part-label">Stage A</span>
   <h2>The ICP Model</h2>
 
-  <p>Most companies confuse "best customers" with "most recent customers." The ICP model reverse-engineers your closed-won data to find which account clusters punch above their expected win rate — then weights them by LTV, not volume.</p>
+  <p>Most companies confuse "best customers" with "most recent customers." The ICP model reverse-engineers your closed-won/lost data to find which account clusters punch above their expected win rate, then weights them by LTV.</p>
 
   <div class="callout">
-    <strong>The diagnostic.</strong> Can you answer these 6 questions from your CRM right now? If you can't answer 4 or more cleanly, your ICP is built on assumptions — not data.
+    <strong>The diagnostic.</strong> Can you answer these 6 questions from your CRM right now? If you can't answer 4 or more cleanly, your ICP is built on assumptions.
   </div>
 
   <ul>
-    <li><strong>Close rate by firmographic segment</strong> — not overall. By industry + headcount band.</li>
-    <li><strong>Average deal size by segment</strong> — not blended ACV. Broken out by ICP cluster.</li>
-    <li><strong>Net revenue retention by cohort</strong> — NRR at 12mo, 24mo per segment. Not company-wide.</li>
-    <li><strong>Average sales cycle by segment</strong> — days from first touch to closed-won, per segment.</li>
-    <li><strong>Buyer committee roles in closed-won vs. closed-lost</strong> — who was in the room when you won? Who was missing when you lost?</li>
-    <li><strong>Churn indicators by firmographic cluster</strong> — which company profiles churn at 12mo? Which expand?</li>
+    <li><strong>Close rate by firmographic segment:</strong> by industry + headcount band.</li>
+    <li><strong>Average deal size by segment:</strong> broken out by ICP cluster.</li>
+    <li><strong>Net revenue retention by cohort:</strong> NRR at 12mo, 24mo per segment.</li>
+    <li><strong>Average sales cycle by segment:</strong> days from first touch to closed-won, per segment.</li>
+    <li><strong>Buyer committee roles in closed-won vs. closed-lost:</strong> who was in the room when you won? Who was missing when you lost?</li>
+    <li><strong>Churn indicators by firmographic cluster:</strong> which company profiles churn at 12mo? Which expand?</li>
   </ul>
 
   <h3>The LTV-Weighted ICP Formula</h3>
@@ -388,9 +388,9 @@
   <h3>The Three Analyses</h3>
 
   <div class="indent-block">
-    <p><span class="arrow">↳</span><strong>Closed-won analysis.</strong> Score every closed-won deal across 7 firmographic and intent signals. Weight each signal by its actual correlation to a win — not by assumption. Run a propensity-to-buy model against your closed history to validate it.</p>
+    <p><span class="arrow">↳</span><strong>Closed-won analysis.</strong> Score every closed-won deal across 7+ firmographic and intent signals. Weight each signal by its actual correlation to a win (not by assumption). Run a propensity-to-buy model against your closed history to validate it.</p>
     <p><span class="arrow">↳</span><strong>Buyer committee mapping.</strong> Pull contact data for every closed-won deal. Map economic buyer, champion, tech evaluator, end user, legal/procurement. Compare against closed-lost: what roles were missing when you lost? That's your minimum committee completeness gate.</p>
-    <p><span class="arrow">↳</span><strong>Negative ICP flags.</strong> Which firmographic clusters churn fastest? Which buyer titles stall deals? This is your exclusion model — the DQ triggers that prevent SDRs from wasting time on accounts that will never close.</p>
+    <p><span class="arrow">↳</span><strong>Negative ICP flags.</strong> Which firmographic clusters churn fastest? Which buyer titles stall deals? This is your exclusion model - the DQ triggers that prevent SDRs from wasting time on accounts that will never close.</p>
   </div>
 
   <h3>ICP Model Checklist</h3>
@@ -410,7 +410,7 @@
     <li>Propensity-to-buy model validated against historical closed-won data</li>
   </ul>
 
-  <h3>Signal Scoring Reference</h3>
+  <h3>Example Signal Scoring</h3>
 
   <table class="tier-table">
     <thead>
@@ -443,18 +443,18 @@
 
   <p>Your ICP model tells you which accounts are worth pursuing. Active demand filtering tells you which ones are worth pursuing <em>right now.</em> This is the difference between TAM and pipeline.</p>
 
-  <p>You start with your broad TAM — everyone who could theoretically buy. Then you filter through three signal layers until you're left with accounts actively showing purchase intent.</p>
+  <p>You start with your broad TAM - everyone who could theoretically buy. Then you filter through three signal layers until you're left with accounts actively showing purchase intent.</p>
 
   <h3>The Three Signal Layers</h3>
 
   <div class="indent-block">
-    <p><span class="arrow">↳</span><strong>1st party signals (highest intent).</strong> Lead magnet downloads, demo requests, web visitors de-anonymized via RB2B, email replies. Someone already touched your brand. Tools: HubSpot, RB2B, Outreach.</p>
+    <p><span class="arrow">↳</span><strong>1st party signals (highest intent).</strong> Lead magnet downloads, newsletter signups, de-anonymized website visitors, email replies. Someone already touched your brand. Tools: HubSpot, RB2B, Outreach.</p>
     <p><span class="arrow">↳</span><strong>2nd party signals (medium intent).</strong> Ad and social engagement, partner signals, G2 reviews. Someone in your orbit is actively engaging with content in your category. Tools: ZenABM, Fibbler, Trigify.io.</p>
-    <p><span class="arrow">↳</span><strong>3rd party signals (context signals).</strong> Job openings, tech stack changes, funding news, Bombora intent topics. The account is in motion — buying new tech, hiring relevant roles, expanding. Tools: TheirStack, Crunchbase, Google News.</p>
+    <p><span class="arrow">↳</span><strong>3rd party signals (context signals).</strong> Standard signals are job openings, tech stack changes, funding news. With certain tools, we now have the ability to scrape for any signal that is available on the open web. Tools: TheirStack, Crunchbase, Google News.</p>
   </div>
 
   <div class="callout">
-    <strong>Real example — University Dining.</strong> We worked with a company targeting college dining programs. They needed to identify which institutions used specific food service providers (Compass, Sodexo, Chartwells). We used Clay + Apify to scrape public Student Government Association meeting minutes and Faculty Meeting agendas for those FSP names. That signal — which no competitor had — cut the TAM by 80% and tripled outreach conversion rates.
+    <strong>Real example — University Dining.</strong> We worked with a company targeting college dining programs. They needed to identify which institutions used specific food service providers (Compass, Sodexo, Chartwells). We used Clay + Apify to scrape public Student Government Association meeting minutes and Faculty Meeting Minutes for those FSP names. That signal — which no competitor had — cut the TAM by 80% and tripled outreach conversion rates.
   </div>
 
   <h3>How Far to Filter: Match Your SDR Capacity</h3>
@@ -464,7 +464,7 @@
     <code>SDR headcount × accounts per SDR per quarter = Target Account List size
 
 Example: 3 SDRs × 100 high-touch accounts = 300-account TAL.
-Filter your active demand universe to this number. More isn't better.</code>
+Filter your active demand universe to this number.</code>
   </div>
 
   <h3>Active Demand Toolstack</h3>
@@ -504,14 +504,14 @@ Filter your active demand universe to this number. More isn't better.</code>
   </table>
 
   <div class="callout">
-    <strong>How the score calculates.</strong> Each of 7 signals scored 0–3, multiplied by its weight. Weighted sum produces a score 0–1. Column K in the ICP Scoring Model outputs the tier automatically. The LTV Weight Calculator tab further ranks T1 accounts by revenue potential — so your team always works highest-LTV accounts first.
+    <strong>How the score calculates.</strong> Each of 7 signals scored 0–3, multiplied by its weight. Weighted sum produces a score 0–1. Column K in the <a href="https://docs.google.com/spreadsheets/d/11n-VBHesEir4bNyL_a5jifVWeoX4R2pw/edit?gid=517800857#gid=517800857" class="text-link">ICP Scoring Model</a> outputs the tier automatically. The LTV Weight Calculator tab further ranks T1 accounts by revenue potential, so your team always works highest-LTV accounts first.
   </div>
 
   <div class="callout">
     <strong>Clay enrichment order matters.</strong> Run in this exact sequence: Firmographic → Tech Stack → Intent → Buyer Committee. Each layer refines the one before. Don't run buyer committee lookups on accounts that haven't passed firmographic scoring — you'll burn credits on accounts that DQ anyway.
   </div>
 
-  <a href="https://docs.google.com/spreadsheets/d/11n-VBHesEir4bNyL_a5jifVWeoX4R2pw/edit?gid=1575734347#gid=1575734347" class="resource-link" target="_blank">
+  <a href="https://docs.google.com/spreadsheets/d/11n-VBHesEir4bNyL_a5jifVWeoX4R2pw/edit?gid=1014278211#gid=1014278211" class="resource-link" target="_blank">
     <span class="rl-icon">📊</span>
     <span>
       <span class="rl-label">Free Resource</span>
@@ -525,7 +525,7 @@ Filter your active demand universe to this number. More isn't better.</code>
   <span class="part-label">Stage D</span>
   <h2>Contact Enrichment + Awareness Scoring</h2>
 
-  <p>Every account in your TAL needs a full buyer committee mapped. And every account needs an awareness stage score — so the right message finds them at the right moment in the journey.</p>
+  <p>Every account in your TAL needs a full buyer committee mapped. And every account needs an awareness stage score - so the right message finds them at the right moment in the journey.</p>
 
   <h3>Buyer Committee Roles</h3>
 
@@ -536,7 +536,7 @@ Filter your active demand universe to this number. More isn't better.</code>
   </div>
 
   <div class="callout">
-    <strong>Enrichment order — not all Clay.</strong> Start with <strong>Exa.ai, Ocean.io, and AudienceLab.io</strong> — these get to 94%+ buyer committee coverage at lower cost. Clay waterfall enrichment is last resort: use it for anything no other tool can find, or for contact data requiring real-time verification. n8n orchestrates the pipeline and pushes clean data to CRM.
+    <strong>Enrichment order (it's not all Clay!)</strong> Start with <strong>Exa.ai, Ocean.io, and AudienceLab.io</strong>. These get to 94%+ buyer committee coverage at lower cost. Clay waterfall enrichment is last resort: use it for anything no other tool can find, or for contact data requiring real-time verification. n8n orchestrates the pipeline and pushes clean data to CRM.
   </div>
 
   <a href="https://docs.google.com/spreadsheets/d/11n-VBHesEir4bNyL_a5jifVWeoX4R2pw/edit?gid=429185856#gid=429185856" class="resource-link" target="_blank">
@@ -550,7 +550,7 @@ Filter your active demand universe to this number. More isn't better.</code>
 
   <h3>Awareness Scoring</h3>
 
-  <p>Every account gets scored into one of five awareness stages. Scores update dynamically as new signals fire. Claude Skills generate stage-matched messaging — or buyer committee persona-matched, or both.</p>
+  <p>Every account gets scored into one of five awareness stages. Scores update dynamically as new signals fire. Claude Skills generate stage-matched messaging - or buyer committee persona-matched, or both.</p>
 
   <div class="stage-row">
     <div class="stage-cell">
@@ -561,17 +561,17 @@ Filter your active demand universe to this number. More isn't better.</code>
     <div class="stage-cell">
       <div class="stage-name">Aware</div>
       <div class="stage-pts">2–3 signals</div>
-      <p>Ad impression or content view. Passively in orbit.</p>
+      <p>Ad impressions & content views. Passively in orbit.</p>
     </div>
     <div class="stage-cell">
       <div class="stage-name">Interested</div>
       <div class="stage-pts">4–6 signals</div>
-      <p>Repeated engagement. Multiple page visits.</p>
+      <p>Repeated engagement wtih 1/3 of the buyer committee.</p>
     </div>
     <div class="stage-cell">
       <div class="stage-name">Consider</div>
       <div class="stage-pts">7–9 signals</div>
-      <p>High-frequency, multi-channel. Pricing, case studies.</p>
+      <p>High-frequency, multi-channel, 50%+ buyer committee engaged.</p>
     </div>
     <div class="stage-cell">
       <div class="stage-name">Selecting</div>
@@ -581,9 +581,9 @@ Filter your active demand universe to this number. More isn't better.</code>
   </div>
 
   <div class="indent-block">
-    <p><span class="arrow">↳</span><strong>Recency bonus.</strong> Signal within 7 days = 2× weight. 7–30 days = 1×. 30–90 days = 0.5×.</p>
-    <p><span class="arrow">↳</span><strong>Advance rules.</strong> Identified → Aware: 1 verified 2nd/3rd party signal. Aware → Interested: 2+ signals across 2+ channels. Interested → Consider: 3+ 1st party OR 5+ cross-channel. Consider → Selecting: pricing/demo signal + 3+ warm 1st party touches.</p>
-    <p><span class="arrow">↳</span><strong>CRM fields per account.</strong> Buyer Committee tag, Committee Coverage Score, Awareness Stage, dated engagement log, contact intent data ("Interest in [category] 6× in last 30 days"), ICP Tier, LTV Score + Priority Rank.</p>
+    <p><span class="arrow">↳</span><strong>Recency bonus:</strong> Signal within 7 days = 2× weight. 7–30 days = 1×. 30–90 days = 0.5×.</p>
+    <p><span class="arrow">↳</span><strong>Advance rules:</strong> <p>Identified → Aware: 1 verified 2nd/3rd party signal.</p> <p>Aware → Interested: 2+ signals across 2+ channels.</p><p> Interested → Consider: 3+ 1st party OR 5+ cross-channel. </p> <p></p> Consider → Selecting: pricing/demo signal + 3+ warm 1st party touches.</p>
+    <p><span class="arrow">↳</span><strong>CRM fields per account:</strong> Buyer Committee tag, Committee Coverage Score, Awareness Stage, dated engagement log, contact intent data ("Interest in [category] 6× in last 30 days"), ICP Tier, LTV Score + Priority Rank.</p>
   </div>
 
   <h3>Enrichment Toolstack</h3>
@@ -602,10 +602,10 @@ Filter your active demand universe to this number. More isn't better.</code>
   <span class="part-label">Stage E</span>
   <h2>Demand Gen &amp; Sales Plays</h2>
 
-  <p>This is where the system pays off. You now have accounts tiered by ICP score and segmented by awareness stage. The play library matches to both dimensions — and gets more personalized as you move down-funnel and up-tier.</p>
+  <p>This is where the system pays off. You now have accounts tiered by ICP score and segmented by awareness stage. The play library matches to both dimensions and gets more personalized as you move down-funnel and up-tier.</p>
 
   <div class="callout">
-    <strong>The principle.</strong> High tier + down funnel = maximum personalization. A T1 account in Selecting should get a 1:1 landing page, a custom ROI model, and a $500–$1,000 restaurant gift card. A T3 account in Identified gets broad awareness ads and nothing else until signals change. Don't invert this.
+    <strong>The principle (example):</strong> High tier + down funnel = maximum personalization. A T1 account in Selecting should get a 1:1 landing page, a custom ROI model, and a $500–$1,000 restaurant gift card. A T3 account in Identified gets broad awareness ads and nothing else until signals change.
   </div>
 
   <div class="plays-grid">
@@ -656,7 +656,7 @@ Filter your active demand universe to this number. More isn't better.</code>
   </div>
 
   <div class="callout">
-    <strong>Marketing + Sales handoff logic.</strong> Identified → Aware = marketing owns entirely. Interested = marketing + SDR coordinate. Consider → Selecting = AE-led with marketing in support. SDR minimum gate: committee completeness &gt;60% + at least 5 warm signals before any outbound. Awareness stage on the account record updates dynamically — routing happens automatically.
+    <strong>Marketing + Sales handoff logic</strong> <p></p>Identified → Aware = marketing owns entirely</p> </p>Interested = marketing + SDR coordinate</p> </p>Consider → Selecting = AE-led with marketing in support. SDR minimum gate: committee completeness &gt;60% + at least 5 warm signals before any outbound</p> <p>Awareness stage on the account record updates dynamically — routing happens automatically
   </div>
 
   <hr>
@@ -687,18 +687,18 @@ Filter your active demand universe to this number. More isn't better.</code>
   <div class="choice-grid">
     <div class="choice-card">
       <h4>Choice 1: Build It Yourself</h4>
-      <p>Take this guide. Download the spreadsheet. Set up the tools. Wire the automations. 10–16 weeks if you're focused. Longer if you're also running your business (you are).</p>
+      <p>Take this guide. Download the spreadsheet. Set up the tools. Wire the automations. 14-16 weeks if you're focused. Longer if this isn't the only thing you're working on.</p>
     </div>
     <a href="https://calendly.com/ryan_carlin/30min" target="_blank" class="choice-card-link">
       <div class="choice-card preferred">
         <h4>Choice 2: We Build It For You</h4>
-        <p>At Exit Engine, we build AI-powered GTM systems for B2B SaaS founders at $2M–$5M ARR. We implement the full ICP-to-plays system — custom to your data, your stack, your sales motion. 6 weeks to operational.</p>
+        <p>At Exit Engine, we build AI-powered GTM systems for B2B SaaS. We implement the full ICP-to-plays system - custom to your data, your stack, your sales motion. 30 days to operational.</p>
       </div>
     </a>
   </div>
 
-  <p>If you're Choice 1 — respect. This guide gives you everything you need. Go build.</p>
-  <p>If you're Choice 2 — let's talk. We'll audit your current GTM setup, identify where pipeline is leaking, and show you exactly how we'd build the system.</p>
+  <p>If you're Choice 1 — respect. This guide will set you on the right path. Go build.</p>
+  <p>If you're Choice 2 — let's talk. 30 minute call and we'll show you exactly how we'd build the system.</p>
 
   <div class="cta-block">
     <h3>Ready to Build the System?</h3>
