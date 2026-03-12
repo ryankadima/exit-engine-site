@@ -238,8 +238,6 @@ function Dashboard({ data, theme }) {
         </div>
       </div>
 
-      {/* Branding watermark */}
-      <BrandingWatermark theme={theme} />
     </div>
   );
 }
