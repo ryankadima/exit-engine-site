@@ -303,7 +303,7 @@ export default function App() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#060B14',
+        background: '#FFFFFF',
         fontFamily: "'Inter', -apple-system, sans-serif",
         padding: '24px',
         boxSizing: 'border-box',
@@ -495,7 +495,7 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #060B14; }
+        body { background: #FFFFFF; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         select option { background: #1E293B; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
