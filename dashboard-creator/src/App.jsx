@@ -320,16 +320,6 @@ export default function App() {
           flexWrap: 'wrap',
         }}
       >
-        {/* Title */}
-        <div style={{ marginRight: '8px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: '#F1F5F9', letterSpacing: '-0.01em' }}>
-            Dashboard Generator
-          </div>
-          <div style={{ fontSize: '11px', color: '#64748B', marginTop: '1px' }}>
-            LinkedIn 1200×1200 PNG export
-          </div>
-        </div>
-
         {/* Theme selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <label style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -479,20 +469,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Footer hint */}
-      <div
-        className="no-export"
-        style={{
-          textAlign: 'center',
-          marginTop: '16px',
-          fontSize: '11px',
-          color: '#334155',
-        }}
-      >
-        Dashboard renders at exactly 1200×1200px · Upload an Excel file to use your own data · Export PNG for LinkedIn
-      </div>
-
-      <style>{`
+<style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #FFFFFF; }
