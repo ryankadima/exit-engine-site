@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import FunnelChart from './components/FunnelChart';
 import TrendChart from './components/TrendChart';
 import PieModule from './components/PieModule';
@@ -246,7 +246,15 @@ function Dashboard({ data, theme }) {
 
 // ── App shell ───────────────────────────────────────────────────────────────
 export default function App() {
-  const [themeKey, setThemeKey] = useState(DEFAULT_THEME_KEY);
+  const initialTheme = (() => {
+    const hash = window.location.hash.replace('#', '').toLowerCase();
+    return hash && THEMES[hash] ? hash : DEFAULT_THEME_KEY;
+  })();
+  const [themeKey, setThemeKey] = useState(initialTheme);
+
+  useEffect(() => {
+    window.location.hash = themeKey;
+  }, [themeKey]);
   const [data, setData] = useState(SAMPLE_DATA);
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState(null);
