@@ -553,7 +553,8 @@ function buildDashboardHtml(pipelineArr, forecastArr, gtmArr, email) {
   .header { padding: 20px 24px; display: flex; align-items: center; gap: 20px; max-width: 1400px; margin: 0 auto; }
   .header-logo { height: 36px; }
   .dashboard-title { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 22px; font-weight: 700; color: #1a1a1a; text-align: center; flex: 1; margin: 0; }
-  .header-cta { padding: 8px 20px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .15s; }
+  .header-spacer { width: 130px; flex-shrink: 0; }
+  .header-cta { padding: 8px 20px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .15s; width: 130px; text-align: center; flex-shrink: 0; }
   .header-cta:hover { background: #1d4ed8; }
   .google-sheets-connector { display: flex; align-items: center; gap: 12px; }
   .google-sheets-connector input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-tertiary); border-radius: 6px; font-size: 13px; }
@@ -563,7 +564,8 @@ function buildDashboardHtml(pipelineArr, forecastArr, gtmArr, email) {
   .status-badge.green { background: #e1f5ee; color: #0f6e56; }
 
   /* Tabs */
-  .tabs { background: var(--bg-primary); border-bottom: 1px solid var(--border-tertiary); display: flex; justify-content: center; }
+  .tabs-wrap { background: var(--bg-primary); border-bottom: 1px solid var(--border-tertiary); }
+  .tabs { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: center; }
   .tab { padding: 16px 24px; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: background .15s, color .15s; }
   .tab.active { border-bottom-color: var(--primary-blue); color: var(--primary-blue); background: rgba(37, 99, 235, 0.06); }
 
@@ -655,12 +657,13 @@ function buildDashboardHtml(pipelineArr, forecastArr, gtmArr, email) {
 
 <div class="header-wrap">
   <div class="header">
+    <div class="header-spacer"></div>
     <h1 class="dashboard-title">RevOps Dashboard</h1>
     <a href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener" class="header-cta">Schedule a Call</a>
   </div>
 </div>
 
-<div class="tabs" id="tabsBar"></div>
+<div class="tabs-wrap"><div class="tabs" id="tabsBar"></div></div>
 
 <div class="content">
   <div id="pipeline-tab" class="tab-content">
