@@ -748,7 +748,7 @@ function buildDashboardHtml(pipelineArr, forecastArr, gtmArr, email) {
 
 <div class="action-bar">
   <div class="action-bar-buttons">
-    <button class="primary" onclick="window.print()">Download PDF</button>
+    <button class="primary" onclick="downloadPDF()">Download PDF</button>
   </div>
 </div>
 
@@ -1318,6 +1318,23 @@ document.addEventListener('DOMContentLoaded', () => {
   initializePipelineTab();
   initializeForecastTab();
 });
+<\/script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"><\/script>
+<script>
+function downloadPDF() {
+  var btn = document.querySelector('.action-bar');
+  btn.style.display = 'none';
+  html2pdf().set({
+    margin: [10, 10, 10, 10],
+    filename: 'RevOps-Dashboard.pdf',
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+    jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  }).from(document.body).save().then(function() {
+    btn.style.display = '';
+  });
+}
 <\/script>
 </body>
 </html>`;
