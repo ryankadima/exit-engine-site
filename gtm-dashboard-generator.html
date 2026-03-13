@@ -407,7 +407,14 @@ Input field for sheet URL + Connect button + status badge: amber "Using sample d
 
 Use Chart.js loaded from CDN for all bar and line charts. Custom HTML trapezoids for funnel ONLY.
 
-CRITICAL: Embed ALL provided data directly into the dashboard. Every metric, chart, and table must use ONLY values from the data above — do not invent or use placeholder values. The output must be COMPLETE — do not truncate.
+DATA INTEGRITY RULES:
+- Embed all 3 data sources as JavaScript arrays at the top of the <script> tag (const gtmData = [...], const pipelineData = [...], const forecastData = [...]).
+- Every metric card value, chart data point, table cell, and recommendation metric MUST be computed from these arrays using JavaScript — NEVER hardcode a number in HTML.
+- If a metric requires a field that doesn't exist in the data, show "N/A" — do NOT invent values.
+- For the Pipeline Funnel: stages and dollar values must come from the Pipeline Health data. If the data doesn't have stage-level breakdowns, group by the stage column that exists in the data.
+- Add a console.log('Data sources loaded:', {gtm: gtmData.length, pipeline: pipelineData.length, forecast: forecastData.length}) so the user can verify data loaded.
+
+CRITICAL: The output must be COMPLETE — do not truncate. Every displayed number must trace back to the embedded data arrays.
 
 Output ONLY the complete HTML. No explanation, no markdown fences. Start with <!DOCTYPE html>.`;
 }
