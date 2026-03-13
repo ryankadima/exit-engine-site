@@ -346,14 +346,13 @@ ${forecastJson}
 
 INSTRUCTIONS — follow every specification below exactly:
 
-CADENCE TABS:
-- Calculate earliest and latest date across all data. data_span_days = latest - earliest.
-- Show Weekly tab if span >= 7 days, Monthly if >= 30 days, Quarterly if >= 90 days.
-- Hide tabs that don't meet threshold entirely — no disabled state, no placeholder.
+TABS:
+- Always show 3 tabs: Pipeline, Forecast, GTM Efficiency.
+- Show a tab if its corresponding data source has at least 1 row of data.
+- Hide tabs with no data entirely — no disabled state, no placeholder.
 - First available tab is active by default.
-- If span < 7 days, show message: "Your data covers [N] days. Minimum 7 days needed."
 
-WEEKLY TAB — Pipeline + Aging Deals (last 7 days):
+PIPELINE TAB — Pipeline + Aging Deals (uses Pipeline Health data):
 Metric cards (4): Pipeline Coverage Ratio = Active Pipeline / Quarterly Quota (healthy 3-4x), Active Pipeline $, Sales Velocity = (Open Opps × Avg Deal Size × Win Rate) / Avg Sales Cycle Days, At-Risk Pipeline $ = deals aged > 2x avg cycle
 Charts:
 - Trapezoid funnel: custom HTML (NOT Chart.js), width proportional to stage value, min 46% max 100%, height 33px per stage, gap 4px, blue-to-purple gradient (#4f6bf4 → #6b7fe8 → #7b6fd4 → #8b5fc4 → #9b4fb8), white labels centered 11px 500
@@ -361,7 +360,7 @@ Charts:
 Table: Aging deals sorted by $ desc. Columns: Deal Name, Segment, Days Stalled, $ Value, Action Required. Red pill highest risk, amber moderate.
 Badges: green coverage ≥3x, amber 2-3x, red <2x
 
-MONTHLY TAB — Forecast + Rep Performance (last 30 days):
+FORECAST TAB — Forecast + Rep Performance (uses Forecast Accuracy data):
 Metric cards (4): Overall MAPE = mean(|actual-forecast|/|actual|)×100, Forecast Bias = avg((forecast-actual)/actual)×100, Avg Miss Per Period, Forecast Score = 100-(MAPE×4) capped 0-100
 MAPE ratings: <10% Excellent green, 10-20% Needs Work amber, >20% Poor red
 Charts:
@@ -370,7 +369,7 @@ Charts:
 Rep table: max-height 280px, sticky header, scrollable. Columns: Rep, Segment, Forecast, Actual, MAPE, Signal, Coaching Note
 Signal logic: MAPE<5% → Accurate (green) | 5-12% over → Over-commit (amber) | 5-12% under → Sandbagging (amber) | >12% → Wishful (amber) | >18% → red
 
-QUARTERLY TAB — GTM Efficiency + Unit Economics (last 90 days):
+GTM EFFICIENCY TAB — GTM Efficiency + Unit Economics (uses GTM Efficiency data):
 Metric cards (4): Magic Number = Net New ARR / Prior S&M Spend (healthy >0.75), Rule of 40 = Revenue Growth % + FCF Margin %, NRR % = (Start ARR + Expansion - Contraction - Churn) / Start ARR × 100 (strong >110%), LTV:CAC Blended weighted avg (healthy 3-4x)
 Charts:
 - LTV:CAC by Segment grouped bar. Height = max(180, n_segments × 52)px. Two datasets: actual (colored by segment), 3x target (light fill)
