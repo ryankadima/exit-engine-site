@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Dashboard Generator · Exit Engine</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --blue:#4f6bf4;--purple:#7b6fd4;--green:#22c55e;--amber:#ef9f27;--red:#e24b4a;
+    --bg:#0b0c10;--bg-card:#13151c;--bg-card2:#1a1d28;
+    --border:rgba(255,255,255,0.07);--border-active:rgba(79,107,244,0.4);
+    --text:#e8e9ef;--text-muted:#7a7d8e;--text-dim:#4a4d5e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,107,244,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,107,244,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(79,107,244,0.12) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  .wrapper{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:60px 24px 80px;}
+
+  /* Header */
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+  .logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:#fff;}
+  .logo-text{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;}
+  h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;line-height:1.15;background:linear-gradient(135deg,#e8e9ef 0%,#9b9eb5 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+  .subtitle{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:32px;}
+
+  /* Notice */
+  .notice{background:linear-gradient(135deg,rgba(79,107,244,0.08),rgba(123,111,212,0.08));border:1px solid rgba(79,107,244,0.2);border-radius:10px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:#9ba3c4;line-height:1.7;}
+  .notice strong{color:#a8b4f8;font-weight:500;}
+  .notice code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(79,107,244,0.15);padding:1px 5px;border-radius:3px;color:#8fa8f8;}
+
+  /* Cards */
+  .form-card,.output-card,.paste-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;}
+  .output-card{display:none;border-color:rgba(34,197,94,0.2);}
+  .output-card.visible{display:block;}
+  .paste-card{display:none;border-color:rgba(239,159,39,0.25);}
+  .paste-card.visible{display:block;}
+
+  /* Section label */
+  .section-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);margin-bottom:20px;}
+  .section-label.amber{color:var(--amber);}
+
+  /* Fields */
+  .field{margin-bottom:18px;}
+  .field:last-of-type{margin-bottom:0;}
+  label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  label .req{color:var(--blue);margin-left:2px;}
+  input[type=text],input[type=password],input[type=url],input[type=email]{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
+  input:focus{border-color:var(--border-active);box-shadow:0 0 0 3px rgba(79,107,244,0.1);}
+  input::placeholder{color:var(--text-dim);}
+  textarea.paste-area{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .15s;line-height:1.5;}
+  textarea.paste-area:focus{border-color:rgba(239,159,39,0.4);box-shadow:0 0 0 3px rgba(239,159,39,0.08);}
+  .field-hint{font-size:11px;color:var(--text-dim);margin-top:5px;line-height:1.5;}
+
+  /* Divider */
+  .divider{height:1px;background:var(--border);margin:22px 0;}
+
+  /* Buttons */
+  .btn-primary{width:100%;padding:14px 24px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .15s;position:relative;overflow:hidden;letter-spacing:.01em;}
+  .btn-primary:hover:not(:disabled){opacity:.9;transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-amber{background:linear-gradient(135deg,#ef9f27,#d4831a);}
+  .btn-action{flex:1;padding:11px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;}
+  .btn-download{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;}
+  .btn-download:hover{opacity:.9;}
+  .btn-copy{background:var(--bg-card2);color:var(--text-muted);border:1px solid var(--border);}
+  .btn-copy:hover{background:rgba(79,107,244,0.08);border-color:var(--border-active);color:var(--text);}
+
+  /* Progress */
+  .progress-area{display:none;margin-top:20px;}
+  .progress-area.visible{display:block;}
+  .progress-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;width:0%;transition:width .6s ease;}
+  .progress-steps{display:flex;gap:6px;flex-wrap:wrap;}
+  .step{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:20px;background:var(--bg-card2);color:var(--text-dim);border:1px solid var(--border);transition:all .2s;}
+  .step.active{background:rgba(79,107,244,0.1);color:#8fa8f8;border-color:rgba(79,107,244,0.3);}
+  .step.done{background:rgba(34,197,94,0.08);color:#4ade80;border-color:rgba(34,197,94,0.2);}
+  .step.error{background:rgba(226,75,74,0.08);color:#f87171;border-color:rgba(226,75,74,0.2);}
+
+  /* Messages */
+  .message{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;display:none;}
+  .message.visible{display:block;}
+  .message.error{background:rgba(226,75,74,0.08);border:1px solid rgba(226,75,74,0.2);color:#f87171;}
+  .message code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px;}
+
+  /* Output */
+  .output-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .success-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 8px rgba(34,197,94,0.5);}
+  .output-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;}
+  .output-meta{font-size:12px;color:var(--text-dim);margin-left:auto;font-family:'DM Mono',monospace;}
+  .output-actions{display:flex;gap:10px;}
+  .preview-snippet{margin-top:14px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;max-height:80px;overflow:hidden;position:relative;}
+  .preview-snippet::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg-card2));}
+
+  /* Paste instructions */
+  .paste-instructions{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:18px;padding:12px 14px;background:rgba(239,159,39,0.05);border-radius:8px;border-left:2px solid var(--amber);}
+  .paste-instructions ol{padding-left:16px;}
+  .paste-instructions li{margin-bottom:3px;}
+  .paste-instructions code{font-family:'DM Mono',monospace;font-size:10px;background:rgba(255,255,255,0.06);padding:1px 4px;border-radius:3px;}
+
+  /* Animations */
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .btn-primary.loading{background:linear-gradient(135deg,var(--blue),var(--purple),var(--blue));background-size:200% auto;animation:shimmer 2s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+  .footer{margin-top:48px;text-align:center;font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="logo">
+    <div class="logo-mark">EE</div>
+    <div class="logo-text">Exit Engine</div>
+  </div>
+  <h1>GTM Dashboard<br>Generator</h1>
+  <p class="subtitle">Connect your Google Sheet, paste your Claude API key, and get a fully interactive leadership dashboard in seconds.</p>
+
+  <div class="notice">
+    <strong>⚠ Before you start:</strong> Your Google Sheet must be shared as <strong>"Anyone with the link → Viewer"</strong>.<br>
+    In Google Sheets: <strong>Share → Change to anyone with the link → Viewer → Done</strong>.<br>
+    The sheet must have 3 tabs named exactly: <code>GTM Efficiency</code>, <code>Pipeline Health</code>, <code>Forecast Accuracy</code>
+  </div>
+
+  <!-- Main form -->
+  <div class="form-card">
+    <div class="section-label">Configuration</div>
+
+    <div class="field">
+      <label>Claude API Key <span class="req">*</span></label>
+      <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off"/>
+      <div class="field-hint">Sent directly to Anthropic — never stored anywhere.</div>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Google Sheet URL <span class="req">*</span></label>
+      <input type="url" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/..."/>
+      <div class="field-hint">Must be shared publicly as Viewer.</div>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Email Address <span class="req">*</span></label>
+      <input type="email" id="emailAddr" placeholder="you@company.com"/>
+      <div class="field-hint">Pre-fills the Email Report button inside the generated dashboard.</div>
+    </div>
+    <div class="divider"></div>
+
+    <button class="btn-primary" id="generateBtn" onclick="startGenerate()">Generate Dashboard →</button>
+
+    <div class="progress-area" id="progressArea">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-steps">
+        <div class="step" id="step1">01 · Reading sheet</div>
+        <div class="step" id="step2">02 · Parsing data</div>
+        <div class="step" id="step3">03 · Calling Claude</div>
+        <div class="step" id="step4">04 · Building dashboard</div>
+      </div>
+    </div>
+    <div class="message error" id="errorMsg"></div>
+  </div>
+
+  <!-- Manual paste fallback (shown on CORS failure) -->
+  <div class="paste-card" id="pasteCard">
+    <div class="section-label amber">⚠ Manual Data Entry — CORS Workaround</div>
+    <div class="paste-instructions">
+      Browser security blocked automatic sheet reading. Download each tab as CSV and paste below:<br>
+      <ol>
+        <li>In your Google Sheet, click the <strong>GTM Efficiency</strong> tab</li>
+        <li><strong>File → Download → Comma Separated Values (.csv)</strong></li>
+        <li>Open the downloaded file, select all (<code>Cmd+A</code>), copy (<code>Cmd+C</code>), paste below</li>
+        <li>Repeat for <strong>Pipeline Health</strong> and <strong>Forecast Accuracy</strong> tabs</li>
+      </ol>
+    </div>
+    <div class="field">
+      <label>GTM Efficiency (CSV)</label>
+      <textarea class="paste-area" id="pasteGtm" rows="4" placeholder="Date,Magic Number,S&M Spend,Net New ARR..."></textarea>
+    </div>
+    <div class="field">
+      <label>Pipeline Health (CSV)</label>
+      <textarea class="paste-area" id="pastePipeline" rows="4" placeholder="Date,Stage,Deal Name,Value,Quota..."></textarea>
+    </div>
+    <div class="field">
+      <label>Forecast Accuracy (CSV)</label>
+      <textarea class="paste-area" id="pasteForecast" rows="4" placeholder="Period,Rep,Segment,Forecast,Actual..."></textarea>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="btn-primary btn-amber" id="pasteBtn" onclick="generateFromPaste()">Generate with Pasted Data →</button>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="output-card" id="outputCard">
+    <div class="output-header">
+      <div class="success-dot"></div>
+      <div class="output-title">Dashboard Ready</div>
+      <div class="output-meta" id="outputMeta"></div>
+    </div>
+    <div class="output-actions">
+      <button class="btn-action btn-download" onclick="downloadDashboard()">↓ Download Dashboard</button>
+      <button class="btn-action btn-copy" id="copyBtn" onclick="copyHtml()">⊕ Copy HTML</button>
+    </div>
+    <div class="preview-snippet" id="previewSnippet"></div>
+  </div>
+
+  <div class="footer">Exit Engine · GTM Engineering for B2B SaaS</div>
+</div>
+
+<script>
+// ——— State ————————————————————————————————————————————————————————————
+let generatedHtml = '';
+
+// ——— Utilities ————————————————————————————————————————————————————————
+function extractSheetId(url) {
+  const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return m ? m[1] : null;
+}
+
+function setStep(n, state) {
+  const el = document.getElementById('step' + n);
+  const base = el.textContent.replace(/^[✓✗] /, '');
+  el.className = 'step ' + state;
+  el.textContent = (state === 'done' ? '✓ ' : state === 'error' ? '✗ ' : '') + base;
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showError(html) {
+  const el = document.getElementById('errorMsg');
+  el.innerHTML = html;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  const el = document.getElementById('errorMsg');
+  el.innerHTML = '';
+  el.classList.remove('visible');
+}
+
+function setBusy(btnId, busy, label) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = busy;
+  if (busy) {
+    btn.classList.add('loading');
+    btn.innerHTML = '<span class="spinner"></span>' + (label || 'Working...');
+  } else {
+    btn.classList.remove('loading');
+    btn.innerHTML = label || btn.innerHTML;
+  }
+}
+
+// ——— CSV Parser ———————————————————————————————————————————————————————
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      result.push(cur.trim()); cur = '';
+    } else cur += c;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length === 0) throw new Error('Empty CSV');
+  const headers = parseCSVLine(lines[0]);
+  const rows = lines.slice(1).map(l => parseCSVLine(l));
+  return { headers, rows };
+}
+
+// ——— gviz Parser ——————————————————————————————————————————————————————
+function parseGviz(raw) {
+  let json = raw.trim();
+  const prefix = 'google.visualization.Query.setResponse(';
+  if (json.startsWith(prefix)) {
+    json = json.slice(prefix.length);
+    if (json.endsWith(');')) json = json.slice(0, -2);
+    else if (json.endsWith(')')) json = json.slice(0, -1);
+  }
+  const data = JSON.parse(json);
+  const table = data.table;
+  const headers = table.cols.map(c => c.label || '');
+  const rows = (table.rows || []).map(row =>
+    row.c.map(cell => (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '')
+  );
+  return { headers, rows };
+}
+
+// ——— Sheet Fetcher ————————————————————————————————————————————————————
+async function tryFetch(url) {
+  const resp = await fetch(url, { redirect: 'follow' });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return resp.text();
+}
+
+async function fetchTab(sheetId, tabName) {
+  const enc = encodeURIComponent(tabName);
+  const csvUrl  = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&sheet=' + enc;
+  const gvizUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/gviz/tq?tqx=out:json&sheet=' + enc;
+  const pubUrl  = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/pub?output=csv&sheet=' + enc;
+
+  const strategies = [
+    async () => { const t = await tryFetch(csvUrl);  if (t.trim().startsWith('<')) throw new Error('HTML'); return parseCSV(t); },
+    async () => { const t = await tryFetch(gvizUrl); if (t.trim().startsWith('<')) throw new Error('HTML'); return parseGviz(t); },
+    async () => { const t = await tryFetch(pubUrl);  if (t.trim().startsWith('<')) throw new Error('HTML'); return parseCSV(t); },
+    async () => { const t = await tryFetch('https://corsproxy.io/?' + encodeURIComponent(csvUrl));  if (t.trim().startsWith('<')) throw new Error('HTML'); return parseCSV(t); },
+    async () => { const t = await tryFetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(gvizUrl)); return parseGviz(t); },
+  ];
+
+  const errs = [];
+  for (const fn of strategies) {
+    try { return await fn(); } catch(e) { errs.push(e.message); }
+  }
+  throw new Error('CORS_FAIL:' + errs.join('|'));
+}
+
+function tableToJson(parsed) {
+  return parsed.rows.map(row => {
+    const obj = {};
+    parsed.headers.forEach((h, i) => { if (h) obj[h] = row[i] !== undefined ? row[i] : ''; });
+    return obj;
+  });
+}
+
+// ——— Prompt Builder ———————————————————————————————————————————————————
+function buildPrompt(gtmJson, pipelineJson, forecastJson, email) {
+  return `You are a RevOps dashboard generator. Generate a complete, self-contained interactive HTML dashboard based on the GTM data below.
+
+GTM EFFICIENCY DATA:
+${gtmJson}
+
+PIPELINE HEALTH DATA:
+${pipelineJson}
+
+FORECAST ACCURACY DATA:
+${forecastJson}
+
+INSTRUCTIONS — follow every specification below exactly:
+
+CADENCE TABS:
+- Calculate earliest and latest date across all data. data_span_days = latest - earliest.
+- Show Weekly tab if span >= 7 days, Monthly if >= 30 days, Quarterly if >= 90 days.
+- Hide tabs that don't meet threshold entirely — no disabled state, no placeholder.
+- First available tab is active by default.
+- If span < 7 days, show message: "Your data covers [N] days. Minimum 7 days needed."
+
+WEEKLY TAB — Pipeline + Aging Deals (last 7 days):
+Metric cards (4): Pipeline Coverage Ratio = Active Pipeline / Quarterly Quota (healthy 3-4x), Active Pipeline $, Sales Velocity = (Open Opps × Avg Deal Size × Win Rate) / Avg Sales Cycle Days, At-Risk Pipeline $ = deals aged > 2x avg cycle
+Charts:
+- Trapezoid funnel: custom HTML (NOT Chart.js), width proportional to stage value, min 46% max 100%, height 33px per stage, gap 4px, blue-to-purple gradient (#4f6bf4 → #6b7fe8 → #7b6fd4 → #8b5fc4 → #9b4fb8), white labels centered 11px 500
+- Pipeline vs Quota grouped bar: red bars when below quota, zoom toggle "Current + Next 2" vs "All Quarters", labels rotate 35° when >4 quarters
+Table: Aging deals sorted by $ desc. Columns: Deal Name, Segment, Days Stalled, $ Value, Action Required. Red pill highest risk, amber moderate.
+Badges: green coverage ≥3x, amber 2-3x, red <2x
+
+MONTHLY TAB — Forecast + Rep Performance (last 30 days):
+Metric cards (4): Overall MAPE = mean(|actual-forecast|/|actual|)×100, Forecast Bias = avg((forecast-actual)/actual)×100, Avg Miss Per Period, Forecast Score = 100-(MAPE×4) capped 0-100
+MAPE ratings: <10% Excellent green, 10-20% Needs Work amber, >20% Poor red
+Charts:
+- Forecast vs Actual dual-line: solid blue forecast, dashed green actual
+- MAPE trend area chart red, dashed green line at 10% target
+Rep table: max-height 280px, sticky header, scrollable. Columns: Rep, Segment, Forecast, Actual, MAPE, Signal, Coaching Note
+Signal logic: MAPE<5% → Accurate (green) | 5-12% over → Over-commit (amber) | 5-12% under → Sandbagging (amber) | >12% → Wishful (amber) | >18% → red
+
+QUARTERLY TAB — GTM Efficiency + Unit Economics (last 90 days):
+Metric cards (4): Magic Number = Net New ARR / Prior S&M Spend (healthy >0.75), Rule of 40 = Revenue Growth % + FCF Margin %, NRR % = (Start ARR + Expansion - Contraction - Churn) / Start ARR × 100 (strong >110%), LTV:CAC Blended weighted avg (healthy 3-4x)
+Charts:
+- LTV:CAC by Segment grouped bar. Height = max(180, n_segments × 52)px. Two datasets: actual (colored by segment), 3x target (light fill)
+- CAC Payback vs Benchmark grouped bar. Green if at/under benchmark, amber if 1-20% over, red if >20% over
+- NRR Waterfall 4 bars: Starting MRR (blue), Expansion (green), Churn (red), Ending MRR (teal). Y-axis in $ thousands
+- Metric Scorecard scrollable list max-height 240px. Each row: label 130px fixed, progress bar flex 1, value 52px right. Bar blue if healthy, amber if at risk
+Investment Recommendations block: 3-5 prioritized cards generated from this signal tree:
+  1. Magic Number ≥0.75 → "Increase S&M 10-20%, prioritize highest LTV:CAC segment" | <0.75 → "Diagnose before increasing spend"
+  2. Pipeline coverage <1.5x → CRITICAL source gap immediately | <2.5x → WARNING add deals
+  3. CAC payback >benchmark×1.2 → reduce payback for that segment
+  4. MAPE >15% → coach reps, apply haircut 0.90 if 15-20%, 0.85 if >20%
+  5. NRR <100% → CRITICAL fix retention | 100-110% → add upsell motion | ≥130% → double down expansion
+  Each card: rank badge, headline ≤12 words, 2-sentence description with metric cited, impact line prefixed "Expected:" or "Risk:"
+  Rank order: retention → pipeline gaps → GTM spend → segment unit economics → forecast coaching
+
+DESIGN SYSTEM — match exactly:
+Colors: #4f6bf4 primary blue, #7b6fd4 purple, #9b4fb8 deep purple, #378add blue secondary, #22c55e green, #ef9f27 amber, #e24b4a red, #14b8a6 teal
+Badge backgrounds: green bg #e1f5ee text #0f6e56 | amber bg #faeeda text #854f0b | red bg #fcebeb text #a32d2d | blue bg #e6f1fb text #185fa5
+Section labels: #4f6bf4, 11px, uppercase, letter-spacing 0.08em
+Cards: background primary, border 0.5px solid border-tertiary, border-radius 12px, padding 18px
+Metric cards: background secondary, border-radius 8px, padding 14px 16px, no border, 4-column grid gap 10px. Label 11px uppercase muted. Value 22px weight 500. Badge below value.
+Chart axes: grid rgba(128,128,128,0.08), ticks #888780 11px
+NO default Chart.js legends — custom HTML legends only, 10x10px colored squares, 12px text
+Typography: dashboard title 20px 500, card title 15px 500, body/table 13px
+Scrollbars: width 4px, transparent track, thumb border-radius 2px
+Segments: read dynamically from data, NEVER hardcode. Color palette cycles: ['#4f6bf4','#7b6fd4','#9b4fb8','#378add','#22c55e','#ef9f27','#e24b4a','#14b8a6']
+X-axis labels rotate 35° when >4 items
+
+ACTION BAR — fixed bottom, always visible:
+Left: "[Cadence] Report · For Leadership"
+Right: "↓ Download PDF" button (window.print()) + "✉ Email Report" primary button (opens mailto modal with recipient pre-filled as ${email || '[email]'}, subject line, optional note)
+
+GOOGLE SHEETS CONNECTOR — always at top:
+Input field for sheet URL + Connect button + status badge: amber "Using sample data" / green "Connected"
+
+Use Chart.js loaded from CDN for all bar and line charts. Custom HTML trapezoids for funnel ONLY.
+
+Output ONLY the complete HTML. No explanation, no markdown fences. Start with <!DOCTYPE html>.`;
+}
+
+// ——— Claude API Call ——————————————————————————————————————————————————
+async function callClaude(apiKey, prompt) {
+  let resp;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+  } catch (corsErr) {
+    throw new Error('CLAUDE_CORS');
+  }
+
+  if (!resp.ok) {
+    let detail = resp.statusText;
+    try { const b = await resp.json(); detail = b?.error?.message || detail; } catch(_) {}
+    throw new Error('CLAUDE_HTTP:' + resp.status + ':' + detail);
+  }
+
+  const data = await resp.json();
+  return data.content?.[0]?.text || '';
+}
+
+// ——— Finish: render output ————————————————————————————————————————————
+function finishWithHtml(raw) {
+  let html = raw.trim();
+  if (html.startsWith('```html')) html = html.slice(7);
+  if (html.startsWith('```')) html = html.slice(3);
+  if (html.endsWith('```')) html = html.slice(0, -3);
+  html = html.trim();
+
+  if (!html.startsWith('<!DOCTYPE') && !html.startsWith('<html')) {
+    throw new Error('Claude returned unexpected output — not valid HTML. Try generating again.');
+  }
+
+  generatedHtml = html;
+  setStep(4, 'done');
+  setProgress(100);
+
+  const kb = (html.length / 1024).toFixed(1);
+  document.getElementById('outputMeta').textContent = kb + ' KB';
+  document.getElementById('previewSnippet').textContent = html.slice(0, 300) + '...';
+  document.getElementById('outputCard').classList.add('visible');
+  document.getElementById('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ——— Shared Claude pipeline (steps 3+4) ————————————————————————————————
+async function runClaudePipeline(apiKey, email, gtmData, pipelineData, forecastData) {
+  // Step 2 done → Step 3
+  setStep(2, 'done');
+  setProgress(40);
+  setStep(3, 'active');
+
+  const gtmJson      = JSON.stringify(tableToJson(gtmData), null, 2);
+  const pipelineJson = JSON.stringify(tableToJson(pipelineData), null, 2);
+  const forecastJson = JSON.stringify(tableToJson(forecastData), null, 2);
+
+  const prompt = buildPrompt(gtmJson, pipelineJson, forecastJson, email);
+
+  let raw;
+  try {
+    raw = await callClaude(apiKey, prompt);
+  } catch(e) {
+    const msg = e.message || '';
+    setStep(3, 'error');
+    if (msg === 'CLAUDE_CORS') {
+      showError(
+        '<strong>CORS Error — Claude API blocked by browser.</strong><br><br>' +
+        'Direct API calls from <code>file://</code> are blocked by browser security.<br><br>' +
+        '<strong>Fix:</strong> Serve this file via a local server:<br>' +
+        '<code>npx serve .</code> then open <code>http://localhost:3000</code><br><br>' +
+        'Or run via <strong>Claude Code</strong> as a Node script.'
+      );
+    } else if (msg.startsWith('CLAUDE_HTTP:401')) {
+      showError('<strong>Invalid API Key (401):</strong> Check your key at <a href="https://console.anthropic.com" target="_blank" style="color:#8fa8f8">console.anthropic.com</a>.');
+    } else if (msg.startsWith('CLAUDE_HTTP:429')) {
+      showError('<strong>Rate Limited (429):</strong> Wait a moment and try again.');
+    } else if (msg.startsWith('CLAUDE_HTTP:529')) {
+      showError('<strong>API Overloaded (529):</strong> Try again in a few seconds.');
+    } else {
+      showError('<strong>Claude API Error:</strong> ' + msg);
+    }
+    return;
+  }
+
+  setStep(3, 'done');
+  setProgress(85);
+  setStep(4, 'active');
+
+  try {
+    finishWithHtml(raw);
+  } catch(e) {
+    setStep(4, 'error');
+    showError(e.message);
+  }
+}
+
+// ——— Primary flow (auto-fetch sheet) —————————————————————————————————
+async function startGenerate() {
+  clearError();
+  generatedHtml = '';
+  document.getElementById('outputCard').classList.remove('visible');
+
+  const apiKey   = document.getElementById('apiKey').value.trim();
+  const sheetUrl = document.getElementById('sheetUrl').value.trim();
+  const email    = document.getElementById('emailAddr').value.trim();
+
+  if (!apiKey)   return showError('Please enter your Claude API key.');
+  if (!apiKey.startsWith('sk-ant-')) return showError('That doesn\'t look like a Claude API key. It should start with <code>sk-ant-</code>.');
+  if (!sheetUrl) return showError('Please paste your Google Sheet URL.');
+  const sheetId = extractSheetId(sheetUrl);
+  if (!sheetId)  return showError('Couldn\'t extract a Sheet ID — paste the full Google Sheets browser URL.');
+  if (!email)    return showError('Please enter an email address.');
+
+  setBusy('generateBtn', true);
+  document.getElementById('progressArea').classList.add('visible');
+  setProgress(5);
+  setStep(1, 'active');
+
+  try {
+    let gtmData, pipelineData, forecastData;
+    try {
+      [gtmData, pipelineData, forecastData] = await Promise.all([
+        fetchTab(sheetId, 'GTM Efficiency'),
+        fetchTab(sheetId, 'Pipeline Health'),
+        fetchTab(sheetId, 'Forecast Accuracy'),
+      ]);
+    } catch(fetchErr) {
+      setStep(1, 'error');
+      showError(
+        '<strong>Could not read your Google Sheet</strong> — all fetch strategies failed.<br><br>' +
+        'This is a browser CORS restriction when opening from <code>file://</code>.<br><br>' +
+        '<strong>Use the manual paste method below</strong> — download each tab as CSV and paste it in.'
+      );
+      // Show paste fallback
+      document.getElementById('pasteCard').classList.add('visible');
+      // Pre-store credentials in paste card
+      document.getElementById('pasteCard').dataset.apiKey = apiKey;
+      document.getElementById('pasteCard').dataset.email  = email;
+      document.getElementById('pasteCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    setStep(1, 'done');
+    setProgress(25);
+    setStep(2, 'active');
+
+    // Small delay so user sees step 2
+    await new Promise(r => setTimeout(r, 200));
+
+    await runClaudePipeline(apiKey, email, gtmData, pipelineData, forecastData);
+
+  } catch(err) {
+    showError('Unexpected error: ' + (err.message || err));
+  } finally {
+    setBusy('generateBtn', false, 'Generate Dashboard →');
+  }
+}
+
+// ——— Manual paste flow ————————————————————————————————————————————————
+async function generateFromPaste() {
+  clearError();
+  generatedHtml = '';
+  document.getElementById('outputCard').classList.remove('visible');
+
+  const card    = document.getElementById('pasteCard');
+  const apiKey  = card.dataset.apiKey || document.getElementById('apiKey').value.trim();
+  const email   = card.dataset.email  || document.getElementById('emailAddr').value.trim();
+  const gtmCsv  = document.getElementById('pasteGtm').value.trim();
+  const pipeCsv = document.getElementById('pastePipeline').value.trim();
+  const fcastCsv= document.getElementById('pasteForecast').value.trim();
+
+  if (!apiKey)  return showError('API key missing — fill in the form above first.');
+  if (!gtmCsv || !pipeCsv || !fcastCsv) return showError('Please paste CSV data for all 3 tabs.');
+
+  setBusy('pasteBtn', true, 'Generating...');
+  setBusy('generateBtn', true);
+  document.getElementById('progressArea').classList.add('visible');
+
+  try {
+    setStep(1, 'done');
+    setProgress(25);
+    setStep(2, 'active');
+
+    let gtmData, pipelineData, forecastData;
+    try {
+      gtmData      = parseCSV(gtmCsv);
+      pipelineData = parseCSV(pipeCsv);
+      forecastData = parseCSV(fcastCsv);
+    } catch(e) {
+      setStep(2, 'error');
+      return showError('CSV parse error: ' + e.message + '. Make sure you pasted plain comma-separated CSV.');
+    }
+
+    await runClaudePipeline(apiKey, email, gtmData, pipelineData, forecastData);
+
+  } catch(err) {
+    showError('Unexpected error: ' + (err.message || err));
+  } finally {
+    setBusy('pasteBtn', false, 'Generate with Pasted Data →');
+    setBusy('generateBtn', false, 'Generate Dashboard →');
+  }
+}
+
+// ——— Output actions ———————————————————————————————————————————————————
+function downloadDashboard() {
+  if (!generatedHtml) return;
+  const blob = new Blob([generatedHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gtm-dashboard.html'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyHtml() {
+  if (!generatedHtml) return;
+  const btn = document.getElementById('copyBtn');
+  try {
+    await navigator.clipboard.writeText(generatedHtml);
+  } catch(_) {
+    const ta = document.createElement('textarea');
+    ta.value = generatedHtml;
+    ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = '⊕ Copy HTML', 2000);
+}
+</script>
+</body>
+</html>
