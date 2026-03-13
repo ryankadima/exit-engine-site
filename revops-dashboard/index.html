@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevOps Dashboard Generator · Exit Engine</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;
+    --bg:#ffffff;--bg-card:#eef3fb;--bg-card2:#f4f4f5;
+    --border:#d1d5db;--border-active:#2563eb;
+    --text:#1a1a1a;--text-muted:#6b7280;--text-dim:#9ca3af;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;}
+  .wrapper{position:relative;max-width:640px;margin:0 auto;padding:60px 24px 80px;}
+
+  /* Header */
+  h1{font-family:'Inter',system-ui,sans-serif;font-size:32px;font-weight:700;line-height:1.15;color:var(--text);margin-bottom:10px;}
+  .subtitle{font-size:15px;color:var(--text-muted);line-height:1.6;margin-bottom:32px;}
+
+  /* Notice */
+  .notice{background:var(--bg-card);border:1px solid #c7d5ed;border-left:3px solid var(--blue);border-radius:6px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:#374151;line-height:1.7;}
+  .notice strong{color:var(--blue);font-weight:600;}
+  .notice code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(37,99,235,0.08);padding:1px 5px;border-radius:3px;color:var(--blue);}
+
+  /* Cards */
+  .form-card,.output-card,.paste-card{background:var(--bg-card);border:1px solid #c7d5ed;border-radius:6px;padding:28px;margin-bottom:16px;}
+  .output-card{display:none;border-color:#86efac;}
+  .output-card.visible{display:block;}
+  .paste-card{display:none;border-color:#fcd34d;}
+  .paste-card.visible{display:block;}
+
+  /* Section label */
+  .section-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);margin-bottom:20px;}
+  .section-label.amber{color:var(--amber);}
+
+  /* Fields */
+  .field{margin-bottom:18px;}
+  .field:last-of-type{margin-bottom:0;}
+  label{display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:6px;}
+  label .req{color:var(--blue);margin-left:2px;}
+  input[type=text],input[type=password],input[type=url],input[type=email]{width:100%;background:#ffffff;border:1px solid var(--border);border-radius:6px;padding:11px 14px;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
+  input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
+  input::placeholder{color:var(--text-dim);}
+  textarea.paste-area{width:100%;background:#ffffff;border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);resize:vertical;min-height:80px;outline:none;transition:border-color .15s;line-height:1.5;}
+  textarea.paste-area:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,0.1);}
+  .field-hint{font-size:11px;color:var(--text-dim);margin-top:5px;line-height:1.5;}
+
+  /* Divider */
+  .divider{height:1px;background:#e5e7eb;margin:22px 0;}
+
+  /* Buttons */
+  .btn-primary{width:100%;padding:14px 24px;background:var(--blue);border:none;border-radius:6px;color:#fff;font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .15s;position:relative;overflow:hidden;letter-spacing:.01em;}
+  .btn-primary:hover:not(:disabled){background:#1d4ed8;transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-amber{background:var(--amber);}
+  .btn-amber:hover:not(:disabled){background:#b45309;}
+  .btn-action{flex:1;padding:11px 16px;border-radius:6px;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;}
+  .btn-download{background:var(--blue);color:#fff;}
+  .btn-download:hover{background:#1d4ed8;}
+  .btn-copy{background:#ffffff;color:var(--blue);border:1px solid var(--blue);}
+  .btn-copy:hover{background:rgba(37,99,235,0.05);}
+
+  /* Progress */
+  .progress-area{display:none;margin-top:20px;}
+  .progress-area.visible{display:block;}
+  .progress-track{height:2px;background:#e5e7eb;border-radius:2px;overflow:hidden;margin-bottom:12px;}
+  .progress-fill{height:100%;background:var(--blue);border-radius:2px;width:0%;transition:width .6s ease;}
+  .progress-steps{display:flex;gap:6px;flex-wrap:wrap;}
+  .step{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:20px;background:#f3f4f6;color:var(--text-dim);border:1px solid #e5e7eb;transition:all .2s;}
+  .step.active{background:rgba(37,99,235,0.08);color:var(--blue);border-color:rgba(37,99,235,0.3);}
+  .step.done{background:rgba(22,163,74,0.08);color:var(--green);border-color:rgba(22,163,74,0.3);}
+  .step.error{background:rgba(220,38,38,0.06);color:var(--red);border-color:rgba(220,38,38,0.2);}
+
+  /* Messages */
+  .message{margin-top:16px;padding:12px 16px;border-radius:6px;font-size:13px;line-height:1.7;display:none;}
+  .message.visible{display:block;}
+  .message.error{background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);color:var(--red);}
+  .message code{font-family:'DM Mono',monospace;font-size:11px;background:#f3f4f6;padding:1px 5px;border-radius:3px;}
+
+  /* Output */
+  .output-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .success-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px rgba(22,163,74,0.4);}
+  .output-title{font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:600;color:var(--text);}
+  .output-meta{font-size:12px;color:var(--text-dim);margin-left:auto;font-family:'DM Mono',monospace;}
+  .output-actions{display:flex;gap:10px;}
+  .preview-snippet{margin-top:14px;background:#f4f4f5;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);line-height:1.6;max-height:80px;overflow:hidden;position:relative;}
+  .preview-snippet::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,#f4f4f5);}
+
+  /* Paste instructions */
+  .paste-instructions{font-size:12px;color:#374151;line-height:1.7;margin-bottom:18px;padding:12px 14px;background:rgba(217,119,6,0.05);border-radius:6px;border-left:3px solid var(--amber);}
+  .paste-instructions ol{padding-left:16px;}
+  .paste-instructions li{margin-bottom:3px;}
+  .paste-instructions code{font-family:'DM Mono',monospace;font-size:10px;background:#f3f4f6;padding:1px 4px;border-radius:3px;}
+
+  /* Animations */
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .btn-primary.loading{background:linear-gradient(90deg,var(--blue),#3b82f6,var(--blue));background-size:200% auto;animation:shimmer 2s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(37,99,235,0.3);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+  .footer{margin-top:48px;text-align:center;font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <img src="exit-engine-logo.png" alt="Exit Engine" style="height:48px;margin-bottom:28px;">
+  <h1>RevOps Dashboard Generator</h1>
+  <p class="subtitle">Connect your Google Sheet and get a fully interactive leadership dashboard in seconds.</p>
+  <p class="subtitle" style="margin-top:-20px;">PS - if you want to integrate these types of RevOps dashboards with your CRM or analytics tools, <a href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener" style="color:var(--blue);font-weight:500;text-decoration:underline;">schedule a call with me here.</a></p>
+
+  <div class="notice">
+    <strong>Before you start:</strong> Your Google Sheet must be shared as <strong>"Anyone with the link &rarr; Viewer"</strong>.<br>
+    In Google Sheets: <strong>Share &rarr; Change to anyone with the link &rarr; Viewer &rarr; Done</strong>.
+    <br><br>
+    <a href="https://docs.google.com/spreadsheets/d/1FAulBQWzztjFGyusykNTcAtMDeVYOB2Sdq8JrG-RV8w/edit?gid=568547625#gid=568547625" target="_blank" rel="noopener" style="color:var(--blue);font-weight:500;text-decoration:underline;">Copy this template into your Google Drive</a>
+  </div>
+
+  <!-- Main form -->
+  <div class="form-card"> 
+    <div class="section-label">Configuration</div>
+
+    <div class="field">
+      <label>Google Sheet URL <span class="req">*</span></label>
+      <input type="url" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/..."/>
+      <div class="field-hint">Must be shared publicly as Viewer.</div>
+    </div>
+    <div class="divider"></div>
+
+    <button class="btn-primary" id="generateBtn" onclick="startGenerate()">Generate Dashboard &rarr;</button>
+
+    <div class="progress-area" id="progressArea">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-steps">
+        <div class="step" id="step1">01 &middot; Reading sheet</div>
+        <div class="step" id="step2">02 &middot; Parsing data</div>
+        <div class="step" id="step3">03 &middot; Building dashboard</div>
+      </div>
+    </div>
+    <div class="message error" id="errorMsg"></div>
+  </div>
+
+  <!-- Manual paste fallback (shown on CORS failure) -->
+  <div class="paste-card" id="pasteCard">
+    <div class="section-label amber">&#9888; Manual Data Entry &mdash; CORS Workaround</div>
+    <div class="paste-instructions">
+      Browser security blocked automatic sheet reading. Download each tab as CSV and paste below:<br>
+      <ol>
+        <li>In your Google Sheet, click the <strong>GTM Efficiency</strong> tab</li>
+        <li><strong>File &rarr; Download &rarr; Comma Separated Values (.csv)</strong></li>
+        <li>Open the downloaded file, select all (<code>Cmd+A</code>), copy (<code>Cmd+C</code>), paste below</li>
+        <li>Repeat for <strong>Pipeline Health</strong> and <strong>Forecast Accuracy</strong> tabs</li>
+      </ol>
+    </div>
+    <div class="field">
+      <label>GTM Efficiency (CSV)</label>
+      <textarea class="paste-area" id="pasteGtm" rows="4" placeholder="Period,Segment,Net New ARR ($),Prior Qtr S&M Spend ($)..."></textarea>
+    </div>
+    <div class="field">
+      <label>Pipeline Health (CSV)</label>
+      <textarea class="paste-area" id="pastePipeline" rows="4" placeholder="Period,Deal Name,Stage,Segment,Deal Value ($)..."></textarea>
+    </div>
+    <div class="field">
+      <label>Forecast Accuracy (CSV)</label>
+      <textarea class="paste-area" id="pasteForecast" rows="4" placeholder="Period,Rep Name,Segment,Forecast ($),Actual Closed ($)..."></textarea>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="btn-primary btn-amber" id="pasteBtn" onclick="generateFromPaste()">Generate with Pasted Data &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="output-card" id="outputCard">
+    <div class="output-header">
+      <div class="success-dot"></div>
+      <div class="output-title">Dashboard Ready</div>
+      <div class="output-meta" id="outputMeta"></div>
+    </div>
+    <div class="output-actions">
+      <button class="btn-action btn-download" onclick="downloadDashboard()">&#8595; Download Dashboard</button>
+      <button class="btn-action btn-copy" id="copyBtn" onclick="copyHtml()">&#8853; Copy HTML</button>
+    </div>
+    <div class="preview-snippet" id="previewSnippet"></div>
+  </div>
+
+  <div class="footer">Exit Engine &middot; GTM Engineering for B2B SaaS</div>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+// ——— State ————————————————————————————————————————————————————————————
+let generatedHtml = '';
+
+// ——— Utilities ————————————————————————————————————————————————————————
+function extractSheetId(url) {
+  const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return m ? m[1] : null;
+}
+
+function setStep(n, state) {
+  const el = document.getElementById('step' + n);
+  const base = el.textContent.replace(/^[✓✗] /, '');
+  el.className = 'step ' + state;
+  el.textContent = (state === 'done' ? '✓ ' : state === 'error' ? '✗ ' : '') + base;
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showError(html) {
+  const el = document.getElementById('errorMsg');
+  el.innerHTML = html;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  const el = document.getElementById('errorMsg');
+  el.innerHTML = '';
+  el.classList.remove('visible');
+}
+
+function setBusy(btnId, busy, label) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = busy;
+  if (busy) {
+    btn.classList.add('loading');
+    btn.innerHTML = '<span class="spinner"></span>' + (label || 'Working...');
+  } else {
+    btn.classList.remove('loading');
+    btn.innerHTML = label || btn.innerHTML;
+  }
+}
+
+// ——— CSV Parser ———————————————————————————————————————————————————————
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else {
+      cur += c;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length === 0) throw new Error('Empty CSV');
+  const headers = parseCSVLine(lines[0]);
+  const rows = lines.slice(1).map(l => parseCSVLine(l));
+  return { headers, rows };
+}
+
+// ——— gviz Parser ——————————————————————————————————————————————————————
+function parseGviz(raw) {
+  let json = raw.trim();
+  const prefix = 'google.visualization.Query.setResponse(';
+  if (json.startsWith(prefix)) {
+    json = json.slice(prefix.length);
+    if (json.endsWith(');')) json = json.slice(0, -2);
+    else if (json.endsWith(')')) json = json.slice(0, -1);
+  }
+  const data = JSON.parse(json);
+  const table = data.table;
+  const headers = table.cols.map(c => c.label || '');
+  const rows = (table.rows || []).map(row =>
+    row.c.map(cell => (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '')
+  );
+  return { headers, rows };
+}
+
+// ——— Sheet Fetcher ————————————————————————————————————————————————————
+async function tryFetch(url) {
+  const resp = await fetch(url, { redirect: 'follow' });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return resp.text();
+}
+
+async function fetchAllTabsXlsx(sheetId) {
+  const xlsxUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=xlsx';
+  const strategies = [
+    { name: 'direct', url: xlsxUrl },
+    { name: 'corsproxy', url: 'https://corsproxy.io/?' + encodeURIComponent(xlsxUrl) },
+    { name: 'allorigins', url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(xlsxUrl) },
+  ];
+
+  for (var si = 0; si < strategies.length; si++) {
+    var s = strategies[si];
+    try {
+      var resp = await fetch(s.url, { redirect: 'follow' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      var contentType = resp.headers.get('content-type') || '';
+      var buf = await resp.arrayBuffer();
+      // Reject HTML responses (login pages, error pages)
+      if (buf.byteLength < 100 || contentType.includes('text/html')) throw new Error('Not XLSX');
+      var wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+      console.log('XLSX fetched via ' + s.name + ', sheets:', wb.SheetNames);
+
+      function findSheet(name) {
+        var exact = wb.SheetNames.find(function(n) { return n === name; });
+        if (exact) return exact;
+        var lower = name.toLowerCase();
+        return wb.SheetNames.find(function(n) { return n.toLowerCase() === lower; }) ||
+               wb.SheetNames.find(function(n) { return n.toLowerCase().includes(lower); });
+      }
+
+      function sheetToParsed(sheetName) {
+        var ws = wb.Sheets[sheetName];
+        var csv = XLSX.utils.sheet_to_csv(ws);
+        return parseCSV(csv);
+      }
+
+      var gtmName   = findSheet('GTM Efficiency');
+      var pipeName  = findSheet('Pipeline Health');
+      var fcastName = findSheet('Forecast Accuracy');
+
+      if (!gtmName || !pipeName || !fcastName) {
+        var missing = [];
+        if (!gtmName) missing.push('GTM Efficiency');
+        if (!pipeName) missing.push('Pipeline Health');
+        if (!fcastName) missing.push('Forecast Accuracy');
+        throw new Error('Missing tabs: ' + missing.join(', ') + '. Found: ' + wb.SheetNames.join(', '));
+      }
+
+      return {
+        gtm: sheetToParsed(gtmName),
+        pipeline: sheetToParsed(pipeName),
+        forecast: sheetToParsed(fcastName),
+      };
+    } catch(e) {
+      console.warn('XLSX fetch via ' + s.name + ' failed:', e.message);
+    }
+  }
+  throw new Error('XLSX_FETCH_FAIL');
+}
+
+async function fetchTab(sheetId, tabName, expectedHeaders) {
+  const enc = encodeURIComponent(tabName);
+  const csvUrl  = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/export?format=csv&sheet=' + enc;
+  const gvizUrl = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/gviz/tq?tqx=out:json&sheet=' + enc;
+  const pubUrl  = 'https://docs.google.com/spreadsheets/d/' + sheetId + '/pub?output=csv&sheet=' + enc;
+
+  console.log('Fetching tab "' + tabName + '"');
+
+  const strategyNames = ['gviz-json', 'csv-export', 'pub-csv', 'corsproxy-gviz', 'allorigins-gviz'];
+  const strategies = [
+    async () => { const t = await tryFetch(gvizUrl); if (t.trim().startsWith('<')) throw new Error('HTML'); return parseGviz(t); },
+    async () => { const t = await tryFetch(csvUrl);  if (t.trim().startsWith('<')) throw new Error('HTML'); return parseCSV(t); },
+    async () => { const t = await tryFetch(pubUrl);  if (t.trim().startsWith('<')) throw new Error('HTML'); return parseCSV(t); },
+    async () => { const t = await tryFetch('https://corsproxy.io/?' + encodeURIComponent(gvizUrl)); return parseGviz(t); },
+    async () => { const t = await tryFetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(gvizUrl)); return parseGviz(t); },
+  ];
+
+  const errs = [];
+  for (let i = 0; i < strategies.length; i++) {
+    try {
+      const result = await strategies[i]();
+      // Validate headers match expected tab (prevents csv-export returning wrong tab)
+      if (expectedHeaders && expectedHeaders.length > 0) {
+        const norm = result.headers.map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
+        const found = expectedHeaders.some(function(eh) {
+          const target = eh.toLowerCase().replace(/[^a-z0-9]/g, '');
+          return norm.some(function(h) { return h.includes(target); });
+        });
+        if (!found) {
+          console.warn('Tab "' + tabName + '" via ' + strategyNames[i] + ': headers don\'t match expected (' + expectedHeaders.join(', ') + '), got: ' + result.headers.slice(0, 3).join(', ') + '... — trying next strategy');
+          errs.push(strategyNames[i] + ':wrong-tab');
+          continue;
+        }
+      }
+      console.log('Tab "' + tabName + '" fetched via strategy: ' + strategyNames[i] + ', headers:', result.headers.slice(0, 3).join(', ') + '..., rows: ' + result.rows.length);
+      return result;
+    } catch(e) { errs.push(strategyNames[i] + ':' + e.message); }
+  }
+  throw new Error('TAB_FETCH_FAIL:' + errs.join(' | '));
+}
+
+// ——— CSV-to-JS-object mappers ————————————————————————————————————————
+// Fuzzy column matching: case-insensitive, strip whitespace, find best match
+function findCol(headers, ...candidates) {
+  const normalized = headers.map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
+  for (const c of candidates) {
+    const target = c.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const idx = normalized.indexOf(target);
+    if (idx !== -1) return idx;
+    // Partial match
+    const partial = normalized.findIndex(h => h.includes(target) || target.includes(h));
+    if (partial !== -1) return partial;
+  }
+  return -1;
+}
+
+function getVal(row, idx) {
+  if (idx < 0 || idx >= row.length) return '';
+  return (row[idx] ?? '').toString().trim();
+}
+
+function parseNum(str) {
+  if (str === '' || str === null || str === undefined) return 0;
+  const cleaned = str.toString().replace(/[$,\s%xmo]/gi, '').trim();
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
+}
+
+function mapGtmRows(parsed) {
+  const h = parsed.headers;
+  const ci = {
+    period:         findCol(h, 'Period / Quarter', 'Period', 'Quarter'),
+    segment:        findCol(h, 'Segment'),
+    netNewARR:      findCol(h, 'Net New ARR ($)', 'Net New ARR', 'NetNewARR'),
+    priorSMSpend:   findCol(h, 'Prior Qtr S&M Spend ($)', 'Prior Qtr S&M Spend', 'SM Spend', 'S&M Spend'),
+    revGrowth:      findCol(h, 'Rev Growth %', 'Rev Growth', 'Revenue Growth'),
+    fcfMargin:      findCol(h, 'FCF Margin %', 'FCF Margin'),
+    startingARR:    findCol(h, 'Starting ARR ($)', 'Starting ARR'),
+    expansionARR:   findCol(h, 'Expansion ARR ($)', 'Expansion ARR'),
+    churnedARR:     findCol(h, 'Churned ARR ($)', 'Churned ARR'),
+    contractionARR: findCol(h, 'Contraction ARR ($)', 'Contraction ARR'),
+    cac:            findCol(h, 'CAC ($)', 'CAC'),
+    arpaMonthly:    findCol(h, 'ARPA Monthly ($)', 'ARPA Monthly', 'ARPA'),
+    grossMargin:    findCol(h, 'Gross Margin %', 'Gross Margin'),
+    annualChurn:    findCol(h, 'Annual Churn %', 'Annual Churn'),
+  };
+
+  return parsed.rows.map(row => {
+    const gm = parseNum(getVal(row, ci.grossMargin));
+    const ac = parseNum(getVal(row, ci.annualChurn));
+    const rg = parseNum(getVal(row, ci.revGrowth));
+    const fm = parseNum(getVal(row, ci.fcfMargin));
+    return {
+      period:         getVal(row, ci.period),
+      segment:        getVal(row, ci.segment),
+      netNewARR:      parseNum(getVal(row, ci.netNewARR)),
+      priorSMSpend:   parseNum(getVal(row, ci.priorSMSpend)),
+      revGrowth:      rg > 100 ? rg / 100 : rg,    // normalize: 3200 → 32, 32 stays
+      fcfMargin:      fm > 100 ? fm / 100 : fm,     // normalize: 800 → 8, 8 stays
+      startingARR:    parseNum(getVal(row, ci.startingARR)),
+      expansionARR:   parseNum(getVal(row, ci.expansionARR)),
+      churnedARR:     parseNum(getVal(row, ci.churnedARR)),
+      contractionARR: parseNum(getVal(row, ci.contractionARR)),
+      cac:            parseNum(getVal(row, ci.cac)),
+      arpaMonthly:    parseNum(getVal(row, ci.arpaMonthly)),
+      grossMargin:    gm > 1 ? gm / 100 : gm,   // normalize: 81 → 0.81, 0.81 stays
+      annualChurn:    ac > 1 ? ac / 100 : ac,     // normalize: 18 → 0.18, 0.18 stays
+    };
+  }).filter(r => r.period && r.segment);
+}
+
+function mapPipelineRows(parsed) {
+  const h = parsed.headers;
+  const ci = {
+    period:           findCol(h, 'Period / Quarter', 'Period', 'Quarter'),
+    dealName:         findCol(h, 'Deal Name', 'DealName', 'Opportunity'),
+    stage:            findCol(h, 'Stage'),
+    segment:          findCol(h, 'Segment'),
+    dealValue:        findCol(h, 'Deal Value ($)', 'Deal Value', 'Value', 'Amount'),
+    dateEnteredStage: findCol(h, 'Date Entered Stage', 'DateEnteredStage', 'Date Entered'),
+    expectedCloseDate:findCol(h, 'Expected Close Date', 'ExpectedCloseDate', 'Close Date'),
+    quota:            findCol(h, 'Quarterly Quota ($)', 'Quarterly Quota', 'Quota'),
+    daysInStage:      findCol(h, 'Days in Stage', 'DaysInStage', 'Days Stalled'),
+    agingFlag:        findCol(h, 'Aging Flag', 'AgingFlag', 'Flag'),
+  };
+
+  return parsed.rows.map(row => ({
+    period:           getVal(row, ci.period),
+    dealName:         getVal(row, ci.dealName),
+    stage:            getVal(row, ci.stage),
+    segment:          getVal(row, ci.segment),
+    dealValue:        parseNum(getVal(row, ci.dealValue)),
+    dateEnteredStage: getVal(row, ci.dateEnteredStage),
+    expectedCloseDate:getVal(row, ci.expectedCloseDate),
+    quota:            parseNum(getVal(row, ci.quota)),
+    daysInStage:      Math.round(parseNum(getVal(row, ci.daysInStage))),
+    agingFlag:        getVal(row, ci.agingFlag),
+  })).filter(r => r.period && r.dealName);
+}
+
+function mapForecastRows(parsed) {
+  const h = parsed.headers;
+  const ci = {
+    period:      findCol(h, 'Period / Quarter', 'Period', 'Quarter'),
+    repName:     findCol(h, 'Rep Name', 'RepName', 'Rep', 'Name'),
+    segment:     findCol(h, 'Segment'),
+    forecast:    findCol(h, 'Forecast ($)', 'Forecast', 'Forecast Amount'),
+    actual:      findCol(h, 'Actual Closed ($)', 'Actual Closed', 'Actual', 'Actual Amount'),
+    mape:        findCol(h, 'MAPE %', 'MAPE'),
+    bias:        findCol(h, 'Bias %', 'Bias'),
+    signal:      findCol(h, 'Signal'),
+    coachingNote:findCol(h, 'Coaching Note', 'CoachingNote', 'Note'),
+  };
+
+  return parsed.rows.map(row => {
+    const mape = parseNum(getVal(row, ci.mape));
+    const bias = parseNum(getVal(row, ci.bias));
+    return {
+      period:      getVal(row, ci.period),
+      repName:     getVal(row, ci.repName),
+      segment:     getVal(row, ci.segment),
+      forecast:    parseNum(getVal(row, ci.forecast)),
+      actual:      parseNum(getVal(row, ci.actual)),
+      mape:        mape > 1 ? mape / 100 : mape,   // normalize: 8.01 → 0.0801
+      bias:        Math.abs(bias) > 1 ? bias / 100 : bias,
+      signal:      getVal(row, ci.signal),
+      coachingNote:getVal(row, ci.coachingNote),
+    };
+  }).filter(r => r.period && r.repName);
+}
+
+// ——— Poison row protection: deduplicate GTM by period+segment ————————
+function deduplicateGtm(rows) {
+  const seen = new Set();
+  return rows.filter(d => {
+    const key = d.period + '|' + d.segment;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+// ——— Dashboard template builder ——————————————————————————————————————
+function buildDashboardHtml(pipelineArr, forecastArr, gtmArr, email) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevOps Dashboard · Exit Engine</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary-blue: #4f6bf4; --purple: #7b6fd4; --deep-purple: #9b4fb8;
+    --blue-secondary: #378add; --green: #22c55e; --amber: #ef9f27;
+    --red: #e24b4a; --teal: #14b8a6;
+    --bg-primary: #ffffff; --bg-secondary: #f8f9fb;
+    --border-tertiary: rgba(128,128,128,0.12);
+    --text-muted: #888780;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-secondary); color: #1a1a1a; padding-bottom: 80px; }
+
+  /* Header */
+  .header-wrap { background: var(--bg-primary); border-bottom: 1px solid var(--border-tertiary); }
+  .header { padding: 20px 24px; display: flex; align-items: center; gap: 20px; max-width: 1400px; margin: 0 auto; }
+  .header-logo { height: 36px; }
+  .dashboard-title { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 22px; font-weight: 700; color: #1a1a1a; text-align: center; flex: 1; margin: 0; }
+  .header-cta { padding: 8px 20px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .15s; }
+  .header-cta:hover { background: #1d4ed8; }
+  .google-sheets-connector { display: flex; align-items: center; gap: 12px; }
+  .google-sheets-connector input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-tertiary); border-radius: 6px; font-size: 13px; }
+  .connect-btn { padding: 8px 16px; background: var(--primary-blue); color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .status-badge.amber { background: #faeeda; color: #854f0b; }
+  .status-badge.green { background: #e1f5ee; color: #0f6e56; }
+
+  /* Tabs */
+  .tabs { background: var(--bg-primary); border-bottom: 1px solid var(--border-tertiary); display: flex; justify-content: center; }
+  .tab { padding: 16px 24px; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: background .15s, color .15s; }
+  .tab.active { border-bottom-color: var(--primary-blue); color: var(--primary-blue); background: rgba(37, 99, 235, 0.06); }
+
+  /* Content */
+  .content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Section label */
+  .section-label { color: var(--primary-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; font-weight: 500; }
+
+  /* Metric cards */
+  .metric-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .metric-card { background: var(--bg-secondary); border-radius: 8px; padding: 14px 16px; }
+  .metric-card .label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .metric-card .value { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+  .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .badge.green { background: #e1f5ee; color: #0f6e56; }
+  .badge.amber { background: #faeeda; color: #854f0b; }
+  .badge.red { background: #fcebeb; color: #a32d2d; }
+  .badge.blue { background: #e6f1fb; color: #185fa5; }
+
+  /* Cards */
+  .card { background: var(--bg-primary); border: 0.5px solid var(--border-tertiary); border-radius: 12px; padding: 18px; margin-bottom: 24px; }
+  .card-title { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+
+  /* Charts grid */
+  .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+  .chart-container { position: relative; height: 300px; }
+
+  /* Custom legend */
+  .custom-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-color { width: 10px; height: 10px; border-radius: 2px; }
+  .legend-text { font-size: 12px; }
+
+  /* Funnel */
+  .funnel-container { display: flex; flex-direction: column; justify-content: stretch; gap: 8px; padding: 10px 0; min-height: 280px; }
+  .funnel-stage { display: flex; align-items: center; justify-content: center; flex: 1; color: white; font-size: 16px; font-weight: 600; border-radius: 6px; margin-left: auto; margin-right: auto; letter-spacing: 0.01em; overflow: hidden; container-type: inline-size; }
+  .funnel-stage span { white-space: nowrap; text-align: center; }
+  @container (max-width: 180px) { .funnel-stage span { font-size: 12px; } }
+  @container (max-width: 120px) { .funnel-stage span { font-size: 10px; } }
+
+  /* Tables */
+  .table-container { max-height: 280px; overflow-y: auto; }
+  .table-container::-webkit-scrollbar { width: 4px; }
+  .table-container::-webkit-scrollbar-track { background: transparent; }
+  .table-container::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border-tertiary); font-weight: 500; font-size: 11px; text-transform: uppercase; color: var(--text-muted); position: sticky; top: 0; background: var(--bg-primary); z-index: 1; }
+  td { padding: 10px 8px; border-bottom: 1px solid var(--border-tertiary); }
+  .risk-pill { padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+  .risk-pill.high { background: #fcebeb; color: #a32d2d; }
+  .risk-pill.moderate { background: #faeeda; color: #854f0b; }
+  .risk-pill.low { background: #e1f5ee; color: #0f6e56; }
+
+  /* Scorecard */
+  .scorecard-container { max-height: 240px; overflow-y: auto; }
+  .scorecard-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-tertiary); }
+  .scorecard-label { width: 130px; font-size: 12px; flex-shrink: 0; }
+  .scorecard-bar { flex: 1; height: 8px; background: rgba(128,128,128,0.1); border-radius: 4px; overflow: hidden; margin: 0 12px; }
+  .scorecard-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .scorecard-value { width: 52px; text-align: right; font-size: 12px; font-weight: 500; }
+
+  /* Recommendations */
+  .recommendation-card { background: var(--bg-secondary); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; gap: 12px; }
+  .rank-badge { background: var(--primary-blue); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .rec-content h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .rec-content p { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px; }
+  .rec-content .impact { font-size: 12px; font-weight: 500; }
+
+  /* Zoom toggle */
+  .zoom-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+  .zoom-btn { padding: 4px 10px; border: 1px solid var(--border-tertiary); border-radius: 4px; font-size: 11px; background: var(--bg-primary); cursor: pointer; color: var(--text-muted); }
+  .zoom-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+  /* Action bar */
+  .action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-primary); border-top: 1px solid var(--border-tertiary); padding: 16px 24px; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+  .action-bar-buttons { display: flex; gap: 12px; }
+  .action-bar button { padding: 8px 16px; border: 1px solid var(--border-tertiary); border-radius: 6px; font-size: 13px; cursor: pointer; background: var(--bg-primary); }
+  .action-bar button.primary { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+  /* Responsive */
+  @media (max-width: 900px) { .metric-cards { grid-template-columns: repeat(2, 1fr); } .charts-grid { grid-template-columns: 1fr; } }
+  @media print { .action-bar { display: none; } body { padding-bottom: 0; } }
+</style>
+</head>
+<body>
+
+<div class="header-wrap">
+  <div class="header">
+    <h1 class="dashboard-title">RevOps Dashboard</h1>
+    <a href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener" class="header-cta">Schedule a Call</a>
+  </div>
+</div>
+
+<div class="tabs" id="tabsBar"></div>
+
+<div class="content">
+  <div id="pipeline-tab" class="tab-content">
+    <div class="section-label">PIPELINE HEALTH</div>
+    <div class="metric-cards" id="pipelineMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">Pipeline Funnel</div>
+        <div class="funnel-container" id="pipelineFunnel"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pipeline vs Quota</div>
+        <div class="custom-legend" id="pipelineQuotaLegend"></div>
+        <div class="chart-container"><canvas id="pipelineQuotaChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Aging Deals</div>
+      <div class="table-container" id="agingDealsTable"></div>
+    </div>
+  </div>
+
+  <div id="forecast-tab" class="tab-content">
+    <div class="section-label">FORECAST ACCURACY</div>
+    <div class="metric-cards" id="forecastMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">Forecast vs Actual</div>
+        <div class="custom-legend" id="forecastActualLegend"></div>
+        <div class="chart-container"><canvas id="forecastActualChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">MAPE Trend</div>
+        <div class="custom-legend" id="mapeTrendLegend"></div>
+        <div class="chart-container"><canvas id="mapeTrendChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Rep Performance</div>
+      <div class="table-container" id="repTable"></div>
+    </div>
+  </div>
+
+  <div id="gtm-tab" class="tab-content active">
+    <div class="section-label">GTM EFFICIENCY &amp; UNIT ECONOMICS</div>
+    <div class="metric-cards" id="gtmMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">LTV:CAC by Segment</div>
+        <div class="custom-legend" id="ltvCacLegend"></div>
+        <div class="chart-container"><canvas id="ltvCacChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">CAC Payback vs Benchmark</div>
+        <div class="custom-legend" id="cacPaybackLegend"></div>
+        <div class="chart-container"><canvas id="cacPaybackChart"></canvas></div>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">NRR Waterfall</div>
+        <div class="custom-legend" id="nrrWaterfallLegend"></div>
+        <div class="chart-container"><canvas id="nrrWaterfallChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Metric Scorecard</div>
+        <div class="scorecard-container" id="metricScorecard"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Investment Recommendations</div>
+      <div id="investmentRecs"></div>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <div class="action-bar-buttons">
+    <button class="primary" onclick="window.print()">Download PDF</button>
+  </div>
+</div>
+
+<script>
+const BENCHMARKS = {
+  magicNumber:    { strong: 0.75, monitor: 0.5 },
+  ruleOf40:       { strong: 40, monitor: 30 },
+  nrr:            { strong: 1.10, monitor: 1.00, weak: 0.90 },
+  ltvCac:         { strong: 3, monitor: 2 },
+  cacPayback:     { SMB: { strong: 12, weak: 18 }, 'Mid-Market': { strong: 18, weak: 24 }, Enterprise: { strong: 24, weak: 36 } },
+  pipelineCoverage: { strong: 3, monitor: 2 },
+  dealAging:      { monitor: 30, critical: 60 },
+  forecastMAPE:   { strong: 0.05, monitor: 0.18 },
+  forecastBias:   { strong: 0.03, monitor: 0.10 },
+};
+
+const SEGMENT_COLORS = ['#4f6bf4','#7b6fd4','#9b4fb8','#378add','#22c55e','#ef9f27','#e24b4a','#14b8a6'];
+
+// Data arrays — injected from Google Sheets
+const pipelineData = ${JSON.stringify(pipelineArr, null, 2)};
+
+const forecastData = ${JSON.stringify(forecastArr, null, 2)};
+
+const gtmDataRaw = ${JSON.stringify(gtmArr, null, 2)};
+
+// Deduplicate: keep first occurrence of each period+segment
+const seenGtm = new Set();
+const gtmData = gtmDataRaw.filter(d => {
+  const key = d.period + '|' + d.segment;
+  if (seenGtm.has(key)) return false;
+  seenGtm.add(key);
+  return true;
+});
+
+console.log('Data sources loaded:', { gtm: gtmData.length, pipeline: pipelineData.length, forecast: forecastData.length });
+
+// Utility functions
+function fmt$(v) { return '$' + Math.round(v).toLocaleString(); }
+function fmtK$(v) { return '$' + (v/1000).toFixed(0) + 'K'; }
+function fmtM$(v) { return '$' + (v/1000000).toFixed(2) + 'M'; }
+function badgeHtml(text, color) { return '<span class="badge ' + color + '">' + text + '</span>'; }
+function uniqueOrdered(arr, key) { const s = []; const seen = new Set(); arr.forEach(d => { if (!seen.has(d[key])) { seen.add(d[key]); s.push(d[key]); } }); return s; }
+
+function computeLtvCac(row) {
+  const monthlyChurn = row.annualChurn / 12;
+  if (monthlyChurn === 0) return Infinity;
+  const ltv = (row.arpaMonthly * row.grossMargin) / monthlyChurn;
+  return ltv / row.cac;
+}
+
+function computeNrr(row) {
+  return (row.startingARR + row.expansionARR - row.contractionARR - row.churnedARR) / row.startingARR;
+}
+
+function coverageBadge(coverage) {
+  if (coverage >= BENCHMARKS.pipelineCoverage.strong) return badgeHtml('Healthy', 'green');
+  if (coverage >= BENCHMARKS.pipelineCoverage.monitor) return badgeHtml('At Risk', 'amber');
+  return badgeHtml('Critical', 'red');
+}
+
+// Tab management
+const allTabs = ['gtm', 'pipeline', 'forecast'];
+const tabLabels = { gtm: 'GTM Efficiency', pipeline: 'Pipeline', forecast: 'Forecast' };
+let activeTab = 'gtm';
+let chartInstances = {};
+
+function buildTabs() {
+  const bar = document.getElementById('tabsBar');
+  bar.innerHTML = allTabs.map(t =>
+    '<button class="tab' + (t === activeTab ? ' active' : '') + '" onclick="switchTab(\\'' + t + '\\')">' + tabLabels[t] + '</button>'
+  ).join('');
+}
+
+function switchTab(t) {
+  activeTab = t;
+  allTabs.forEach(id => {
+    document.getElementById(id + '-tab').classList.toggle('active', id === t);
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => el.classList.toggle('active', allTabs[i] === t));
+  // Resize charts after tab becomes visible (Chart.js needs visible container)
+  setTimeout(() => { Object.values(chartInstances).forEach(c => { if (c && c.resize) c.resize(); }); }, 50);
+}
+
+// Pipeline Tab
+function initializePipelineTab() {
+  const quarters = uniqueOrdered(pipelineData, 'period');
+  const currentQuarter = quarters[0];
+  const currentQtrDeals = pipelineData.filter(d => d.period === currentQuarter);
+  const totalPipeline = currentQtrDeals.reduce((s, d) => s + d.dealValue, 0);
+  const quota = currentQtrDeals[0].quota;
+  const coverage = totalPipeline / quota;
+  const velocity = totalPipeline / 90;
+  const atRisk = currentQtrDeals.filter(d => d.daysInStage > BENCHMARKS.dealAging.critical).reduce((s, d) => s + d.dealValue, 0);
+
+  document.getElementById('pipelineMetrics').innerHTML =
+    '<div class="metric-card"><div class="label">Pipeline Coverage</div><div class="value">' + coverage.toFixed(2) + 'x</div>' + coverageBadge(coverage) + '</div>' +
+    '<div class="metric-card"><div class="label">Active Pipeline</div><div class="value">' + fmt$(totalPipeline) + '</div>' + badgeHtml(currentQuarter, 'blue') + '</div>' +
+    '<div class="metric-card"><div class="label">Sales Velocity</div><div class="value">' + fmt$(velocity) + '/day</div>' + badgeHtml('$/day avg', 'blue') + '</div>' +
+    '<div class="metric-card"><div class="label">At-Risk Pipeline</div><div class="value">' + fmt$(atRisk) + '</div>' + badgeHtml(atRisk === totalPipeline ? 'All deals >60d' : Math.round(atRisk/totalPipeline*100) + '% of pipeline', 'red') + '</div>';
+
+  createPipelineFunnel(currentQtrDeals);
+  createPipelineQuotaChart(quarters);
+  populateAgingDealsTable(currentQtrDeals);
+}
+
+function createPipelineFunnel(deals) {
+  const stageOrder = ['Discovery', 'Qualification', 'Proposal', 'Negotiation'];
+  const stageColors = ['#4f6bf4', '#6b7fe8', '#7b6fd4', '#8b5fc4'];
+  const stageValues = stageOrder.map(stage => deals.filter(d => d.stage === stage).reduce((s, d) => s + d.dealValue, 0));
+  const maxVal = Math.max(...stageValues);
+
+  document.getElementById('pipelineFunnel').innerHTML = stageValues.map((val, i) => {
+    const widthPct = maxVal > 0 ? Math.max(20, (val / maxVal) * 100) : 20;
+    return '<div class="funnel-stage" style="width:' + widthPct + '%; background:' + stageColors[i] + '"><span>' + stageOrder[i] + ': ' + fmtM$(val) + '</span></div>';
+  }).join('');
+}
+
+function createPipelineQuotaChart(quarters) {
+  const pipelineByQtr = quarters.map(q => pipelineData.filter(d => d.period === q).reduce((s, d) => s + d.dealValue, 0));
+  const quotaByQtr = quarters.map(q => pipelineData.find(d => d.period === q).quota);
+
+  document.getElementById('pipelineQuotaLegend').innerHTML =
+    '<div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Pipeline</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Quota</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">Pipeline (under quota)</span></div>';
+
+  if (chartInstances.pipelineQuota) chartInstances.pipelineQuota.destroy();
+  chartInstances.pipelineQuota = new Chart(document.getElementById('pipelineQuotaChart'), {
+    type: 'bar',
+    data: {
+      labels: quarters,
+      datasets: [{
+        label: 'Pipeline',
+        data: pipelineByQtr,
+        backgroundColor: pipelineByQtr.map((v, i) => v < quotaByQtr[i] ? '#e24b4a' : '#4f6bf4'),
+        borderRadius: 4
+      }, {
+        label: 'Quota',
+        data: quotaByQtr,
+        backgroundColor: '#22c55e',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 }, maxRotation: quarters.length > 4 ? 35 : 0 } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + (v/1000000).toFixed(1) + 'M' } }
+      }
+    }
+  });
+}
+
+function populateAgingDealsTable(deals) {
+  const sorted = [...deals].sort((a, b) => b.dealValue - a.dealValue);
+  document.getElementById('agingDealsTable').innerHTML = '<table>' +
+    '<thead><tr><th>Deal Name</th><th>Segment</th><th>Days Stalled</th><th>$ Value</th><th>Action Required</th></tr></thead>' +
+    '<tbody>' + sorted.map(d => {
+      let action, cls;
+      if (d.daysInStage > BENCHMARKS.dealAging.critical) { action = 'Executive escalation'; cls = 'high'; }
+      else if (d.daysInStage > BENCHMARKS.dealAging.monitor) { action = 'Manager review'; cls = 'moderate'; }
+      else { action = 'Monitor'; cls = 'low'; }
+      return '<tr><td>' + d.dealName + '</td><td>' + d.segment + '</td><td>' + d.daysInStage + ' days</td><td>' + fmt$(d.dealValue) + '</td><td><span class="risk-pill ' + cls + '">' + action + '</span></td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+// Forecast Tab
+function initializeForecastTab() {
+  const allMAPE = forecastData.map(d => d.mape);
+  const overallMAPE = allMAPE.reduce((s, v) => s + v, 0) / allMAPE.length;
+  const mapePct = overallMAPE * 100;
+
+  const allBias = forecastData.map(d => d.bias);
+  const avgBias = allBias.reduce((s, v) => s + v, 0) / allBias.length;
+  const biasPct = avgBias * 100;
+
+  const periods = uniqueOrdered(forecastData, 'period');
+  const periodMisses = periods.map(p => {
+    const rows = forecastData.filter(d => d.period === p);
+    return Math.abs(rows.reduce((s, d) => s + d.forecast, 0) - rows.reduce((s, d) => s + d.actual, 0));
+  });
+  const avgMiss = periodMisses.reduce((s, v) => s + v, 0) / periodMisses.length;
+  const forecastScore = Math.max(0, Math.round(100 - (mapePct * 4)));
+
+  let mapeBadge;
+  if (overallMAPE < BENCHMARKS.forecastMAPE.strong) mapeBadge = badgeHtml('Excellent', 'green');
+  else if (overallMAPE <= BENCHMARKS.forecastMAPE.monitor) mapeBadge = badgeHtml('Needs Work', 'amber');
+  else mapeBadge = badgeHtml('Poor', 'red');
+
+  document.getElementById('forecastMetrics').innerHTML =
+    '<div class="metric-card"><div class="label">Overall MAPE</div><div class="value">' + mapePct.toFixed(1) + '%</div>' + mapeBadge + '</div>' +
+    '<div class="metric-card"><div class="label">Forecast Bias</div><div class="value">' + (avgBias >= 0 ? '+' : '') + biasPct.toFixed(1) + '%</div>' + (Math.abs(avgBias) < BENCHMARKS.forecastBias.strong ? badgeHtml('Balanced', 'green') : badgeHtml('Biased', 'amber')) + '</div>' +
+    '<div class="metric-card"><div class="label">Avg Miss / Period</div><div class="value">' + fmt$(avgMiss) + '</div>' + badgeHtml(periods.length + ' periods', 'blue') + '</div>' +
+    '<div class="metric-card"><div class="label">Forecast Score</div><div class="value">' + forecastScore + '</div>' + (forecastScore >= 80 ? badgeHtml('Strong', 'green') : forecastScore >= 50 ? badgeHtml('Moderate', 'amber') : badgeHtml('Weak', 'red')) + '</div>';
+
+  createForecastActualChart(periods);
+  createMAPEChart(periods);
+  populateRepPerformanceTable();
+}
+
+function createForecastActualChart(periods) {
+  const forecastLine = periods.map(p => forecastData.filter(d => d.period === p).reduce((s, d) => s + d.forecast, 0));
+  const actualLine = periods.map(p => forecastData.filter(d => d.period === p).reduce((s, d) => s + d.actual, 0));
+
+  document.getElementById('forecastActualLegend').innerHTML =
+    '<div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Forecast</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Actual</span></div>';
+
+  if (chartInstances.forecastActual) chartInstances.forecastActual.destroy();
+  chartInstances.forecastActual = new Chart(document.getElementById('forecastActualChart'), {
+    type: 'line',
+    data: {
+      labels: periods,
+      datasets: [{
+        label: 'Forecast', data: forecastLine,
+        borderColor: '#4f6bf4', backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 4
+      }, {
+        label: 'Actual', data: actualLine,
+        borderColor: '#22c55e', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 5], tension: 0.3, pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 }, maxRotation: periods.length > 4 ? 35 : 0 } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + (v/1000) + 'K' } }
+      }
+    }
+  });
+}
+
+function createMAPEChart(periods) {
+  const mapeTrend = periods.map(p => {
+    const rows = forecastData.filter(d => d.period === p);
+    const totalF = rows.reduce((s, d) => s + d.forecast, 0);
+    const totalA = rows.reduce((s, d) => s + d.actual, 0);
+    return (Math.abs(totalA - totalF) / Math.abs(totalA)) * 100;
+  });
+
+  document.getElementById('mapeTrendLegend').innerHTML =
+    '<div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">MAPE %</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">5% Target</span></div>';
+
+  if (chartInstances.mapeTrend) chartInstances.mapeTrend.destroy();
+  chartInstances.mapeTrend = new Chart(document.getElementById('mapeTrendChart'), {
+    type: 'line',
+    data: {
+      labels: periods,
+      datasets: [{
+        label: 'MAPE %', data: mapeTrend,
+        borderColor: '#e24b4a', backgroundColor: 'rgba(226,75,74,0.2)', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 4
+      }, {
+        label: '5% Target', data: periods.map(() => 5),
+        borderColor: '#22c55e', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 5], pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + '%' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function populateRepPerformanceTable() {
+  const periods = uniqueOrdered(forecastData, 'period');
+  const latestPeriod = periods[periods.length - 1];
+  const reps = forecastData.filter(d => d.period === latestPeriod).sort((a, b) => b.mape - a.mape);
+
+  function signalBadge(signal) {
+    if (signal.includes('Accurate')) return '<span class="badge green">\\u2713 Accurate</span>';
+    if (signal.includes('Wishful')) return '<span class="badge red">\\u26a0 Wishful</span>';
+    if (signal.includes('Over-commit')) return '<span class="badge amber">\\u26a0 Over-commit</span>';
+    if (signal.includes('Sandbagging')) return '<span class="badge amber">\\u26a0 Sandbagging</span>';
+    return '<span class="badge blue">' + signal + '</span>';
+  }
+
+  document.getElementById('repTable').innerHTML = '<table>' +
+    '<thead><tr><th>Rep</th><th>Segment</th><th>Forecast</th><th>Actual</th><th>MAPE</th><th>Signal</th><th>Coaching Note</th></tr></thead>' +
+    '<tbody>' + reps.map(d => '<tr>' +
+      '<td>' + d.repName + '</td><td>' + d.segment + '</td><td>' + fmt$(d.forecast) + '</td><td>' + fmt$(d.actual) + '</td>' +
+      '<td>' + (d.mape * 100).toFixed(1) + '%</td><td>' + signalBadge(d.signal) + '</td><td style="font-size:11px;color:var(--text-muted);max-width:200px">' + d.coachingNote + '</td>' +
+    '</tr>').join('') + '</tbody></table>';
+}
+
+// GTM Efficiency Tab
+function initializeGTMTab() {
+  const periods = uniqueOrdered(gtmData, 'period');
+  const latestPeriod = periods[periods.length - 1];
+  const blended = gtmData.find(d => d.segment === 'Blended' && d.period === latestPeriod);
+
+  const magicNumber = blended.netNewARR / blended.priorSMSpend;
+  const ruleOf40 = blended.revGrowth + blended.fcfMargin;
+  const nrr = computeNrr(blended);
+  const nrrPct = nrr * 100;
+  const ltvCac = computeLtvCac(blended);
+
+  let mnBadge = magicNumber >= BENCHMARKS.magicNumber.strong ? badgeHtml('Healthy', 'green') : magicNumber >= BENCHMARKS.magicNumber.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  let r40Badge = ruleOf40 > BENCHMARKS.ruleOf40.strong ? badgeHtml('Strong', 'green') : ruleOf40 >= BENCHMARKS.ruleOf40.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  let nrrBadge = nrr > BENCHMARKS.nrr.strong ? badgeHtml('Strong', 'green') : nrr >= BENCHMARKS.nrr.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  let ltvBadge = ltvCac > BENCHMARKS.ltvCac.strong ? badgeHtml('Healthy', 'green') : ltvCac >= BENCHMARKS.ltvCac.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+
+  document.getElementById('gtmMetrics').innerHTML =
+    '<div class="metric-card"><div class="label">Magic Number</div><div class="value">' + magicNumber.toFixed(2) + 'x</div>' + mnBadge + '</div>' +
+    '<div class="metric-card"><div class="label">Rule of 40</div><div class="value">' + ruleOf40.toFixed(0) + '</div>' + r40Badge + '</div>' +
+    '<div class="metric-card"><div class="label">NRR %</div><div class="value">' + nrrPct.toFixed(1) + '%</div>' + nrrBadge + '</div>' +
+    '<div class="metric-card"><div class="label">LTV:CAC</div><div class="value">' + ltvCac.toFixed(1) + 'x</div>' + ltvBadge + '</div>';
+
+  createLTVCACChart(latestPeriod);
+  createCACPaybackChart(latestPeriod);
+  createNRRWaterfallChart(blended);
+  createMetricScorecard(blended, magicNumber, ruleOf40, nrrPct, ltvCac);
+  createInvestmentRecommendations(blended, magicNumber, ruleOf40, nrr, ltvCac);
+}
+
+function createLTVCACChart(latestPeriod) {
+  const segments = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  const segNames = segments.map(d => d.segment);
+  const ltvCacVals = segments.map(d => computeLtvCac(d));
+
+  document.getElementById('ltvCacLegend').innerHTML = segNames.map((s, i) =>
+    '<div class="legend-item"><div class="legend-color" style="background:' + SEGMENT_COLORS[i] + '"></div><span class="legend-text">' + s + '</span></div>'
+  ).join('') + '<div class="legend-item"><div class="legend-color" style="background:rgba(128,128,128,0.2)"></div><span class="legend-text">3x Target</span></div>';
+
+  if (chartInstances.ltvCac) chartInstances.ltvCac.destroy();
+  chartInstances.ltvCac = new Chart(document.getElementById('ltvCacChart'), {
+    type: 'bar',
+    data: {
+      labels: segNames,
+      datasets: [{
+        label: 'Actual LTV:CAC', data: ltvCacVals,
+        backgroundColor: segNames.map((_, i) => SEGMENT_COLORS[i]), borderRadius: 4
+      }, {
+        label: '3x Target', data: segNames.map(() => 3),
+        backgroundColor: 'rgba(128,128,128,0.2)', borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + 'x' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function createCACPaybackChart(latestPeriod) {
+  const segments = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  const segNames = segments.map(d => d.segment);
+  const paybacks = segments.map(d => d.cac / (d.arpaMonthly * d.grossMargin));
+  const benchmarks = segNames.map(s => BENCHMARKS.cacPayback[s] ? BENCHMARKS.cacPayback[s].strong : 18);
+
+  const barColors = paybacks.map((v, i) => {
+    const bm = BENCHMARKS.cacPayback[segNames[i]];
+    if (!bm) return '#22c55e';
+    if (v <= bm.strong) return '#22c55e';
+    if (v <= bm.weak) return '#ef9f27';
+    return '#e24b4a';
+  });
+
+  document.getElementById('cacPaybackLegend').innerHTML =
+    '<div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">At/Under Benchmark</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#ef9f27"></div><span class="legend-text">Monitor</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#d1d5db"></div><span class="legend-text">Benchmark</span></div>';
+
+  if (chartInstances.cacPayback) chartInstances.cacPayback.destroy();
+  chartInstances.cacPayback = new Chart(document.getElementById('cacPaybackChart'), {
+    type: 'bar',
+    data: {
+      labels: segNames,
+      datasets: [{
+        label: 'Actual', data: paybacks, backgroundColor: barColors, borderRadius: 4
+      }, {
+        label: 'Benchmark', data: benchmarks, backgroundColor: '#d1d5db', borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + ' mo' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function createNRRWaterfallChart(blended) {
+  const startARR = blended.startingARR / 1000;
+  const expansion = blended.expansionARR / 1000;
+  const churnContraction = (blended.churnedARR + blended.contractionARR) / 1000;
+  const endARR = startARR + expansion - churnContraction;
+
+  document.getElementById('nrrWaterfallLegend').innerHTML =
+    '<div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Starting ARR</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Expansion</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">Churn + Contraction</span></div>' +
+    '<div class="legend-item"><div class="legend-color" style="background:#14b8a6"></div><span class="legend-text">Ending ARR</span></div>';
+
+  if (chartInstances.nrrWaterfall) chartInstances.nrrWaterfall.destroy();
+  chartInstances.nrrWaterfall = new Chart(document.getElementById('nrrWaterfallChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Starting ARR', 'Expansion', 'Churn + Contraction', 'Ending ARR'],
+      datasets: [{
+        data: [startARR, expansion, -churnContraction, endARR],
+        backgroundColor: ['#4f6bf4', '#22c55e', '#e24b4a', '#14b8a6'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + v + 'K' } }
+      }
+    }
+  });
+}
+
+function createMetricScorecard(blended, magicNumber, ruleOf40, nrrPct, ltvCac) {
+  const cacPayback = blended.cac / (blended.arpaMonthly * blended.grossMargin);
+  const grossMarginPct = blended.grossMargin * 100;
+  const annualChurnPct = blended.annualChurn * 100;
+
+  const metrics = [
+    { label: 'Magic Number', value: magicNumber.toFixed(2) + 'x', actual: magicNumber, target: 0.75, inverted: false },
+    { label: 'Rule of 40', value: ruleOf40.toFixed(0), actual: ruleOf40, target: 40, inverted: false },
+    { label: 'NRR %', value: nrrPct.toFixed(1) + '%', actual: nrrPct, target: 110, inverted: false },
+    { label: 'LTV:CAC', value: ltvCac.toFixed(1) + 'x', actual: ltvCac, target: 3, inverted: false },
+    { label: 'CAC Payback', value: cacPayback.toFixed(1) + ' mo', actual: cacPayback, target: 12, inverted: true },
+    { label: 'Gross Margin', value: grossMarginPct.toFixed(0) + '%', actual: grossMarginPct, target: 75, inverted: false },
+    { label: 'Annual Churn', value: annualChurnPct.toFixed(0) + '%', actual: annualChurnPct, target: 10, inverted: true },
+  ];
+
+  document.getElementById('metricScorecard').innerHTML = metrics.map(m => {
+    let progress, healthy;
+    if (m.inverted) {
+      progress = Math.min(100, (m.target / m.actual) * 100);
+      healthy = m.actual <= m.target;
+    } else {
+      progress = Math.min(100, (m.actual / m.target) * 100);
+      healthy = m.actual >= m.target;
+    }
+    const color = healthy ? 'var(--primary-blue)' : 'var(--amber)';
+    return '<div class="scorecard-row">' +
+      '<div class="scorecard-label">' + m.label + '</div>' +
+      '<div class="scorecard-bar"><div class="scorecard-fill" style="width:' + progress + '%; background:' + color + '"></div></div>' +
+      '<div class="scorecard-value">' + m.value + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function createInvestmentRecommendations(blended, magicNumber, ruleOf40, nrr, ltvCac) {
+  const recs = [];
+
+  // 1. NRR check (highest priority)
+  if (nrr < 1.00) {
+    recs.push({ rank: recs.length + 1, headline: 'Critical: Fix retention before scaling', desc: 'NRR at ' + (nrr*100).toFixed(1) + '% \\u2014 you\\'re losing more revenue than you\\'re gaining from existing customers. Focus on churn reduction and customer success before any expansion investment.', impact: 'Risk: Revenue base eroding quarter-over-quarter', color: 'red' });
+  } else if (nrr < 1.10) {
+    recs.push({ rank: recs.length + 1, headline: 'Add upsell motion to reach 110%+ NRR', desc: 'NRR at ' + (nrr*100).toFixed(1) + '% is positive but below the 110% benchmark. Current expansion of ' + fmt$(blended.expansionARR) + ' against ' + fmt$(blended.churnedARR + blended.contractionARR) + ' churn+contraction leaves room to grow.', impact: 'Expected: 5-8% NRR improvement within 2 quarters', color: 'amber' });
+  } else if (nrr >= 1.30) {
+    recs.push({ rank: recs.length + 1, headline: 'World-class NRR \\u2014 double down on expansion', desc: 'NRR at ' + (nrr*100).toFixed(1) + '% is exceptional. Your expansion revenue significantly outpaces losses. Increase investment in expansion playbooks.', impact: 'Expected: Accelerated revenue compound growth', color: 'green' });
+  }
+
+  // 2. Pipeline coverage per quarter
+  const pipelineQuarters = uniqueOrdered(pipelineData, 'period');
+  pipelineQuarters.forEach(q => {
+    const deals = pipelineData.filter(d => d.period === q);
+    const totalPipeline = deals.reduce((s, d) => s + d.dealValue, 0);
+    const quota = deals[0].quota;
+    const coverage = totalPipeline / quota;
+    if (coverage < 1.5) {
+      const gap = quota * 2 - totalPipeline;
+      recs.push({ rank: recs.length + 1, headline: q + ' pipeline critically low at ' + coverage.toFixed(2) + 'x', desc: 'Active pipeline of ' + fmtM$(totalPipeline) + ' against ' + fmtM$(quota) + ' quota. Need ' + fmt$(gap) + ' additional pipeline to reach minimum 2x coverage.', impact: 'Risk: High probability of missing quarterly quota', color: 'red' });
+    } else if (coverage < 2.5) {
+      recs.push({ rank: recs.length + 1, headline: q + ' pipeline needs attention at ' + coverage.toFixed(1) + 'x', desc: 'Pipeline coverage of ' + coverage.toFixed(1) + 'x is below the 3x healthy benchmark. Add more deals to reduce risk.', impact: 'Expected: Improved close confidence with 3x+ coverage', color: 'amber' });
+    }
+  });
+
+  // 3. Magic Number
+  if (magicNumber >= BENCHMARKS.magicNumber.strong) {
+    recs.push({ rank: recs.length + 1, headline: 'GTM efficiency supports increased spend', desc: 'Magic Number of ' + magicNumber.toFixed(2) + 'x exceeds the 0.75x threshold. Consider increasing S&M budget 10-20%, prioritizing the highest LTV:CAC segment.', impact: 'Expected: 15-25% acceleration in Net New ARR', color: 'green' });
+  } else {
+    recs.push({ rank: recs.length + 1, headline: 'Diagnose GTM efficiency before scaling', desc: 'Magic Number of ' + magicNumber.toFixed(2) + 'x is below the 0.75x threshold. Audit channel effectiveness and conversion rates before increasing spend.', impact: 'Risk: Increased spend may not yield proportional returns', color: 'amber' });
+  }
+
+  // 4. CAC Payback by segment
+  const latestPeriod = uniqueOrdered(gtmData, 'period').pop();
+  const segRows = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  segRows.forEach(row => {
+    const payback = row.cac / (row.arpaMonthly * row.grossMargin);
+    const bm = BENCHMARKS.cacPayback[row.segment];
+    if (bm && payback > bm.strong * 1.2) {
+      recs.push({ rank: recs.length + 1, headline: row.segment + ' CAC payback exceeds benchmark', desc: row.segment + ' CAC payback at ' + payback.toFixed(1) + ' months vs ' + bm.strong + ' month benchmark. Review acquisition channels and optimize spend allocation for this segment.', impact: 'Expected: Reduced payback period by 2-3 months', color: 'amber' });
+    }
+  });
+
+  // 5. Forecast MAPE
+  const overallMAPE = forecastData.reduce((s, d) => s + d.mape, 0) / forecastData.length;
+  if (overallMAPE > 0.15) {
+    const worstReps = forecastData.filter(d => d.mape > 0.15).map(d => d.repName);
+    const uniqueWorst = [...new Set(worstReps)];
+    recs.push({ rank: recs.length + 1, headline: 'Coach reps on forecast accuracy', desc: 'Overall MAPE at ' + (overallMAPE*100).toFixed(1) + '% exceeds 15% threshold. Key reps to coach: ' + uniqueWorst.join(', ') + '. Apply 85-90% haircut to commits from chronic over-committers.', impact: 'Expected: 30-50% reduction in forecast variance', color: 'amber' });
+  }
+
+  // Re-rank
+  recs.forEach((r, i) => r.rank = i + 1);
+
+  // Limit to 5
+  const display = recs.slice(0, 5);
+  document.getElementById('investmentRecs').innerHTML = display.map(r =>
+    '<div class="recommendation-card">' +
+      '<div class="rank-badge">' + r.rank + '</div>' +
+      '<div class="rec-content">' +
+        '<h4>' + r.headline + '</h4>' +
+        '<p>' + r.desc + '</p>' +
+        '<div class="impact" style="color:' + (r.color === 'red' ? 'var(--red)' : r.color === 'green' ? 'var(--green)' : 'var(--amber)') + '">' + r.impact + '</div>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// Action bar
+function connectSheets() {
+  const url = document.getElementById('sheetsUrl').value;
+  if (url) {
+    const badge = document.getElementById('connectionStatus');
+    badge.textContent = 'Connected';
+    badge.className = 'status-badge green';
+  }
+}
+
+function emailReport() {
+  // Download the dashboard HTML file so the user can attach it
+  var html = document.documentElement.outerHTML;
+  var blob = new Blob([html], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'RevOps-Dashboard.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Open mailto with instructions after a short delay
+  setTimeout(function() {
+    var subject = encodeURIComponent('RevOps Dashboard \\u2014 ' + activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Report');
+    var body = encodeURIComponent('Hi,\\n\\nPlease find the RevOps dashboard attached (RevOps-Dashboard.html).\\n\\nGenerated from Exit Engine GTM Dashboard.');
+    window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  }, 500);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  buildTabs();
+  initializeGTMTab();
+  initializePipelineTab();
+  initializeForecastTab();
+});
+<\/script>
+</body>
+</html>`;
+}
+
+// ——— Finish: render output ————————————————————————————————————————————
+function finishWithHtml(html) {
+  generatedHtml = html;
+  setStep(3, 'done');
+  setProgress(100);
+
+  const kb = (html.length / 1024).toFixed(1);
+  document.getElementById('outputMeta').textContent = kb + ' KB';
+  document.getElementById('previewSnippet').textContent = html.slice(0, 300) + '...';
+  document.getElementById('outputCard').classList.add('visible');
+  document.getElementById('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ——— Build dashboard from parsed data ————————————————————————————————
+function buildFromParsedData(gtmParsed, pipelineParsed, forecastParsed, email) {
+  // Step 2: Parse to JS objects
+  setStep(2, 'active');
+  setProgress(50);
+
+  // Debug: log what we received from the sheet
+  console.log('GTM parsed:', { headers: gtmParsed.headers, rowCount: gtmParsed.rows.length, firstRow: gtmParsed.rows[0] });
+  console.log('Pipeline parsed:', { headers: pipelineParsed.headers, rowCount: pipelineParsed.rows.length, firstRow: pipelineParsed.rows[0] });
+  console.log('Forecast parsed:', { headers: forecastParsed.headers, rowCount: forecastParsed.rows.length, firstRow: forecastParsed.rows[0] });
+
+  const gtmRows = deduplicateGtm(mapGtmRows(gtmParsed));
+  const pipelineRows = mapPipelineRows(pipelineParsed);
+  const forecastRows = mapForecastRows(forecastParsed);
+
+  console.log('Mapped rows:', { gtm: gtmRows.length, pipeline: pipelineRows.length, forecast: forecastRows.length });
+
+  if (gtmRows.length === 0) throw new Error('GTM Efficiency tab: 0 valid rows. Headers found: [' + gtmParsed.headers.join(', ') + ']. Raw rows: ' + gtmParsed.rows.length);
+  if (pipelineRows.length === 0) throw new Error('Pipeline Health tab: 0 valid rows. Headers found: [' + pipelineParsed.headers.join(', ') + ']. Raw rows: ' + pipelineParsed.rows.length);
+  if (forecastRows.length === 0) throw new Error('Forecast Accuracy tab: 0 valid rows. Headers found: [' + forecastParsed.headers.join(', ') + ']. Raw rows: ' + forecastParsed.rows.length);
+
+  setStep(2, 'done');
+  setProgress(75);
+
+  // Step 3: Build dashboard
+  setStep(3, 'active');
+
+  const html = buildDashboardHtml(pipelineRows, forecastRows, gtmRows, email);
+  finishWithHtml(html);
+}
+
+// ——— Primary flow (auto-fetch sheet) —————————————————————————————————
+async function startGenerate() {
+  clearError();
+  generatedHtml = '';
+  document.getElementById('outputCard').classList.remove('visible');
+
+  const sheetUrl = document.getElementById('sheetUrl').value.trim();
+  const email    = '';
+
+  if (!sheetUrl) return showError('Please paste your Google Sheet URL.');
+  const sheetId = extractSheetId(sheetUrl);
+  if (!sheetId)  return showError('Couldn\'t extract a Sheet ID — paste the full Google Sheets browser URL.');
+
+  setBusy('generateBtn', true);
+  document.getElementById('progressArea').classList.add('visible');
+  setProgress(5);
+  setStep(1, 'active');
+
+  try {
+    let gtmParsed, pipelineParsed, forecastParsed;
+    try {
+      // Strategy A: fetch entire XLSX (works for shared sheets, all tabs in one request)
+      const allTabs = await fetchAllTabsXlsx(sheetId);
+      gtmParsed = allTabs.gtm;
+      pipelineParsed = allTabs.pipeline;
+      forecastParsed = allTabs.forecast;
+    } catch(xlsxErr) {
+      console.warn('XLSX approach failed:', xlsxErr.message, '— trying per-tab fetch');
+      try {
+        // Strategy B: per-tab fetch (works for published sheets)
+        [gtmParsed, pipelineParsed, forecastParsed] = await Promise.all([
+          fetchTab(sheetId, 'GTM Efficiency',  ['Net New ARR', 'Starting ARR', 'Annual Churn']),
+          fetchTab(sheetId, 'Pipeline Health',  ['Deal Name', 'Deal Value', 'Days in Stage']),
+          fetchTab(sheetId, 'Forecast Accuracy', ['Rep Name', 'Forecast', 'MAPE']),
+        ]);
+      } catch(fetchErr) {
+        setStep(1, 'error');
+        showError(
+          '<strong>Could not read your Google Sheet</strong> — all fetch strategies failed.<br><br>' +
+          'Make sure the sheet is <strong>shared</strong> (Anyone with the link can view).<br><br>' +
+          '<strong>Or use the manual paste method below</strong> — download each tab as CSV and paste it in.'
+        );
+        document.getElementById('pasteCard').classList.add('visible');
+        document.getElementById('pasteCard').dataset.email = email;
+        document.getElementById('pasteCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+
+    setStep(1, 'done');
+    setProgress(30);
+
+    buildFromParsedData(gtmParsed, pipelineParsed, forecastParsed, email);
+
+  } catch(err) {
+    showError('Error: ' + (err.message || err));
+  } finally {
+    setBusy('generateBtn', false, 'Generate Dashboard →');
+  }
+}
+
+// ——— Manual paste flow ————————————————————————————————————————————————
+async function generateFromPaste() {
+  clearError();
+  generatedHtml = '';
+  document.getElementById('outputCard').classList.remove('visible');
+
+  const card    = document.getElementById('pasteCard');
+  const email   = card.dataset.email || '';
+  const gtmCsv  = document.getElementById('pasteGtm').value.trim();
+  const pipeCsv = document.getElementById('pastePipeline').value.trim();
+  const fcastCsv= document.getElementById('pasteForecast').value.trim();
+
+  if (!gtmCsv || !pipeCsv || !fcastCsv) return showError('Please paste CSV data for all 3 tabs.');
+
+  setBusy('pasteBtn', true, 'Generating...');
+  setBusy('generateBtn', true);
+  document.getElementById('progressArea').classList.add('visible');
+
+  try {
+    setStep(1, 'done');
+    setProgress(30);
+
+    let gtmParsed, pipelineParsed, forecastParsed;
+    try {
+      gtmParsed      = parseCSV(gtmCsv);
+      pipelineParsed = parseCSV(pipeCsv);
+      forecastParsed = parseCSV(fcastCsv);
+    } catch(e) {
+      setStep(2, 'error');
+      return showError('CSV parse error: ' + e.message + '. Make sure you pasted plain comma-separated CSV.');
+    }
+
+    buildFromParsedData(gtmParsed, pipelineParsed, forecastParsed, email);
+
+  } catch(err) {
+    showError('Error: ' + (err.message || err));
+  } finally {
+    setBusy('pasteBtn', false, 'Generate with Pasted Data →');
+    setBusy('generateBtn', false, 'Generate Dashboard →');
+  }
+}
+
+// ——— Output actions ———————————————————————————————————————————————————
+function downloadDashboard() {
+  if (!generatedHtml) return;
+  const blob = new Blob([generatedHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gtm-dashboard.html'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyHtml() {
+  if (!generatedHtml) return;
+  const btn = document.getElementById('copyBtn');
+  try {
+    await navigator.clipboard.writeText(generatedHtml);
+  } catch(_) {
+    const ta = document.createElement('textarea');
+    ta.value = generatedHtml;
+    ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = '⊕ Copy HTML', 2000);
+}
+</script>
+</body>
+</html>
