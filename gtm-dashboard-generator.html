@@ -408,6 +408,8 @@ Input field for sheet URL + Connect button + status badge: amber "Using sample d
 
 Use Chart.js loaded from CDN for all bar and line charts. Custom HTML trapezoids for funnel ONLY.
 
+CRITICAL: Embed ALL provided data directly into the dashboard. Every metric, chart, and table must use ONLY values from the data above — do not invent or use placeholder values. The output must be COMPLETE — do not truncate.
+
 Output ONLY the complete HTML. No explanation, no markdown fences. Start with <!DOCTYPE html>.`;
 }
 
@@ -425,7 +427,7 @@ async function callClaude(apiKey, prompt) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
+        max_tokens: 16000,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
