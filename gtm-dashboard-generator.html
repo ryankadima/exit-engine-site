@@ -428,8 +428,8 @@ async function callClaude(apiKey, prompt) {
         messages: [{ role: 'user', content: prompt }],
       }),
     });
-  } catch (corsErr) {
-    throw new Error('CLAUDE_CORS');
+  } catch (fetchErr) {
+    throw new Error('CLAUDE_FETCH:' + (fetchErr.message || fetchErr));
   }
 
   if (!resp.ok) {
@@ -484,13 +484,12 @@ async function runClaudePipeline(apiKey, email, gtmData, pipelineData, forecastD
   } catch(e) {
     const msg = e.message || '';
     setStep(3, 'error');
-    if (msg === 'CLAUDE_CORS') {
+    if (msg.startsWith('CLAUDE_FETCH:')) {
+      const detail = msg.slice('CLAUDE_FETCH:'.length);
       showError(
-        '<strong>CORS Error — Claude API blocked by browser.</strong><br><br>' +
-        'Direct API calls from <code>file://</code> are blocked by browser security.<br><br>' +
-        '<strong>Fix:</strong> Serve this file via a local server:<br>' +
-        '<code>npx serve .</code> then open <code>http://localhost:3000</code><br><br>' +
-        'Or run via <strong>Claude Code</strong> as a Node script.'
+        '<strong>Network error calling Claude API:</strong> ' + detail + '<br><br>' +
+        'If you\'re opening this from a <code>file://</code> URL, try serving via a local server instead:<br>' +
+        '<code>npx serve .</code> then open <code>http://localhost:3000</code>'
       );
     } else if (msg.startsWith('CLAUDE_HTTP:401')) {
       showError('<strong>Invalid API Key (401):</strong> Check your key at <a href="https://console.anthropic.com" target="_blank" style="color:#8fa8f8">console.anthropic.com</a>.');
