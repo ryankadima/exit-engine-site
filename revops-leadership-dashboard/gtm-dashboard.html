@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LSM2D1X64C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LSM2D1X64C');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevOps Leadership Dashboard · Exit Engine</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary-blue: #4f6bf4; --purple: #7b6fd4; --deep-purple: #9b4fb8;
+    --blue-secondary: #378add; --green: #22c55e; --amber: #ef9f27;
+    --red: #e24b4a; --teal: #14b8a6;
+    --bg-primary: #ffffff; --bg-secondary: #f8f9fb;
+    --border-tertiary: rgba(128,128,128,0.12);
+    --text-muted: #888780;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-secondary); color: #1a1a1a; padding-bottom: 80px; }
+
+  /* Header */
+  .header { background: var(--bg-primary); padding: 20px 24px; border-bottom: 1px solid var(--border-tertiary); }
+  .dashboard-title { font-size: 20px; font-weight: 500; margin-bottom: 16px; }
+  .google-sheets-connector { display: flex; align-items: center; gap: 12px; }
+  .google-sheets-connector input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-tertiary); border-radius: 6px; font-size: 13px; }
+  .connect-btn { padding: 8px 16px; background: var(--primary-blue); color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .status-badge.amber { background: #faeeda; color: #854f0b; }
+  .status-badge.green { background: #e1f5ee; color: #0f6e56; }
+
+  /* Tabs */
+  .tabs { background: var(--bg-primary); border-bottom: 1px solid var(--border-tertiary); display: flex; }
+  .tab { padding: 16px 24px; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  .tab.active { border-bottom-color: var(--primary-blue); color: var(--primary-blue); }
+
+  /* Content */
+  .content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Section label */
+  .section-label { color: var(--primary-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; font-weight: 500; }
+
+  /* Metric cards */
+  .metric-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .metric-card { background: var(--bg-secondary); border-radius: 8px; padding: 14px 16px; }
+  .metric-card .label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .metric-card .value { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+  .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .badge.green { background: #e1f5ee; color: #0f6e56; }
+  .badge.amber { background: #faeeda; color: #854f0b; }
+  .badge.red { background: #fcebeb; color: #a32d2d; }
+  .badge.blue { background: #e6f1fb; color: #185fa5; }
+
+  /* Cards */
+  .card { background: var(--bg-primary); border: 0.5px solid var(--border-tertiary); border-radius: 12px; padding: 18px; margin-bottom: 24px; }
+  .card-title { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+
+  /* Charts grid */
+  .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+  .chart-container { position: relative; height: 300px; }
+
+  /* Custom legend */
+  .custom-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-color { width: 10px; height: 10px; border-radius: 2px; }
+  .legend-text { font-size: 12px; }
+
+  /* Funnel */
+  .funnel-container { padding: 10px 0; }
+  .funnel-stage { display: flex; align-items: center; justify-content: center; height: 33px; margin-bottom: 4px; color: white; font-size: 11px; font-weight: 500; border-radius: 4px; margin-left: auto; margin-right: auto; }
+
+  /* Tables */
+  .table-container { max-height: 280px; overflow-y: auto; }
+  .table-container::-webkit-scrollbar { width: 4px; }
+  .table-container::-webkit-scrollbar-track { background: transparent; }
+  .table-container::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border-tertiary); font-weight: 500; font-size: 11px; text-transform: uppercase; color: var(--text-muted); position: sticky; top: 0; background: var(--bg-primary); z-index: 1; }
+  td { padding: 10px 8px; border-bottom: 1px solid var(--border-tertiary); }
+  .risk-pill { padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+  .risk-pill.high { background: #fcebeb; color: #a32d2d; }
+  .risk-pill.moderate { background: #faeeda; color: #854f0b; }
+  .risk-pill.low { background: #e1f5ee; color: #0f6e56; }
+
+  /* Scorecard */
+  .scorecard-container { max-height: 240px; overflow-y: auto; }
+  .scorecard-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-tertiary); }
+  .scorecard-label { width: 130px; font-size: 12px; flex-shrink: 0; }
+  .scorecard-bar { flex: 1; height: 8px; background: rgba(128,128,128,0.1); border-radius: 4px; overflow: hidden; margin: 0 12px; }
+  .scorecard-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .scorecard-value { width: 52px; text-align: right; font-size: 12px; font-weight: 500; }
+
+  /* Recommendations */
+  .recommendation-card { background: var(--bg-secondary); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; gap: 12px; }
+  .rank-badge { background: var(--primary-blue); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .rec-content h4 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .rec-content p { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px; }
+  .rec-content .impact { font-size: 12px; font-weight: 500; }
+
+  /* Zoom toggle */
+  .zoom-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+  .zoom-btn { padding: 4px 10px; border: 1px solid var(--border-tertiary); border-radius: 4px; font-size: 11px; background: var(--bg-primary); cursor: pointer; color: var(--text-muted); }
+  .zoom-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+  /* Action bar */
+  .action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-primary); border-top: 1px solid var(--border-tertiary); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+  .action-bar-left { font-size: 13px; color: var(--text-muted); }
+  .action-bar-right { display: flex; gap: 12px; }
+  .action-bar button { padding: 8px 16px; border: 1px solid var(--border-tertiary); border-radius: 6px; font-size: 13px; cursor: pointer; background: var(--bg-primary); }
+  .action-bar button.primary { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+  /* Responsive */
+  @media (max-width: 900px) { .metric-cards { grid-template-columns: repeat(2, 1fr); } .charts-grid { grid-template-columns: 1fr; } }
+  @media print { .action-bar { display: none; } body { padding-bottom: 0; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 class="dashboard-title">RevOps Leadership Dashboard</h1>
+  <div class="google-sheets-connector">
+    <input type="text" placeholder="Paste Google Sheets URL here..." id="sheetsUrl">
+    <button class="connect-btn" onclick="connectSheets()">Connect</button>
+    <span class="status-badge amber" id="connectionStatus">Using sample data</span>
+  </div>
+</div>
+
+<div class="tabs" id="tabsBar"></div>
+
+<div class="content">
+  <div id="pipeline-tab" class="tab-content">
+    <div class="section-label">PIPELINE HEALTH</div>
+    <div class="metric-cards" id="pipelineMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">Pipeline Funnel</div>
+        <div class="funnel-container" id="pipelineFunnel"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pipeline vs Quota</div>
+        <div class="zoom-toggle" id="pipelineZoom"></div>
+        <div class="custom-legend" id="pipelineQuotaLegend"></div>
+        <div class="chart-container"><canvas id="pipelineQuotaChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Aging Deals</div>
+      <div class="table-container" id="agingDealsTable"></div>
+    </div>
+  </div>
+
+  <div id="forecast-tab" class="tab-content">
+    <div class="section-label">FORECAST ACCURACY</div>
+    <div class="metric-cards" id="forecastMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">Forecast vs Actual</div>
+        <div class="custom-legend" id="forecastActualLegend"></div>
+        <div class="chart-container"><canvas id="forecastActualChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">MAPE Trend</div>
+        <div class="custom-legend" id="mapeTrendLegend"></div>
+        <div class="chart-container"><canvas id="mapeTrendChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Rep Performance</div>
+      <div class="table-container" id="repTable"></div>
+    </div>
+  </div>
+
+  <div id="gtm-tab" class="tab-content">
+    <div class="section-label">GTM EFFICIENCY &amp; UNIT ECONOMICS</div>
+    <div class="metric-cards" id="gtmMetrics"></div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">LTV:CAC by Segment</div>
+        <div class="custom-legend" id="ltvCacLegend"></div>
+        <div class="chart-container"><canvas id="ltvCacChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">CAC Payback vs Benchmark</div>
+        <div class="custom-legend" id="cacPaybackLegend"></div>
+        <div class="chart-container"><canvas id="cacPaybackChart"></canvas></div>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="card">
+        <div class="card-title">NRR Waterfall</div>
+        <div class="custom-legend" id="nrrWaterfallLegend"></div>
+        <div class="chart-container"><canvas id="nrrWaterfallChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Metric Scorecard</div>
+        <div class="scorecard-container" id="metricScorecard"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Investment Recommendations</div>
+      <div id="investmentRecs"></div>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <div class="action-bar-left" id="actionBarLabel">Pipeline Report · For Leadership</div>
+  <div class="action-bar-right">
+    <button onclick="window.print()">↓ Download PDF</button>
+    <button class="primary" onclick="emailReport()">✉ Email Report</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// Step 16: BENCHMARKS config
+// ═══════════════════════════════════════════════════════════════════════
+const BENCHMARKS = {
+  magicNumber:    { strong: 0.75, monitor: 0.5 },
+  ruleOf40:       { strong: 40, monitor: 30 },
+  nrr:            { strong: 1.10, monitor: 1.00, weak: 0.90 },
+  ltvCac:         { strong: 3, monitor: 2 },
+  cacPayback:     { SMB: { strong: 12, weak: 18 }, 'Mid-Market': { strong: 18, weak: 24 }, Enterprise: { strong: 24, weak: 36 } },
+  pipelineCoverage: { strong: 3, monitor: 2 },
+  dealAging:      { monitor: 30, critical: 60 },
+  forecastMAPE:   { strong: 0.05, monitor: 0.18 },
+  forecastBias:   { strong: 0.03, monitor: 0.10 },
+};
+
+const SEGMENT_COLORS = ['#4f6bf4','#7b6fd4','#9b4fb8','#378add','#22c55e','#ef9f27','#e24b4a','#14b8a6'];
+
+// ═══════════════════════════════════════════════════════════════════════
+// Step 1: Data arrays extracted from RevOps_Monday_Report_v4.xlsx
+// ═══════════════════════════════════════════════════════════════════════
+
+// FROM: Pipeline Health tab (48 deals)
+const pipelineData = [
+  { period:"Q1 2025", dealName:"Aramark University Dining", stage:"Discovery", segment:"Enterprise", dealValue:680000, dateEnteredStage:"2025-01-08", expectedCloseDate:"2025-06-30", quota:2500000, daysInStage:429, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Sodexo Campus Services", stage:"Discovery", segment:"Enterprise", dealValue:520000, dateEnteredStage:"2025-01-15", expectedCloseDate:"2025-05-15", quota:2500000, daysInStage:422, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Cornell Dining Services", stage:"Qualification", segment:"Mid-Market", dealValue:285000, dateEnteredStage:"2024-12-18", expectedCloseDate:"2025-03-15", quota:2500000, daysInStage:450, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"NYU Langone Food Services", stage:"Qualification", segment:"Mid-Market", dealValue:310000, dateEnteredStage:"2025-01-06", expectedCloseDate:"2025-03-28", quota:2500000, daysInStage:431, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Fordham University", stage:"Proposal", segment:"Mid-Market", dealValue:245000, dateEnteredStage:"2024-11-23", expectedCloseDate:"2025-02-28", quota:2500000, daysInStage:475, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"USC Hospitality", stage:"Proposal", segment:"Enterprise", dealValue:550000, dateEnteredStage:"2025-01-10", expectedCloseDate:"2025-03-31", quota:2500000, daysInStage:427, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Stony Brook University", stage:"Negotiation", segment:"Mid-Market", dealValue:265000, dateEnteredStage:"2025-01-23", expectedCloseDate:"2025-02-28", quota:2500000, daysInStage:414, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Hofstra University", stage:"Negotiation", segment:"SMB", dealValue:88000, dateEnteredStage:"2024-11-05", expectedCloseDate:"2025-02-15", quota:2500000, daysInStage:493, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Island Health Network", stage:"Discovery", segment:"SMB", dealValue:72000, dateEnteredStage:"2025-01-28", expectedCloseDate:"2025-04-15", quota:2500000, daysInStage:409, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Adelphi University", stage:"Discovery", segment:"SMB", dealValue:55000, dateEnteredStage:"2025-02-03", expectedCloseDate:"2025-04-30", quota:2500000, daysInStage:403, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Emory University Dining", stage:"Qualification", segment:"Enterprise", dealValue:490000, dateEnteredStage:"2025-01-20", expectedCloseDate:"2025-04-30", quota:2500000, daysInStage:417, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Boston College Food Svc", stage:"Discovery", segment:"Mid-Market", dealValue:225000, dateEnteredStage:"2025-02-01", expectedCloseDate:"2025-05-31", quota:2500000, daysInStage:405, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Villanova University", stage:"Qualification", segment:"SMB", dealValue:68000, dateEnteredStage:"2025-02-10", expectedCloseDate:"2025-04-15", quota:2500000, daysInStage:396, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Drexel University", stage:"Proposal", segment:"Mid-Market", dealValue:210000, dateEnteredStage:"2025-01-05", expectedCloseDate:"2025-03-15", quota:2500000, daysInStage:432, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Georgetown University", stage:"Discovery", segment:"Mid-Market", dealValue:195000, dateEnteredStage:"2025-02-15", expectedCloseDate:"2025-06-30", quota:2500000, daysInStage:391, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Wake Forest University", stage:"Qualification", segment:"Enterprise", dealValue:380000, dateEnteredStage:"2025-01-22", expectedCloseDate:"2025-05-15", quota:2500000, daysInStage:415, agingFlag:"🔴 CRITICAL" },
+  { period:"Q1 2025", dealName:"Lehigh University", stage:"Discovery", segment:"SMB", dealValue:62000, dateEnteredStage:"2025-02-20", expectedCloseDate:"2025-05-30", quota:2500000, daysInStage:386, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Compass Group NA", stage:"Discovery", segment:"Enterprise", dealValue:750000, dateEnteredStage:"2025-04-01", expectedCloseDate:"2025-07-31", quota:2600000, daysInStage:346, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Chartwells Higher Ed", stage:"Qualification", segment:"Enterprise", dealValue:580000, dateEnteredStage:"2025-04-10", expectedCloseDate:"2025-06-30", quota:2600000, daysInStage:337, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"North Shore LIJ", stage:"Proposal", segment:"Mid-Market", dealValue:310000, dateEnteredStage:"2025-04-15", expectedCloseDate:"2025-06-15", quota:2600000, daysInStage:332, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"SUNY Old Westbury", stage:"Negotiation", segment:"SMB", dealValue:85000, dateEnteredStage:"2025-04-03", expectedCloseDate:"2025-05-31", quota:2600000, daysInStage:344, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"RXR Realty Group", stage:"Discovery", segment:"Mid-Market", dealValue:195000, dateEnteredStage:"2025-04-22", expectedCloseDate:"2025-07-15", quota:2600000, daysInStage:325, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Pace University", stage:"Qualification", segment:"SMB", dealValue:92000, dateEnteredStage:"2025-04-18", expectedCloseDate:"2025-06-30", quota:2600000, daysInStage:329, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Rutgers Dining", stage:"Proposal", segment:"Mid-Market", dealValue:280000, dateEnteredStage:"2025-05-01", expectedCloseDate:"2025-06-30", quota:2600000, daysInStage:316, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Temple University", stage:"Discovery", segment:"Mid-Market", dealValue:175000, dateEnteredStage:"2025-05-10", expectedCloseDate:"2025-08-15", quota:2600000, daysInStage:307, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"American University", stage:"Discovery", segment:"Enterprise", dealValue:420000, dateEnteredStage:"2025-05-05", expectedCloseDate:"2025-08-30", quota:2600000, daysInStage:312, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Northeastern University", stage:"Qualification", segment:"Mid-Market", dealValue:245000, dateEnteredStage:"2025-04-28", expectedCloseDate:"2025-07-15", quota:2600000, daysInStage:319, agingFlag:"🔴 CRITICAL" },
+  { period:"Q2 2025", dealName:"Tulane University", stage:"Proposal", segment:"SMB", dealValue:78000, dateEnteredStage:"2025-05-12", expectedCloseDate:"2025-06-30", quota:2600000, daysInStage:305, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Bon Appetit Management", stage:"Negotiation", segment:"Enterprise", dealValue:720000, dateEnteredStage:"2025-07-08", expectedCloseDate:"2025-08-31", quota:2700000, daysInStage:248, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"UMass Amherst Dining", stage:"Proposal", segment:"Mid-Market", dealValue:340000, dateEnteredStage:"2025-07-25", expectedCloseDate:"2025-09-15", quota:2700000, daysInStage:231, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Penn State Food Services", stage:"Discovery", segment:"Enterprise", dealValue:650000, dateEnteredStage:"2025-07-05", expectedCloseDate:"2025-10-31", quota:2700000, daysInStage:251, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Ohio State Dining", stage:"Discovery", segment:"Enterprise", dealValue:580000, dateEnteredStage:"2025-07-18", expectedCloseDate:"2025-11-30", quota:2700000, daysInStage:238, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Purdue University", stage:"Qualification", segment:"Mid-Market", dealValue:295000, dateEnteredStage:"2025-07-20", expectedCloseDate:"2025-09-30", quota:2700000, daysInStage:236, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Indiana University", stage:"Qualification", segment:"Mid-Market", dealValue:265000, dateEnteredStage:"2025-08-01", expectedCloseDate:"2025-10-15", quota:2700000, daysInStage:224, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Butler University", stage:"Discovery", segment:"SMB", dealValue:95000, dateEnteredStage:"2025-08-10", expectedCloseDate:"2025-11-15", quota:2700000, daysInStage:215, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Xavier University", stage:"Proposal", segment:"SMB", dealValue:82000, dateEnteredStage:"2025-08-05", expectedCloseDate:"2025-10-30", quota:2700000, daysInStage:220, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Dayton University", stage:"Qualification", segment:"SMB", dealValue:72000, dateEnteredStage:"2025-08-15", expectedCloseDate:"2025-10-31", quota:2700000, daysInStage:210, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Wisconsin Food Services", stage:"Discovery", segment:"Enterprise", dealValue:490000, dateEnteredStage:"2025-07-22", expectedCloseDate:"2025-12-15", quota:2700000, daysInStage:234, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Michigan Dining", stage:"Proposal", segment:"Enterprise", dealValue:420000, dateEnteredStage:"2025-07-10", expectedCloseDate:"2025-09-30", quota:2700000, daysInStage:246, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"DePaul University", stage:"Qualification", segment:"Mid-Market", dealValue:185000, dateEnteredStage:"2025-08-12", expectedCloseDate:"2025-11-30", quota:2700000, daysInStage:213, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Loyola Chicago", stage:"Discovery", segment:"SMB", dealValue:68000, dateEnteredStage:"2025-08-20", expectedCloseDate:"2025-12-15", quota:2700000, daysInStage:205, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Northwestern Dining", stage:"Negotiation", segment:"Enterprise", dealValue:550000, dateEnteredStage:"2025-07-15", expectedCloseDate:"2025-08-31", quota:2700000, daysInStage:241, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Minnesota Food Services", stage:"Proposal", segment:"Mid-Market", dealValue:310000, dateEnteredStage:"2025-07-28", expectedCloseDate:"2025-10-15", quota:2700000, daysInStage:228, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Illinois Food Services", stage:"Discovery", segment:"Enterprise", dealValue:480000, dateEnteredStage:"2025-08-01", expectedCloseDate:"2025-12-31", quota:2700000, daysInStage:224, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Iowa State Dining", stage:"Qualification", segment:"Mid-Market", dealValue:220000, dateEnteredStage:"2025-08-08", expectedCloseDate:"2025-11-15", quota:2700000, daysInStage:217, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Aramark Renewal", stage:"Negotiation", segment:"Enterprise", dealValue:680000, dateEnteredStage:"2025-07-05", expectedCloseDate:"2025-09-15", quota:2700000, daysInStage:251, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"Sodexo Expansion", stage:"Proposal", segment:"Enterprise", dealValue:520000, dateEnteredStage:"2025-07-20", expectedCloseDate:"2025-10-30", quota:2700000, daysInStage:236, agingFlag:"🔴 CRITICAL" },
+  { period:"Q3 2025", dealName:"NYU Expansion", stage:"Qualification", segment:"Mid-Market", dealValue:380000, dateEnteredStage:"2025-08-05", expectedCloseDate:"2025-11-30", quota:2700000, daysInStage:220, agingFlag:"🔴 CRITICAL" },
+];
+
+// FROM: Forecast Accuracy tab (16 rows)
+const forecastData = [
+  { period:"Q4 2024", repName:"Jordan M.", segment:"Enterprise", forecast:310000, actual:287000, mape:0.0801, bias:0.0801, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 92% haircut to future commits." },
+  { period:"Q4 2024", repName:"Taylor R.", segment:"Mid-Market", forecast:180000, actual:194000, mape:0.0722, bias:-0.0722, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+  { period:"Q4 2024", repName:"Casey L.", segment:"SMB", forecast:95000, actual:88000, mape:0.0795, bias:0.0795, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 92% haircut to future commits." },
+  { period:"Q4 2024", repName:"Morgan K.", segment:"Enterprise", forecast:240000, actual:261000, mape:0.0805, bias:-0.0805, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+  { period:"Q1 2025", repName:"Jordan M.", segment:"Enterprise", forecast:290000, actual:305000, mape:0.0492, bias:-0.0492, signal:"✓ Accurate", coachingNote:"Reliable forecaster. Use as benchmark for team." },
+  { period:"Q1 2025", repName:"Taylor R.", segment:"Mid-Market", forecast:195000, actual:188000, mape:0.0372, bias:0.0372, signal:"✓ Accurate", coachingNote:"Reliable forecaster. Use as benchmark for team." },
+  { period:"Q1 2025", repName:"Casey L.", segment:"SMB", forecast:102000, actual:97000, mape:0.0515, bias:0.0515, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 95% haircut to future commits." },
+  { period:"Q1 2025", repName:"Morgan K.", segment:"Enterprise", forecast:255000, actual:278000, mape:0.0827, bias:-0.0827, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+  { period:"Q2 2025", repName:"Jordan M.", segment:"Enterprise", forecast:320000, actual:265000, mape:0.2075, bias:0.2075, signal:"⚠ Wishful", coachingNote:"Consistently over-commits. Apply 79% haircut to future commits." },
+  { period:"Q2 2025", repName:"Taylor R.", segment:"Mid-Market", forecast:210000, actual:228000, mape:0.0789, bias:-0.0789, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+  { period:"Q2 2025", repName:"Casey L.", segment:"SMB", forecast:110000, actual:104000, mape:0.0577, bias:0.0577, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 94% haircut to future commits." },
+  { period:"Q2 2025", repName:"Morgan K.", segment:"Enterprise", forecast:270000, actual:255000, mape:0.0588, bias:0.0588, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 94% haircut to future commits." },
+  { period:"Q3 2025", repName:"Jordan M.", segment:"Enterprise", forecast:340000, actual:310000, mape:0.0968, bias:0.0968, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 90% haircut to future commits." },
+  { period:"Q3 2025", repName:"Taylor R.", segment:"Mid-Market", forecast:225000, actual:242000, mape:0.0702, bias:-0.0702, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+  { period:"Q3 2025", repName:"Casey L.", segment:"SMB", forecast:115000, actual:98000, mape:0.1735, bias:0.1735, signal:"⚠ Over-commit", coachingNote:"Consistently over-commits. Apply 83% haircut to future commits." },
+  { period:"Q3 2025", repName:"Morgan K.", segment:"Enterprise", forecast:280000, actual:295000, mape:0.0508, bias:-0.0508, signal:"⚠ Sandbagging", coachingNote:"Sandbagging. Push for higher stage-weighted commit next period." },
+];
+
+// FROM: GTM Efficiency tab (16 rows — 4 quarters × 4 segments)
+// Poison row protection: deduplicate by period+segment, keep first occurrence
+const gtmDataRaw = [
+  { period:"Q1 2025", segment:"Blended", netNewARR:620000, priorSMSpend:780000, revGrowth:32, fcfMargin:8, startingARR:8400000, expansionARR:380000, churnedARR:210000, contractionARR:70000, cac:42000, arpaMonthly:3200, grossMargin:0.81, annualChurn:0.10 },
+  { period:"Q1 2025", segment:"SMB", netNewARR:180000, priorSMSpend:220000, revGrowth:35, fcfMargin:10, startingARR:2100000, expansionARR:85000, churnedARR:95000, contractionARR:30000, cac:18000, arpaMonthly:1400, grossMargin:0.78, annualChurn:0.18 },
+  { period:"Q1 2025", segment:"Mid-Market", netNewARR:260000, priorSMSpend:310000, revGrowth:30, fcfMargin:7, startingARR:3400000, expansionARR:165000, churnedARR:72000, contractionARR:25000, cac:52000, arpaMonthly:3800, grossMargin:0.82, annualChurn:0.09 },
+  { period:"Q1 2025", segment:"Enterprise", netNewARR:180000, priorSMSpend:250000, revGrowth:28, fcfMargin:6, startingARR:2900000, expansionARR:130000, churnedARR:43000, contractionARR:15000, cac:110000, arpaMonthly:7500, grossMargin:0.85, annualChurn:0.05 },
+  { period:"Q2 2025", segment:"Blended", netNewARR:480000, priorSMSpend:820000, revGrowth:26, fcfMargin:5, startingARR:9020000, expansionARR:310000, churnedARR:285000, contractionARR:95000, cac:45000, arpaMonthly:3200, grossMargin:0.80, annualChurn:0.11 },
+  { period:"Q2 2025", segment:"SMB", netNewARR:120000, priorSMSpend:240000, revGrowth:22, fcfMargin:3, startingARR:2060000, expansionARR:60000, churnedARR:130000, contractionARR:40000, cac:20000, arpaMonthly:1400, grossMargin:0.77, annualChurn:0.22 },
+  { period:"Q2 2025", segment:"Mid-Market", netNewARR:210000, priorSMSpend:330000, revGrowth:28, fcfMargin:6, startingARR:3468000, expansionARR:145000, churnedARR:98000, contractionARR:35000, cac:55000, arpaMonthly:3800, grossMargin:0.81, annualChurn:0.10 },
+  { period:"Q2 2025", segment:"Enterprise", netNewARR:150000, priorSMSpend:250000, revGrowth:25, fcfMargin:5, startingARR:3492000, expansionARR:105000, churnedARR:57000, contractionARR:20000, cac:115000, arpaMonthly:7500, grossMargin:0.84, annualChurn:0.05 },
+  { period:"Q3 2025", segment:"Blended", netNewARR:560000, priorSMSpend:850000, revGrowth:28, fcfMargin:7, startingARR:9450000, expansionARR:350000, churnedARR:230000, contractionARR:75000, cac:43000, arpaMonthly:3300, grossMargin:0.81, annualChurn:0.10 },
+  { period:"Q3 2025", segment:"SMB", netNewARR:155000, priorSMSpend:250000, revGrowth:28, fcfMargin:6, startingARR:1950000, expansionARR:72000, churnedARR:105000, contractionARR:32000, cac:19000, arpaMonthly:1450, grossMargin:0.78, annualChurn:0.17 },
+  { period:"Q3 2025", segment:"Mid-Market", netNewARR:240000, priorSMSpend:340000, revGrowth:29, fcfMargin:7, startingARR:3480000, expansionARR:158000, churnedARR:80000, contractionARR:28000, cac:53000, arpaMonthly:3900, grossMargin:0.82, annualChurn:0.09 },
+  { period:"Q3 2025", segment:"Enterprise", netNewARR:165000, priorSMSpend:260000, revGrowth:27, fcfMargin:8, startingARR:4020000, expansionARR:120000, churnedARR:45000, contractionARR:15000, cac:108000, arpaMonthly:7600, grossMargin:0.85, annualChurn:0.04 },
+  { period:"Q4 2025", segment:"Blended", netNewARR:710000, priorSMSpend:880000, revGrowth:34, fcfMargin:10, startingARR:10010000, expansionARR:420000, churnedARR:195000, contractionARR:65000, cac:40000, arpaMonthly:3400, grossMargin:0.82, annualChurn:0.09 },
+  { period:"Q4 2025", segment:"SMB", netNewARR:185000, priorSMSpend:260000, revGrowth:32, fcfMargin:9, startingARR:2035000, expansionARR:80000, churnedARR:88000, contractionARR:28000, cac:17000, arpaMonthly:1500, grossMargin:0.79, annualChurn:0.16 },
+  { period:"Q4 2025", segment:"Mid-Market", netNewARR:295000, priorSMSpend:350000, revGrowth:35, fcfMargin:10, startingARR:3530000, expansionARR:185000, churnedARR:68000, contractionARR:22000, cac:50000, arpaMonthly:4000, grossMargin:0.83, annualChurn:0.08 },
+  { period:"Q4 2025", segment:"Enterprise", netNewARR:230000, priorSMSpend:270000, revGrowth:33, fcfMargin:11, startingARR:4445000, expansionARR:155000, churnedARR:39000, contractionARR:15000, cac:105000, arpaMonthly:7800, grossMargin:0.86, annualChurn:0.04 },
+];
+
+// Deduplicate: keep first occurrence of each period+segment
+const seen = new Set();
+const gtmData = gtmDataRaw.filter(d => {
+  const key = d.period + '|' + d.segment;
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+
+console.log('Data sources loaded:', { gtm: gtmData.length, pipeline: pipelineData.length, forecast: forecastData.length });
+
+// ═══════════════════════════════════════════════════════════════════════
+// Utility functions
+// ═══════════════════════════════════════════════════════════════════════
+function fmt$(v) { return '$' + Math.round(v).toLocaleString(); }
+function fmtK$(v) { return '$' + (v/1000).toFixed(0) + 'K'; }
+function fmtM$(v) { return '$' + (v/1000000).toFixed(2) + 'M'; }
+function badgeHtml(text, color) { return `<span class="badge ${color}">${text}</span>`; }
+function uniqueOrdered(arr, key) { const s = []; const seen = new Set(); arr.forEach(d => { if (!seen.has(d[key])) { seen.add(d[key]); s.push(d[key]); } }); return s; }
+
+function computeLtvCac(row) {
+  const monthlyChurn = row.annualChurn / 12;
+  if (monthlyChurn === 0) return Infinity;
+  const ltv = (row.arpaMonthly * row.grossMargin) / monthlyChurn;
+  return ltv / row.cac;
+}
+
+function computeNrr(row) {
+  return (row.startingARR + row.expansionARR - row.contractionARR - row.churnedARR) / row.startingARR;
+}
+
+function coverageBadge(coverage) {
+  if (coverage >= BENCHMARKS.pipelineCoverage.strong) return badgeHtml('Healthy', 'green');
+  if (coverage >= BENCHMARKS.pipelineCoverage.monitor) return badgeHtml('At Risk', 'amber');
+  return badgeHtml('Critical', 'red');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Tab management
+// ═══════════════════════════════════════════════════════════════════════
+const allTabs = ['pipeline', 'forecast', 'gtm'];
+const tabLabels = { pipeline: 'Pipeline', forecast: 'Forecast', gtm: 'GTM Efficiency' };
+let activeTab = 'pipeline';
+let chartInstances = {};
+
+function buildTabs() {
+  const bar = document.getElementById('tabsBar');
+  bar.innerHTML = allTabs.map(t =>
+    `<button class="tab${t === activeTab ? ' active' : ''}" onclick="switchTab('${t}')">${tabLabels[t]}</button>`
+  ).join('');
+}
+
+function switchTab(t) {
+  activeTab = t;
+  allTabs.forEach(id => {
+    document.getElementById(id + '-tab').classList.toggle('active', id === t);
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => el.classList.toggle('active', allTabs[i] === t));
+  document.getElementById('actionBarLabel').textContent = tabLabels[t] + ' Report · For Leadership';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Step 2: Pipeline Tab
+// ═══════════════════════════════════════════════════════════════════════
+function initializePipelineTab() {
+  const quarters = uniqueOrdered(pipelineData, 'period');
+  const currentQuarter = quarters[0]; // Q1 2025
+  const currentQtrDeals = pipelineData.filter(d => d.period === currentQuarter);
+  const totalPipeline = currentQtrDeals.reduce((s, d) => s + d.dealValue, 0);
+  const quota = currentQtrDeals[0].quota;
+  const coverage = totalPipeline / quota;
+  const velocity = totalPipeline / 90;
+  const atRisk = currentQtrDeals.filter(d => d.daysInStage > BENCHMARKS.dealAging.critical).reduce((s, d) => s + d.dealValue, 0);
+
+  document.getElementById('pipelineMetrics').innerHTML = `
+    <div class="metric-card"><div class="label">Pipeline Coverage</div><div class="value">${coverage.toFixed(2)}x</div>${coverageBadge(coverage)}</div>
+    <div class="metric-card"><div class="label">Active Pipeline</div><div class="value">${fmt$(totalPipeline)}</div>${badgeHtml(currentQuarter, 'blue')}</div>
+    <div class="metric-card"><div class="label">Sales Velocity</div><div class="value">${fmt$(velocity)}/day</div>${badgeHtml('$/day avg', 'blue')}</div>
+    <div class="metric-card"><div class="label">At-Risk Pipeline</div><div class="value">${fmt$(atRisk)}</div>${badgeHtml(atRisk === totalPipeline ? 'All deals >60d' : Math.round(atRisk/totalPipeline*100) + '% of pipeline', 'red')}</div>
+  `;
+
+  createPipelineFunnel(currentQtrDeals);
+  createPipelineQuotaChart(quarters);
+  populateAgingDealsTable(currentQtrDeals);
+}
+
+// Step 3: Pipeline Funnel — group by Stage
+function createPipelineFunnel(deals) {
+  const stageOrder = ['Discovery', 'Qualification', 'Proposal', 'Negotiation'];
+  const stageColors = ['#4f6bf4', '#6b7fe8', '#7b6fd4', '#8b5fc4'];
+  const stageValues = stageOrder.map(stage => deals.filter(d => d.stage === stage).reduce((s, d) => s + d.dealValue, 0));
+  const maxVal = Math.max(...stageValues);
+
+  document.getElementById('pipelineFunnel').innerHTML = stageValues.map((val, i) => {
+    const widthPct = maxVal > 0 ? Math.max(46, (val / maxVal) * 100) : 46;
+    return `<div class="funnel-stage" style="width:${widthPct}%; background:${stageColors[i]}">${stageOrder[i]}: ${fmtM$(val)}</div>`;
+  }).join('');
+}
+
+// Step 4: Pipeline vs Quota chart
+function createPipelineQuotaChart(quarters, showAll) {
+  const displayQuarters = showAll ? quarters : quarters.slice(0, 3);
+  const pipelineByQtr = displayQuarters.map(q => pipelineData.filter(d => d.period === q).reduce((s, d) => s + d.dealValue, 0));
+  const quotaByQtr = displayQuarters.map(q => pipelineData.find(d => d.period === q).quota);
+
+  document.getElementById('pipelineZoom').innerHTML = `
+    <button class="zoom-btn${!showAll ? ' active' : ''}" onclick="createPipelineQuotaChart(uniqueOrdered(pipelineData,'period'), false)">Current + Next 2</button>
+    <button class="zoom-btn${showAll ? ' active' : ''}" onclick="createPipelineQuotaChart(uniqueOrdered(pipelineData,'period'), true)">All Quarters</button>`;
+
+  document.getElementById('pipelineQuotaLegend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Pipeline</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Quota</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">Pipeline (under quota)</span></div>`;
+
+  if (chartInstances.pipelineQuota) chartInstances.pipelineQuota.destroy();
+  chartInstances.pipelineQuota = new Chart(document.getElementById('pipelineQuotaChart'), {
+    type: 'bar',
+    data: {
+      labels: displayQuarters,
+      datasets: [{
+        label: 'Pipeline',
+        data: pipelineByQtr,
+        backgroundColor: pipelineByQtr.map((v, i) => v < quotaByQtr[i] ? '#e24b4a' : '#4f6bf4'),
+        borderRadius: 4
+      }, {
+        label: 'Quota',
+        data: quotaByQtr,
+        backgroundColor: '#22c55e',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 }, maxRotation: displayQuarters.length > 4 ? 35 : 0 } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + (v/1000000).toFixed(1) + 'M' } }
+      }
+    }
+  });
+}
+
+// Step 5: Aging Deals table
+function populateAgingDealsTable(deals) {
+  const sorted = [...deals].sort((a, b) => b.dealValue - a.dealValue);
+  document.getElementById('agingDealsTable').innerHTML = `<table>
+    <thead><tr><th>Deal Name</th><th>Segment</th><th>Days Stalled</th><th>$ Value</th><th>Action Required</th></tr></thead>
+    <tbody>${sorted.map(d => {
+      let action, cls;
+      if (d.daysInStage > BENCHMARKS.dealAging.critical) { action = 'Executive escalation'; cls = 'high'; }
+      else if (d.daysInStage > BENCHMARKS.dealAging.monitor) { action = 'Manager review'; cls = 'moderate'; }
+      else { action = 'Monitor'; cls = 'low'; }
+      return `<tr><td>${d.dealName}</td><td>${d.segment}</td><td>${d.daysInStage} days</td><td>${fmt$(d.dealValue)}</td><td><span class="risk-pill ${cls}">${action}</span></td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Steps 6-9: Forecast Tab
+// ═══════════════════════════════════════════════════════════════════════
+function initializeForecastTab() {
+  const allMAPE = forecastData.map(d => d.mape);
+  const overallMAPE = allMAPE.reduce((s, v) => s + v, 0) / allMAPE.length;
+  const mapePct = overallMAPE * 100;
+
+  const allBias = forecastData.map(d => d.bias);
+  const avgBias = allBias.reduce((s, v) => s + v, 0) / allBias.length;
+  const biasPct = avgBias * 100;
+
+  const periods = uniqueOrdered(forecastData, 'period');
+  const periodMisses = periods.map(p => {
+    const rows = forecastData.filter(d => d.period === p);
+    return Math.abs(rows.reduce((s, d) => s + d.forecast, 0) - rows.reduce((s, d) => s + d.actual, 0));
+  });
+  const avgMiss = periodMisses.reduce((s, v) => s + v, 0) / periodMisses.length;
+  const forecastScore = Math.max(0, Math.round(100 - (mapePct * 4)));
+
+  let mapeBadge;
+  if (overallMAPE < BENCHMARKS.forecastMAPE.strong) mapeBadge = badgeHtml('Excellent', 'green');
+  else if (overallMAPE <= BENCHMARKS.forecastMAPE.monitor) mapeBadge = badgeHtml('Needs Work', 'amber');
+  else mapeBadge = badgeHtml('Poor', 'red');
+
+  document.getElementById('forecastMetrics').innerHTML = `
+    <div class="metric-card"><div class="label">Overall MAPE</div><div class="value">${mapePct.toFixed(1)}%</div>${mapeBadge}</div>
+    <div class="metric-card"><div class="label">Forecast Bias</div><div class="value">${avgBias >= 0 ? '+' : ''}${biasPct.toFixed(1)}%</div>${Math.abs(avgBias) < BENCHMARKS.forecastBias.strong ? badgeHtml('Balanced', 'green') : badgeHtml('Biased', 'amber')}</div>
+    <div class="metric-card"><div class="label">Avg Miss / Period</div><div class="value">${fmt$(avgMiss)}</div>${badgeHtml(periods.length + ' periods', 'blue')}</div>
+    <div class="metric-card"><div class="label">Forecast Score</div><div class="value">${forecastScore}</div>${forecastScore >= 80 ? badgeHtml('Strong', 'green') : forecastScore >= 50 ? badgeHtml('Moderate', 'amber') : badgeHtml('Weak', 'red')}</div>
+  `;
+
+  createForecastActualChart(periods);
+  createMAPEChart(periods);
+  populateRepPerformanceTable();
+}
+
+// Step 7: Forecast vs Actual chart
+function createForecastActualChart(periods) {
+  const forecastLine = periods.map(p => forecastData.filter(d => d.period === p).reduce((s, d) => s + d.forecast, 0));
+  const actualLine = periods.map(p => forecastData.filter(d => d.period === p).reduce((s, d) => s + d.actual, 0));
+
+  document.getElementById('forecastActualLegend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Forecast</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Actual</span></div>`;
+
+  if (chartInstances.forecastActual) chartInstances.forecastActual.destroy();
+  chartInstances.forecastActual = new Chart(document.getElementById('forecastActualChart'), {
+    type: 'line',
+    data: {
+      labels: periods,
+      datasets: [{
+        label: 'Forecast', data: forecastLine,
+        borderColor: '#4f6bf4', backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 4
+      }, {
+        label: 'Actual', data: actualLine,
+        borderColor: '#22c55e', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 5], tension: 0.3, pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 }, maxRotation: periods.length > 4 ? 35 : 0 } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + (v/1000) + 'K' } }
+      }
+    }
+  });
+}
+
+// Step 8: MAPE Trend chart with 5% target line
+function createMAPEChart(periods) {
+  const mapeTrend = periods.map(p => {
+    const rows = forecastData.filter(d => d.period === p);
+    const totalF = rows.reduce((s, d) => s + d.forecast, 0);
+    const totalA = rows.reduce((s, d) => s + d.actual, 0);
+    return (Math.abs(totalA - totalF) / Math.abs(totalA)) * 100;
+  });
+
+  document.getElementById('mapeTrendLegend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">MAPE %</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">5% Target</span></div>`;
+
+  if (chartInstances.mapeTrend) chartInstances.mapeTrend.destroy();
+  chartInstances.mapeTrend = new Chart(document.getElementById('mapeTrendChart'), {
+    type: 'line',
+    data: {
+      labels: periods,
+      datasets: [{
+        label: 'MAPE %', data: mapeTrend,
+        borderColor: '#e24b4a', backgroundColor: 'rgba(226,75,74,0.2)', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 4
+      }, {
+        label: '5% Target', data: periods.map(() => 5),
+        borderColor: '#22c55e', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 5], pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + '%' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Step 9: Rep Performance table
+function populateRepPerformanceTable() {
+  const periods = uniqueOrdered(forecastData, 'period');
+  const latestPeriod = periods[periods.length - 1];
+  const reps = forecastData.filter(d => d.period === latestPeriod).sort((a, b) => b.mape - a.mape);
+
+  function signalBadge(signal) {
+    if (signal.includes('Accurate')) return '<span class="badge green">✓ Accurate</span>';
+    if (signal.includes('Wishful')) return '<span class="badge red">⚠ Wishful</span>';
+    if (signal.includes('Over-commit')) return '<span class="badge amber">⚠ Over-commit</span>';
+    if (signal.includes('Sandbagging')) return '<span class="badge amber">⚠ Sandbagging</span>';
+    return '<span class="badge blue">' + signal + '</span>';
+  }
+
+  document.getElementById('repTable').innerHTML = `<table>
+    <thead><tr><th>Rep</th><th>Segment</th><th>Forecast</th><th>Actual</th><th>MAPE</th><th>Signal</th><th>Coaching Note</th></tr></thead>
+    <tbody>${reps.map(d => `<tr>
+      <td>${d.repName}</td><td>${d.segment}</td><td>${fmt$(d.forecast)}</td><td>${fmt$(d.actual)}</td>
+      <td>${(d.mape * 100).toFixed(1)}%</td><td>${signalBadge(d.signal)}</td><td style="font-size:11px;color:var(--text-muted);max-width:200px">${d.coachingNote}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Steps 10-15: GTM Efficiency Tab
+// ═══════════════════════════════════════════════════════════════════════
+function initializeGTMTab() {
+  const periods = uniqueOrdered(gtmData, 'period');
+  const latestPeriod = periods[periods.length - 1]; // Q4 2025
+  const blended = gtmData.find(d => d.segment === 'Blended' && d.period === latestPeriod);
+
+  const magicNumber = blended.netNewARR / blended.priorSMSpend;
+  const ruleOf40 = blended.revGrowth + blended.fcfMargin;
+  const nrr = computeNrr(blended);
+  const nrrPct = nrr * 100;
+  const ltvCac = computeLtvCac(blended);
+
+  // Magic Number badge
+  let mnBadge = magicNumber >= BENCHMARKS.magicNumber.strong ? badgeHtml('Healthy', 'green') : magicNumber >= BENCHMARKS.magicNumber.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  // Rule of 40 badge (Step 10: add missing badge)
+  let r40Badge = ruleOf40 > BENCHMARKS.ruleOf40.strong ? badgeHtml('Strong', 'green') : ruleOf40 >= BENCHMARKS.ruleOf40.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  // NRR badge
+  let nrrBadge = nrr > BENCHMARKS.nrr.strong ? badgeHtml('Strong', 'green') : nrr >= BENCHMARKS.nrr.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+  // LTV:CAC badge
+  let ltvBadge = ltvCac > BENCHMARKS.ltvCac.strong ? badgeHtml('Healthy', 'green') : ltvCac >= BENCHMARKS.ltvCac.monitor ? badgeHtml('Monitor', 'amber') : badgeHtml('Weak', 'red');
+
+  document.getElementById('gtmMetrics').innerHTML = `
+    <div class="metric-card"><div class="label">Magic Number</div><div class="value">${magicNumber.toFixed(2)}x</div>${mnBadge}</div>
+    <div class="metric-card"><div class="label">Rule of 40</div><div class="value">${ruleOf40.toFixed(0)}</div>${r40Badge}</div>
+    <div class="metric-card"><div class="label">NRR %</div><div class="value">${nrrPct.toFixed(1)}%</div>${nrrBadge}</div>
+    <div class="metric-card"><div class="label">LTV:CAC</div><div class="value">${ltvCac.toFixed(1)}x</div>${ltvBadge}</div>
+  `;
+
+  createLTVCACChart(latestPeriod);
+  createCACPaybackChart(latestPeriod);
+  createNRRWaterfallChart(blended);
+  createMetricScorecard(blended, magicNumber, ruleOf40, nrrPct, ltvCac);
+  createInvestmentRecommendations(blended, magicNumber, ruleOf40, nrr, ltvCac);
+}
+
+// Step 11: LTV:CAC by Segment
+function createLTVCACChart(latestPeriod) {
+  const segments = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  const segNames = segments.map(d => d.segment);
+  const ltvCacVals = segments.map(d => computeLtvCac(d));
+
+  document.getElementById('ltvCacLegend').innerHTML = segNames.map((s, i) =>
+    `<div class="legend-item"><div class="legend-color" style="background:${SEGMENT_COLORS[i]}"></div><span class="legend-text">${s}</span></div>`
+  ).join('') + `<div class="legend-item"><div class="legend-color" style="background:rgba(128,128,128,0.2)"></div><span class="legend-text">3x Target</span></div>`;
+
+  if (chartInstances.ltvCac) chartInstances.ltvCac.destroy();
+  chartInstances.ltvCac = new Chart(document.getElementById('ltvCacChart'), {
+    type: 'bar',
+    data: {
+      labels: segNames,
+      datasets: [{
+        label: 'Actual LTV:CAC', data: ltvCacVals,
+        backgroundColor: segNames.map((_, i) => SEGMENT_COLORS[i]), borderRadius: 4
+      }, {
+        label: '3x Target', data: segNames.map(() => 3),
+        backgroundColor: 'rgba(128,128,128,0.2)', borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + 'x' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Step 12: CAC Payback vs Benchmark
+function createCACPaybackChart(latestPeriod) {
+  const segments = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  const segNames = segments.map(d => d.segment);
+  const paybacks = segments.map(d => d.cac / (d.arpaMonthly * d.grossMargin));
+  const benchmarks = segNames.map(s => BENCHMARKS.cacPayback[s] ? BENCHMARKS.cacPayback[s].strong : 18);
+
+  const barColors = paybacks.map((v, i) => {
+    const bm = BENCHMARKS.cacPayback[segNames[i]];
+    if (!bm) return '#22c55e';
+    if (v <= bm.strong) return '#22c55e';
+    if (v <= bm.weak) return '#ef9f27';
+    return '#e24b4a';
+  });
+
+  document.getElementById('cacPaybackLegend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">At/Under Benchmark</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#ef9f27"></div><span class="legend-text">Monitor</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#d1d5db"></div><span class="legend-text">Benchmark</span></div>`;
+
+  if (chartInstances.cacPayback) chartInstances.cacPayback.destroy();
+  chartInstances.cacPayback = new Chart(document.getElementById('cacPaybackChart'), {
+    type: 'bar',
+    data: {
+      labels: segNames,
+      datasets: [{
+        label: 'Actual', data: paybacks, backgroundColor: barColors, borderRadius: 4
+      }, {
+        label: 'Benchmark', data: benchmarks, backgroundColor: '#d1d5db', borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => v + ' mo' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Step 13: NRR Waterfall — ARR labels, include contraction
+function createNRRWaterfallChart(blended) {
+  const startARR = blended.startingARR / 1000;
+  const expansion = blended.expansionARR / 1000;
+  const churnContraction = (blended.churnedARR + blended.contractionARR) / 1000;
+  const endARR = startARR + expansion - churnContraction;
+
+  document.getElementById('nrrWaterfallLegend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:#4f6bf4"></div><span class="legend-text">Starting ARR</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span class="legend-text">Expansion</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#e24b4a"></div><span class="legend-text">Churn + Contraction</span></div>
+    <div class="legend-item"><div class="legend-color" style="background:#14b8a6"></div><span class="legend-text">Ending ARR</span></div>`;
+
+  if (chartInstances.nrrWaterfall) chartInstances.nrrWaterfall.destroy();
+  chartInstances.nrrWaterfall = new Chart(document.getElementById('nrrWaterfallChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Starting ARR', 'Expansion', 'Churn + Contraction', 'Ending ARR'],
+      datasets: [{
+        data: [startARR, expansion, -churnContraction, endARR],
+        backgroundColor: ['#4f6bf4', '#22c55e', '#e24b4a', '#14b8a6'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888780', font: { size: 11 } } },
+        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#888780', font: { size: 11 }, callback: v => '$' + v + 'K' } }
+      }
+    }
+  });
+}
+
+// Step 14: Metric Scorecard with inverted metrics
+function createMetricScorecard(blended, magicNumber, ruleOf40, nrrPct, ltvCac) {
+  const cacPayback = blended.cac / (blended.arpaMonthly * blended.grossMargin);
+  const grossMarginPct = blended.grossMargin * 100;
+  const annualChurnPct = blended.annualChurn * 100;
+
+  const metrics = [
+    { label: 'Magic Number', value: magicNumber.toFixed(2) + 'x', actual: magicNumber, target: 0.75, inverted: false },
+    { label: 'Rule of 40', value: ruleOf40.toFixed(0), actual: ruleOf40, target: 40, inverted: false },
+    { label: 'NRR %', value: nrrPct.toFixed(1) + '%', actual: nrrPct, target: 110, inverted: false },
+    { label: 'LTV:CAC', value: ltvCac.toFixed(1) + 'x', actual: ltvCac, target: 3, inverted: false },
+    { label: 'CAC Payback', value: cacPayback.toFixed(1) + ' mo', actual: cacPayback, target: 12, inverted: true },
+    { label: 'Gross Margin', value: grossMarginPct.toFixed(0) + '%', actual: grossMarginPct, target: 75, inverted: false },
+    { label: 'Annual Churn', value: annualChurnPct.toFixed(0) + '%', actual: annualChurnPct, target: 10, inverted: true },
+  ];
+
+  document.getElementById('metricScorecard').innerHTML = metrics.map(m => {
+    let progress, healthy;
+    if (m.inverted) {
+      progress = Math.min(100, (m.target / m.actual) * 100);
+      healthy = m.actual <= m.target;
+    } else {
+      progress = Math.min(100, (m.actual / m.target) * 100);
+      healthy = m.actual >= m.target;
+    }
+    const color = healthy ? 'var(--primary-blue)' : 'var(--amber)';
+    return `<div class="scorecard-row">
+      <div class="scorecard-label">${m.label}</div>
+      <div class="scorecard-bar"><div class="scorecard-fill" style="width:${progress}%; background:${color}"></div></div>
+      <div class="scorecard-value">${m.value}</div>
+    </div>`;
+  }).join('');
+}
+
+// Step 15: Investment Recommendations — cross-reference all 3 data sources
+function createInvestmentRecommendations(blended, magicNumber, ruleOf40, nrr, ltvCac) {
+  const recs = [];
+
+  // 1. NRR check (highest priority)
+  if (nrr < 1.00) {
+    recs.push({ rank: recs.length + 1, headline: 'Critical: Fix retention before scaling', desc: `NRR at ${(nrr*100).toFixed(1)}% — you're losing more revenue than you're gaining from existing customers. Focus on churn reduction and customer success before any expansion investment.`, impact: 'Risk: Revenue base eroding quarter-over-quarter', color: 'red' });
+  } else if (nrr < 1.10) {
+    recs.push({ rank: recs.length + 1, headline: 'Add upsell motion to reach 110%+ NRR', desc: `NRR at ${(nrr*100).toFixed(1)}% is positive but below the 110% benchmark. Current expansion of ${fmt$(blended.expansionARR)} against ${fmt$(blended.churnedARR + blended.contractionARR)} churn+contraction leaves room to grow.`, impact: 'Expected: 5-8% NRR improvement within 2 quarters', color: 'amber' });
+  } else if (nrr >= 1.30) {
+    recs.push({ rank: recs.length + 1, headline: 'World-class NRR — double down on expansion', desc: `NRR at ${(nrr*100).toFixed(1)}% is exceptional. Your expansion revenue significantly outpaces losses. Increase investment in expansion playbooks.`, impact: 'Expected: Accelerated revenue compound growth', color: 'green' });
+  }
+
+  // 2. Pipeline coverage per quarter
+  const pipelineQuarters = uniqueOrdered(pipelineData, 'period');
+  pipelineQuarters.forEach(q => {
+    const deals = pipelineData.filter(d => d.period === q);
+    const totalPipeline = deals.reduce((s, d) => s + d.dealValue, 0);
+    const quota = deals[0].quota;
+    const coverage = totalPipeline / quota;
+    if (coverage < 1.5) {
+      const gap = quota * 2 - totalPipeline;
+      recs.push({ rank: recs.length + 1, headline: `${q} pipeline critically low at ${coverage.toFixed(2)}x`, desc: `Active pipeline of ${fmtM$(totalPipeline)} against ${fmtM$(quota)} quota. Need ${fmt$(gap)} additional pipeline to reach minimum 2x coverage.`, impact: 'Risk: High probability of missing quarterly quota', color: 'red' });
+    } else if (coverage < 2.5) {
+      recs.push({ rank: recs.length + 1, headline: `${q} pipeline needs attention at ${coverage.toFixed(1)}x`, desc: `Pipeline coverage of ${coverage.toFixed(1)}x is below the 3x healthy benchmark. Add more deals to reduce risk.`, impact: 'Expected: Improved close confidence with 3x+ coverage', color: 'amber' });
+    }
+  });
+
+  // 3. Magic Number
+  if (magicNumber >= BENCHMARKS.magicNumber.strong) {
+    recs.push({ rank: recs.length + 1, headline: 'GTM efficiency supports increased spend', desc: `Magic Number of ${magicNumber.toFixed(2)}x exceeds the 0.75x threshold. Consider increasing S&M budget 10-20%, prioritizing the highest LTV:CAC segment.`, impact: 'Expected: 15-25% acceleration in Net New ARR', color: 'green' });
+  } else {
+    recs.push({ rank: recs.length + 1, headline: 'Diagnose GTM efficiency before scaling', desc: `Magic Number of ${magicNumber.toFixed(2)}x is below the 0.75x threshold. Audit channel effectiveness and conversion rates before increasing spend.`, impact: 'Risk: Increased spend may not yield proportional returns', color: 'amber' });
+  }
+
+  // 4. CAC Payback by segment
+  const latestPeriod = uniqueOrdered(gtmData, 'period').pop();
+  const segRows = gtmData.filter(d => d.period === latestPeriod && d.segment !== 'Blended');
+  segRows.forEach(row => {
+    const payback = row.cac / (row.arpaMonthly * row.grossMargin);
+    const bm = BENCHMARKS.cacPayback[row.segment];
+    if (bm && payback > bm.strong * 1.2) {
+      recs.push({ rank: recs.length + 1, headline: `${row.segment} CAC payback exceeds benchmark`, desc: `${row.segment} CAC payback at ${payback.toFixed(1)} months vs ${bm.strong} month benchmark. Review acquisition channels and optimize spend allocation for this segment.`, impact: 'Expected: Reduced payback period by 2-3 months', color: 'amber' });
+    }
+  });
+
+  // 5. Forecast MAPE
+  const overallMAPE = forecastData.reduce((s, d) => s + d.mape, 0) / forecastData.length;
+  if (overallMAPE > 0.15) {
+    const worstReps = forecastData.filter(d => d.mape > 0.15).map(d => d.repName);
+    const uniqueWorst = [...new Set(worstReps)];
+    recs.push({ rank: recs.length + 1, headline: 'Coach reps on forecast accuracy', desc: `Overall MAPE at ${(overallMAPE*100).toFixed(1)}% exceeds 15% threshold. Key reps to coach: ${uniqueWorst.join(', ')}. Apply 85-90% haircut to commits from chronic over-committers.`, impact: 'Expected: 30-50% reduction in forecast variance', color: 'amber' });
+  }
+
+  // Re-rank
+  recs.forEach((r, i) => r.rank = i + 1);
+
+  // Limit to 5
+  const display = recs.slice(0, 5);
+  document.getElementById('investmentRecs').innerHTML = display.map(r =>
+    `<div class="recommendation-card">
+      <div class="rank-badge">${r.rank}</div>
+      <div class="rec-content">
+        <h4>${r.headline}</h4>
+        <p>${r.desc}</p>
+        <div class="impact" style="color:${r.color === 'red' ? 'var(--red)' : r.color === 'green' ? 'var(--green)' : 'var(--amber)'}">${r.impact}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Action bar
+// ═══════════════════════════════════════════════════════════════════════
+function connectSheets() {
+  const url = document.getElementById('sheetsUrl').value;
+  if (url) {
+    const badge = document.getElementById('connectionStatus');
+    badge.textContent = 'Connected';
+    badge.className = 'status-badge green';
+  }
+}
+
+function emailReport() {
+  const subject = encodeURIComponent('RevOps Leadership Dashboard — ' + activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Report');
+  const body = encodeURIComponent('Please find the latest RevOps dashboard report.\n\nGenerated from Exit Engine GTM Dashboard.');
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Initialize
+// ═══════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildTabs();
+  initializePipelineTab();
+  initializeForecastTab();
+  initializeGTMTab();
+});
+</script>
+</body>
+</html>
