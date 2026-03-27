@@ -1,0 +1,1396 @@
+{
+  "series_name": "Exit Engine // Pipeline Generation System",
+  "series_name_upper": "EXIT ENGINE // PIPELINE GENERATION SYSTEM",
+  "subagent_number": 1,
+  "subagent_topic": "Agentic Pipeline Playbook",
+  "cover_subtitle": "A complete operator's manual for generating $4M+ in marketing-sourced pipeline using Claude Code workflows. From closed-won CRM data to tiered account lists, proof assets, relevance messaging, and multi-channel distribution — this is the full build, ops, and strategy guide.",
+  "part_string": "Complete Playbook • Exit Engine Pipeline Generation System",
+  "output_filename": "agentic-pipeline-playbook",
+  "output_dir": "/workspaces/exit-engine-site",
+  "sections": [
+    {
+      "type": "what_it_does",
+      "paragraphs": [
+        "This playbook documents the exact agentic system used to generate $4.3M in marketing-sourced pipeline. It is not a thought piece. It is an operator's manual — a complete build guide, strategy framework, and operating system for any B2B revenue team ready to run pipeline generation on autopilot using Claude Code.",
+        "The system works by turning your closed-won CRM data into a continuously running machine: it identifies your best-fit verticals, builds proof assets from real buyer interviews, finds lookalike accounts, matches them to live pain signals, generates relevance messaging per contact, and distributes across outbound sequences, LinkedIn ads, and LinkedIn DMs — all orchestrated by Claude Code with human checkpoints at every critical step.",
+        "Who this is for: B2B companies with $50K–$500K ACV, 50+ closed-won deals in CRM, a defined ICP, and a team willing to operate an agentic system. Who this is not for: early-stage companies with no CRM history, transactional or low-ACV sales motions, or teams not ready to maintain a data-in / pipeline-out loop.",
+        "What 'agentic' means here: Claude Code does not just generate content — it orchestrates multi-step workflows, calls external tools, evaluates outputs against confidence thresholds, writes back to CRM and Notion, and flags humans when intervention is required. The system acts; humans approve."
+      ]
+    },
+    {
+      "type": "workflow_glance",
+      "steps": [
+        "Workflow 1: Pull 90 days of closed-won from CRM, run vertical intelligence analysis, identify winning verticals and TAL rules",
+        "Workflow 2: Source buyer interviews, process transcripts, extract purchase reasons, and build a full proof asset library (case studies, testimonials, ad snippets)",
+        "Workflow 3: Use DiscoLike + Ocean.io to find lookalike accounts, AI Ark for people lookalikes, match against CRM engagement signals to build Tier 1 account list",
+        "Workflow 4: Pull pain signals (hiring data, job postings, tech installs), match to problem statements extracted from won deals, write relevance messaging per contact",
+        "Workflow 5: Assemble Messaging Engine — translate pain + proof into outbound-ready language adapted by persona, vertical, and channel",
+        "Workflow 6: Distribute — route to Outreach sequences, LinkedIn ABM ads via n8n, and LinkedIn DMs, with full writeback to CRM and Notion"
+      ]
+    },
+    {
+      "type": "requirements",
+      "intro": "You will need active accounts and API access for each of the following. Some are required for MVP; others unlock full-system capability.",
+      "table": {
+        "columns": ["Tool", "Purpose", "Required For"],
+        "rows": [
+          ["HubSpot or Salesforce", "CRM source for closed-won data and contact writeback", "MVP — required"],
+          ["Claude API (Sonnet)", "Pattern analysis, messaging generation, orchestration", "MVP — required"],
+          ["n8n (self-hosted or cloud)", "Workflow automation, routing, LinkedIn Ads integration", "MVP — required"],
+          ["Notion", "Proof asset storage, account intelligence docs, QA layer", "MVP — required"],
+          ["DiscoLike", "Account-level lookalike discovery based on closed-won accounts", "MVP — required"],
+          ["Ocean.io", "Firmographic lookalike expansion and enrichment", "MVP — required"],
+          ["AI Ark", "People lookalike matching — finds contacts similar to won champions", "MVP — required"],
+          ["Outreach or Apollo", "Outbound sequence creation and sending", "MVP — required"],
+          ["LinkedIn Ads API", "Programmatic ABM ad distribution via n8n", "Full system"],
+          ["Gong or Chorus", "Call transcript source for purchase reason extraction", "Recommended"],
+          ["Clearbit or Apollo Enrichment", "Contact and account enrichment for scoring", "Recommended"],
+          ["Loom or Descript", "9-minute interview recording and initial edit", "Workflow 2"]
+        ]
+      },
+      "extra_sections": [
+        {
+          "title": "Estimated Monthly Operating Costs",
+          "content": [
+            {
+              "type": "paragraph",
+              "text": "MVP stack (CRM + Claude API + n8n + Notion + DiscoLike): $400–900/month depending on CRM tier and n8n hosting. Full stack adding Ocean.io, AI Ark, Outreach, and LinkedIn Ads: $2,000–4,500/month. Claude API cost at 500 accounts scored and 2,000 messages generated per month: approximately $80–150/month at Sonnet pricing."
+            }
+          ]
+        },
+        {
+          "title": "Minimum Data Prerequisites",
+          "content": [
+            {
+              "type": "paragraph",
+              "text": "The system requires a minimum of 30 closed-won opportunities in CRM with populated fields (industry, company size, deal value, close date, primary contact role). Below 30 won deals, vertical intelligence results will be unreliable. The sweet spot is 80–200 won deals across at least 3 verticals."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part I — Strategy: Core Thesis and Strategic Logic",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "The central insight behind this system is that most outbound fails not because the product is wrong, but because the targeting, messaging, and timing are all disconnected from reality. Generic ABM picks accounts based on firmographic fit alone. Generic outbound blasts a list with a template. This system does neither."
+        },
+        {
+          "type": "h2",
+          "text": "Why Closed-Won Data Is the Starting Point"
+        },
+        {
+          "type": "paragraph",
+          "text": "Your closed-won deals are the only dataset that has already proven product-market fit. They tell you which verticals close fastest, which job titles champion the deal, which company attributes predict success, and what pain drove the purchase. No intent data vendor, no lookalike model, and no ICP workshop produces a signal that clean. Start here — always."
+        },
+        {
+          "type": "h2",
+          "text": "Why Vertical Intelligence Matters"
+        },
+        {
+          "type": "paragraph",
+          "text": "When you understand which verticals win at the highest rate, you can concentrate proof assets, messaging, and budget on the markets where you are most likely to convert. Without vertical intelligence, you spread resources evenly and win unevenly. With it, you double down on what is already working."
+        },
+        {
+          "type": "h2",
+          "text": "Why Lookalikes Alone Are Not Enough"
+        },
+        {
+          "type": "paragraph",
+          "text": "Lookalike accounts show you who looks like your customers. They do not show you who is ready to buy. A company that looks like your best customer but is not experiencing the pain your product solves is not a pipeline opportunity — it is a waste of sequence capacity and ad spend. Lookalikes are a list. Signals turn that list into a prioritized attack surface."
+        },
+        {
+          "type": "h2",
+          "text": "Why Current Pain Signals Beat Weak Personalization"
+        },
+        {
+          "type": "paragraph",
+          "text": "Mentioning that someone liked a post or visited your website is not personalization — it is surveillance theater. Real relevance comes from identifying current pain: a company hiring five SDRs when their meeting rate is declining, installing a SalesOps automation tool when their follow-up is broken, or adding a RevOps hire when their CRM is chaos. These are observable signals of active suffering. That is what earns a reply."
+        },
+        {
+          "type": "h2",
+          "text": "The Full Strategic Chain"
+        },
+        {
+          "type": "table",
+          "columns": ["Stage", "What It Produces", "Why It Matters"],
+          "rows": [
+            ["Won Deals (CRM)", "Closed-won dataset", "The only verified proof of fit"],
+            ["Vertical Patterns", "Winning vertical profiles", "Concentrates effort where win rate is highest"],
+            ["Lookalike Accounts", "Expanded addressable universe", "Scales beyond your existing customer base"],
+            ["Pain Signals", "Live suffering indicators", "Tells you who needs help right now"],
+            ["Problem Statements", "One-line pain descriptions", "Makes the pain legible to the buyer"],
+            ["Relevance Messaging", "Outbound-ready copy per contact", "Earns attention by describing their reality"],
+            ["Proof Assets", "Case studies, quotes, videos", "Proves you have solved this before"],
+            ["Multi-Channel Distribution", "Sequences, ads, DMs", "Reaches the buyer wherever they are"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part I — Strategy: Ideal Customer and Best-Fit Conditions",
+      "content": [
+        {
+          "type": "h2",
+          "text": "Best-Fit Company Profile"
+        },
+        {
+          "type": "table",
+          "columns": ["Attribute", "Best-Fit Range", "Notes"],
+          "rows": [
+            ["ACV", "$50K – $500K", "Below $50K, the system cost exceeds CAC leverage. Above $500K, enterprise cycles need different motion."],
+            ["Sales cycle", "30 – 180 days", "Shorter cycles make signal decay a problem. Longer cycles need additional nurture layers."],
+            ["Closed-won deals in CRM", "30+ minimum, 80+ optimal", "Fewer than 30 deals makes vertical patterns statistically unreliable."],
+            ["Revenue org size", "3+ AEs, 1+ marketing", "Needs someone to own the system and someone to act on outputs."],
+            ["GTM motion", "Outbound-led or ABM-hybrid", "Works best when there is a sales motion to feed. Pure inbound does not need this."],
+            ["CRM maturity", "Deals have industry, company size, close date, and contact role", "Missing fields = broken pattern analysis."]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Signs the Company Is Ready"
+        },
+        {
+          "type": "table",
+          "columns": ["Signal", "What It Indicates"],
+          "rows": [
+            ["Has 30+ closed-won with populated CRM fields", "Pattern analysis will return reliable vertical insights"],
+            ["Has 2+ customer case study candidates willing to interview", "Proof Asset Factory can launch immediately"],
+            ["Has a defined ICP (even if not perfectly documented)", "Signal matching and tiering can begin"],
+            ["Has someone who can own weekly QA and CRM writeback", "System will not degrade without human oversight"],
+            ["Has budget for tool stack or willingness to build lean", "System can be run lean with CRM + Claude + n8n + free tiers"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Signs the Company Is Not Ready"
+        },
+        {
+          "type": "table",
+          "columns": ["Red Flag", "Why It Breaks the System"],
+          "rows": [
+            ["Fewer than 20 closed-won deals", "Vertical intelligence will overfit to noise"],
+            ["CRM fields unpopulated or inconsistent", "Pattern analysis returns garbage"],
+            ["No willing customer interview subjects", "Proof Asset Factory stalls — no case studies"],
+            ["No one who can review and approve outputs", "System will ship low-quality or inaccurate messaging"],
+            ["ACV under $30K with high volume motion", "ROI math does not work at this price point"],
+            ["No existing outbound motion or sales team", "Pipeline generated has no one to work it"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Common Reasons This System Fails"
+        },
+        {
+          "type": "table",
+          "columns": ["Failure Reason", "Root Cause"],
+          "rows": [
+            ["Weak vertical patterns", "CRM data is too sparse or fields are unpopulated"],
+            ["No case studies", "Customer interview scheduling was deprioritized"],
+            ["Lookalike list never gets tiered", "Pain signal matching was skipped or signals were too generic"],
+            ["Messaging feels generic despite the system", "Problem statements were written at vertical level, not contact level"],
+            ["Pipeline generated but no meetings booked", "Distribution was set up but messaging quality was not reviewed before launch"],
+            ["System runs for 2 weeks then stops", "No one owned the weekly operating cadence"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part I — Strategy: Definitions and Shared Language",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Every workflow in this system uses the following terms precisely. If your team uses different definitions, add a column to this table with your internal terminology — but do not mix the definitions inside the system."
+        },
+        {
+          "type": "table",
+          "columns": ["Term", "Definition"],
+          "rows": [
+            ["Vertical", "A defined industry or sub-industry segment (e.g. 'Series B SaaS, 50–200 employees'). Verticals are specific enough to share pain patterns and generic enough to contain 50+ target accounts."],
+            ["ICP (Ideal Customer Profile)", "The firmographic, technographic, and behavioral attributes of accounts most likely to buy, expand, and stay. Derived from closed-won analysis — not opinion."],
+            ["TAL (Target Account List)", "The prioritized list of companies the system is currently targeting. Generated by applying ICP criteria to lookalike discovery outputs, then filtered and tiered by signal matching."],
+            ["Lookalike Account", "A company that shares firmographic, technographic, and behavioral attributes with your closed-won customers. Found via DiscoLike and Ocean.io."],
+            ["Lookalike Contact", "A person at a lookalike account whose role, seniority, and function mirrors the champions and economic buyers in your won deals. Found via AI Ark."],
+            ["Intent Signal", "Third-party data indicating a company is actively researching a category (e.g. G2 review activity). Lower specificity than pain signals."],
+            ["Pain Signal", "An observable business event indicating a company is currently experiencing the problem your product solves. Examples: SDR job postings, SalesOps tool installs, RevOps hires, revenue team growth >5%."],
+            ["Trigger", "A specific, time-bounded event that makes an account worth reaching out to now. A pain signal that has crossed a recency threshold (within 28 days)."],
+            ["Problem Statement", "A one-line, buyer-language description of the pain a prospect is likely experiencing, derived from matching their observable signals to purchase reasons from similar won deals."],
+            ["Purchase Reason", "The primary reason documented in CRM, call notes, or win interviews that explains why a customer bought. Extracted from closed-won data."],
+            ["Proof Asset", "Any customer-derived content that proves your product solves a specific problem: video case study, written case study, quote, testimonial block, ad snippet, or sales proof card."],
+            ["Relevance Messaging", "Outbound copy that connects the prospect's observable pain signal to a proof asset and problem statement. Relevant because it describes their current reality."],
+            ["Tier 1 Account", "A lookalike account with at least one active pain signal in the last 28 days AND engagement with your brand in the last 28 days. Highest priority for direct outbound."],
+            ["Tier 2 Account", "A lookalike account with at least one active pain signal in the last 28 days but no recent brand engagement. Target with ABM ads before direct outbound."],
+            ["Tier 3 Account", "A lookalike account with no current pain signals. Add to long-cycle nurture. Re-evaluate monthly for signal emergence."],
+            ["Marketing Sourced Pipeline", "Revenue pipeline where the first meaningful touchpoint was a marketing activity generated by this system. Tracked via UTM parameters and CRM source fields."],
+            ["Agent / Workflow / Orchestration", "An Agent is a Claude Code instance performing a specific task. A Workflow is a sequence of agent actions + tool calls producing a defined output. Orchestration coordinates multiple workflows in order."],
+            ["Human-in-the-Loop", "A mandatory review checkpoint where a human must approve an output before the system proceeds. Not optional. Every workflow has at least one HITL gate."],
+            ["Confidence Score", "A 0–100 score assigned by Claude to its own output indicating reliability given the input data quality. Outputs below 60 are flagged for human review. Outputs below 40 are suppressed."]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part II — System Design: System Architecture",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "The system has seven functional layers. Each layer has defined inputs, outputs, and ownership. Claude Code operates primarily in the Analysis, Decision, and Asset Generation layers. External tools handle data sourcing and distribution. Humans own the QA layer."
+        },
+        {
+          "type": "h2",
+          "text": "System Layer Map"
+        },
+        {
+          "type": "table",
+          "columns": ["Layer", "What It Does", "Owned By", "Key Tools"],
+          "rows": [
+            ["Input Layer", "Ingests closed-won data, engagement data, and signal data", "CRM / Enrichment APIs", "HubSpot, Salesforce, Clearbit"],
+            ["Data Layer", "Normalizes and stores structured account and contact data", "n8n + Notion", "n8n, Notion DBs, JSON files"],
+            ["Analysis Layer", "Finds patterns, scores verticals, identifies signals", "Claude Code", "Claude API, pattern analysis Skills"],
+            ["Decision Layer", "Tiers accounts, selects contacts, flags for review", "Claude Code + Human", "Confidence scores, HITL gates"],
+            ["Asset Generation Layer", "Creates case studies, messaging, ad copy, sequences", "Claude Code", "Claude API, content Skills"],
+            ["Distribution Layer", "Routes content to channels, publishes sequences and ads", "n8n + Outreach + LinkedIn", "n8n, Outreach, LinkedIn Ads API"],
+            ["Measurement Layer", "Tracks pipeline sourced, meeting rates, tier conversions", "CRM + Notion", "CRM dashboards, Notion tables"],
+            ["Human QA Layer", "Reviews outputs at every HITL gate before shipping", "RevOps / Marketing", "Notion review queues"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Architecture Flow (End-to-End)"
+        },
+        {
+          "type": "paragraph",
+          "text": "CRM Closed-Won Data → Vertical Intelligence Engine → Notion: Vertical Profiles + TAL Rules → DiscoLike + Ocean.io: Lookalike Accounts → AI Ark: Lookalike Contacts → CRM Signal Match → Tier 1 / 2 / 3 Account List → Signal Sources (Job postings, LinkedIn, tech data) → Pain Signal Engine → Problem Statements per Contact → Proof Asset Factory (Interviews → Claude) → Case Studies + Quote Bank → Messaging Engine → Outbound Copy per Contact + Channel → n8n Orchestration → Outreach Sequences + LinkedIn Ads + LinkedIn DMs → CRM Writeback + Notion Activity Log"
+        },
+        {
+          "type": "h2",
+          "text": "Workflow Dependency Map"
+        },
+        {
+          "type": "table",
+          "columns": ["Workflow", "Depends On", "Must Complete Before"],
+          "rows": [
+            ["1. Vertical Intelligence Engine", "CRM closed-won data", "Workflows 2, 3, 4"],
+            ["2. Proof Asset Factory", "Workflow 1 (vertical list for interview targeting)", "Workflow 6 (messaging needs proof)"],
+            ["3. Lookalike Account + Contact Discovery", "Workflow 1 (TAL rules)", "Workflow 4"],
+            ["4. Signal Matching and Account Tiering", "Workflow 3 (lookalike list)", "Workflows 5, 6, 7"],
+            ["5. Pain Signal → Problem Statement Engine", "Workflows 1 + 4 (signals + purchase reasons)", "Workflow 6"],
+            ["6. Messaging Engine", "Workflows 2 + 5 (proof + problem statements)", "Workflow 7"],
+            ["7. Multi-Channel Distribution", "Workflow 6 (messaging ready)", "None — terminal workflow"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part II — System Design: Data Requirements and Readiness Checklist",
+      "content": [
+        {
+          "type": "pro_tip",
+          "title": "Garbage In, Garbage Out",
+          "text": "Every Claude analysis in this system is only as good as its input data. If your CRM fields are empty, inconsistent, or wrong, the vertical intelligence will be noise, the signal matching will be wrong, and the messaging will be generic. Fix your data before you build the system — not after."
+        },
+        {
+          "type": "h2",
+          "text": "Required CRM Fields"
+        },
+        {
+          "type": "table",
+          "columns": ["Field", "Level", "Why It Matters", "Fallback If Missing"],
+          "rows": [
+            ["Close date", "Opportunity", "Defines the 90-day closed-won window", "No fallback — required"],
+            ["Deal stage (Closed Won)", "Opportunity", "Filters the dataset", "No fallback — required"],
+            ["Deal value (ACV)", "Opportunity", "Weights vertical scoring", "Use average ACV as estimate"],
+            ["Primary contact role / job title", "Contact", "Champion and buyer analysis", "Flag for manual enrichment"],
+            ["Industry / vertical", "Account", "Core vertical pattern analysis", "Enrich via Clearbit or Apollo"],
+            ["Employee count", "Account", "Company size segmentation", "Enrich via Clearbit or Apollo"],
+            ["Tech stack", "Account", "Technographic lookalike matching", "Source from BuiltWith or Clearbit"],
+            ["Engagement history", "Account + Contact", "Signal matching for Tier 1 definition", "Pull from marketing automation"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Required Source Data — Proof Assets and Purchase Reasons"
+        },
+        {
+          "type": "table",
+          "columns": ["Source", "What It Feeds", "Minimum Required"],
+          "rows": [
+            ["Gong / Chorus call recordings or transcripts", "Purchase reason extraction", "5+ win calls per vertical"],
+            ["CRM deal notes (win/loss fields)", "Purchase reason fallback", "Populated on 60%+ of won deals"],
+            ["Customer interviews (9-min recorded)", "Case study creation", "2+ interviews per vertical"],
+            ["CSAT / NPS survey responses", "Testimonial sourcing", "5+ responses per vertical"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Pre-Launch Readiness Checklist"
+        },
+        {
+          "type": "table",
+          "columns": ["Check", "Status"],
+          "rows": [
+            ["CRM has 30+ closed-won deals with close dates populated", ""],
+            ["Industry field populated on 80%+ of won accounts", ""],
+            ["Employee count populated on 70%+ of won accounts", ""],
+            ["Primary contact role populated on 70%+ of won deals", ""],
+            ["At least 5 win call transcripts or detailed CRM notes available", ""],
+            ["At least 2 customers willing to do a 9-minute recorded interview", ""],
+            ["DiscoLike, Ocean.io, and AI Ark accounts active", ""],
+            ["n8n instance running with CRM and LinkedIn Ads connections tested", ""],
+            ["Notion workspace created with appropriate databases", ""],
+            ["Human reviewer assigned for weekly QA checkpoint", ""]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part II — System Design: Workflow Overview",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "There are 7 core workflows in this system. Each runs on its own cadence, produces a defined output, and has at least one human review point. Read this section before diving into the individual workflow guides."
+        },
+        {
+          "type": "table",
+          "columns": ["#", "Workflow Name", "Objective", "Frequency", "Key Output"],
+          "rows": [
+            ["1", "Vertical Intelligence Engine", "Find the verticals most likely to convert and define TAL rules", "Quarterly + ad hoc", "Vertical scorecard + TAL criteria"],
+            ["2", "Proof Asset Factory", "Turn customer interviews into reusable proof assets", "Per interview (ongoing)", "Case studies, quotes, ad snippets"],
+            ["3", "Lookalike Account + Contact Discovery", "Build a qualified account and contact list from closed-won seeds", "Monthly refresh", "Ranked lookalike account + contact list"],
+            ["4", "Signal Matching and Account Tiering", "Match accounts to live pain signals and assign Tier 1/2/3", "Weekly", "Tiered account list with signal annotations"],
+            ["5", "Pain Signal → Problem Statement Engine", "Translate raw signals into contact-level problem statements", "Weekly (after Workflow 4)", "Problem statement per contact in CRM + Notion"],
+            ["6", "Messaging Engine", "Generate outbound-ready copy per contact, vertical, and channel", "Weekly (after Workflow 5)", "Email, DM, and ad copy per Tier 1 contact"],
+            ["7", "Multi-Channel Distribution", "Route messaging and assets to Outreach, LinkedIn Ads, and DMs", "Weekly (after Workflow 6)", "Live sequences, ad sets, DM queue"]
+          ]
+        },
+        {
+          "type": "table",
+          "columns": ["Workflow", "Human Review Points", "Success Criteria"],
+          "rows": [
+            ["1. Vertical Intelligence", "Vertical scorecard review before TAL rules are finalized", "Verticals with 70%+ win rate confidence identified; TAL rules approved"],
+            ["2. Proof Asset Factory", "Interview transcript review; case study editorial review before publishing", "At least 1 complete case study per target vertical"],
+            ["3. Lookalike Discovery", "Lookalike list review — remove obvious bad fits before tiering", "List contains 200+ accounts with 70%+ similarity score"],
+            ["4. Signal Matching + Tiering", "Tier 1 list reviewed before messaging begins", "Tier 1 list contains 20–80 accounts with verified signals"],
+            ["5. Problem Statement Engine", "Spot-check 10% of problem statements for accuracy", "Problem statements match actual pain — not generic"],
+            ["6. Messaging Engine", "All Tier 1 messaging reviewed before sequence launch", "No hallucinated references; pain signal is verifiable"],
+            ["7. Distribution", "Sequence and ad creative approved before going live", "Sequences enrolled; ads submitted; DMs queued"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 1,
+      "title": "Workflow 1: Vertical Intelligence Engine",
+      "intro": "This workflow answers one question: which verticals close at the highest rate, fastest, and at the highest ACV — and what attributes predict that outcome? The output becomes the source of truth for everything downstream: TAL rules, case study targeting, and lookalike seeding.",
+      "substeps": [
+        {
+          "id": "1A",
+          "title": "Data Extraction — Pull 90 Days of Closed-Won",
+          "body": "Export or query your CRM for all closed-won deals in the last 90 days. For early runs, use 12–18 months if 90 days produces fewer than 30 deals.",
+          "labeled_sections": [
+            {
+              "label": "Required Fields in the Export",
+              "type": "bullet_list",
+              "items": [
+                "Deal ID, Close date, Deal value (ACV)",
+                "Account: Industry, Employee count, HQ country, Tech stack (if available)",
+                "Primary contact: Job title, Seniority, Department",
+                "Deal metadata: Time to close (days), Number of stakeholders, Sequence touchpoints before reply"
+              ]
+            }
+          ],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Data Cleaning Pre-Analysis",
+              "code": "System: You are a CRM data analyst. Normalize the following closed-won deal export.\n\nTasks:\n1. Standardize industry names (merge duplicates, e.g. 'Software' + 'SaaS' = 'SaaS')\n2. Fill null employee_count with 'unknown' (do not guess)\n3. Flag any records missing close_date or deal_value\n4. Return a cleaned JSON array with the same schema\n\nInput: {{$json.crm_export_csv}}\n\nOutput format:\n{\n  \"cleaned_records\": [...],\n  \"flagged_records\": [...],\n  \"normalization_log\": [...]\n}"
+            }
+          ],
+          "pro_tips": [
+            {
+              "title": "Minimum Sample Size Warning",
+              "text": "If any single vertical has fewer than 5 closed-won deals, do not build TAL rules for that vertical yet. Mark it as 'emerging' in the scorecard and revisit next quarter. Overfitting to 3–4 data points produces noise, not patterns."
+            }
+          ]
+        },
+        {
+          "id": "1B",
+          "title": "Pattern Analysis — Run Vertical Intelligence Skill",
+          "body": "Feed the cleaned closed-won dataset to Claude with the pattern analysis prompt. Claude will identify vertical clusters, common firmographic attributes, and winning deal characteristics.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Vertical Intelligence Analysis",
+              "code": "System: You are a GTM strategist analyzing closed-won CRM data to identify the highest-converting market segments.\n\nAnalyze the following closed-won deals and return:\n1. Top 3-5 verticals ranked by: win rate, average ACV, and average close time\n2. For each vertical: 3-5 firmographic attributes most common in winning accounts\n3. For each vertical: the job titles that appear most often as primary contacts\n4. Patterns that cross verticals (shared attributes of all winning deals)\n5. Any verticals with <5 deals — flag as 'insufficient sample'\n6. A confidence score (0-100) for each vertical pattern based on sample size\n\nDisqualify any pattern that appears in fewer than 30% of deals in that vertical.\n\nInput data: {{$json.cleaned_crm_records}}\n\nOutput format:\n{\n  \"verticals\": [\n    {\n      \"name\": \"vertical name\",\n      \"deal_count\": N,\n      \"avg_acv\": N,\n      \"avg_close_days\": N,\n      \"confidence_score\": 0-100,\n      \"firmographic_signals\": [...],\n      \"primary_contact_titles\": [...],\n      \"behavioral_patterns\": [...]\n    }\n  ],\n  \"cross_vertical_patterns\": [...],\n  \"flagged_verticals\": [...]\n}"
+            }
+          ],
+          "pro_tips": [
+            {
+              "title": "Strong vs Weak Vertical Insight",
+              "text": "WEAK: 'SaaS companies tend to buy.' STRONG: 'Series B SaaS companies with 80–200 employees, Salesforce in tech stack, and a VP Sales hired in the last 6 months close 68% of the time at $85K ACV in 47 days.' The more specific the pattern, the more actionable the TAL rules."
+            }
+          ]
+        },
+        {
+          "id": "1C",
+          "title": "Vertical Scoring and TAL Rule Generation",
+          "body": "Apply the vertical scoring formula to rank verticals for prioritization. Use the output to generate structured TAL criteria fed directly into DiscoLike and Ocean.io.",
+          "labeled_sections": [
+            {
+              "label": "Vertical Scoring Formula",
+              "type": "paragraph",
+              "text": "Vertical Score = (Win Rate % x 0.4) + (ACV Index x 0.35) + (Close Speed Index x 0.25). Where: ACV Index = (Vertical ACV / Overall Avg ACV) x 100. Close Speed Index = (Overall Avg Days / Vertical Avg Days) x 100. Score above 80 = Tier A (priority). 60–80 = Tier B. Below 60 = deprioritized."
+            }
+          ],
+          "tables": [
+            {
+              "columns": ["Vertical", "Win Rate", "Avg ACV", "Avg Close Days", "Vertical Score", "Priority Tier"],
+              "rows": [
+                ["Series B SaaS, 80-250 EE", "68%", "$87K", "44 days", "88", "A"],
+                ["Regional Staffing, 50-150 EE", "54%", "$62K", "52 days", "71", "B"],
+                ["Professional Services, 100-300 EE", "41%", "$95K", "78 days", "63", "B"],
+                ["Healthcare Tech, <50 EE", "29%", "$41K", "91 days", "41", "Deprioritized"]
+              ]
+            }
+          ],
+          "pro_tips": []
+        },
+        {
+          "id": "1D",
+          "title": "Human QA — Review and Approve Vertical Scorecard",
+          "body": "Before any downstream workflow uses these vertical profiles, a human must review the scorecard. This is the most important QA gate in the system — everything downstream is built on these patterns.",
+          "labeled_sections": [
+            {
+              "label": "Review Criteria",
+              "type": "numbered_list",
+              "items": [
+                "Do the top verticals match your team's intuition about where you win? If not, investigate before proceeding.",
+                "Are the confidence scores above 70 for the verticals you plan to target? If not, expand the data window.",
+                "Do the TAL rules exclude obvious bad-fit accounts? Test 5 known bad-fit companies against the rules.",
+                "Are the primary contact titles accurate? Cross-check against 3 recent won deals manually."
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 2,
+      "title": "Workflow 2: Proof Asset Factory",
+      "intro": "This workflow converts real customer conversations into a reusable library of proof assets. No proof asset gets built without a real interview. No interview gets published without editorial review. This is the content layer that makes all outbound messaging credible.",
+      "substeps": [
+        {
+          "id": "2A",
+          "title": "Interview Sourcing — Who to Interview and How",
+          "body": "Target one economic buyer and one champion (end user) per vertical for the initial build. Schedule 9-minute recorded interviews. This is the minimum viable proof asset input.",
+          "labeled_sections": [
+            {
+              "label": "Interview Candidate Criteria",
+              "type": "bullet_list",
+              "items": [
+                "Closed within the last 12 months (fresh outcome data)",
+                "Deal had a documented before-state problem (pipeline visibility, meeting booking, CRM chaos)",
+                "Customer is willing to be quoted and named in a case study",
+                "Preference for customers in your top Tier A verticals from Workflow 1"
+              ]
+            },
+            {
+              "label": "9-Minute Interview Structure",
+              "type": "numbered_list",
+              "items": [
+                "Min 0–1: Context — what is your role and what does your team own?",
+                "Min 1–3: Before state — what was the specific problem before you bought? What was it costing you?",
+                "Min 3–5: Decision — what made you choose this solution over alternatives?",
+                "Min 5–7: After state — what has changed measurably since you started? Specific numbers if possible.",
+                "Min 7–9: Recommendation — what would you say to a peer at a similar company?"
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": [
+            {
+              "title": "Get Specifics in Real Time",
+              "text": "During the interview, push for numbers. If a customer says 'we saw improvement in pipeline visibility,' ask: what specifically changed — meeting rate, forecast accuracy, rep activity? The specific metric is what makes the case study credible and the ad copy stop the scroll."
+            }
+          ]
+        },
+        {
+          "id": "2B",
+          "title": "Transcript Processing — Claude Extracts Proof Elements",
+          "body": "Feed the recording transcript to Claude. Claude extracts the structured proof elements needed to build all downstream assets.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Proof Asset Extraction",
+              "code": "System: You are a B2B case study editor. Extract structured proof elements from the following customer interview transcript.\n\nExtract and return:\n1. Purchase reason — the primary problem that drove the purchase decision\n2. Before state — specific description of what was broken or painful before purchase\n3. After state — specific description of what improved after purchase\n4. Measurable outcome — any specific number, percentage, or time metric mentioned\n5. Emotional language — phrases the customer used that sound human and visceral (not corporate)\n6. Proof snippets — 3-5 standalone quote fragments usable in ads, emails, or DMs\n7. Testimonial — a 2-3 sentence polished testimonial the customer would approve\n8. Confidence score — your confidence in the accuracy of each extraction (0-100)\n\nTranscript: {{$json.interview_transcript}}\nCustomer: {{$json.customer_name}}, {{$json.customer_title}}, {{$json.vertical}}\n\nReturn as structured JSON."
+            }
+          ],
+          "pro_tips": []
+        },
+        {
+          "id": "2C",
+          "title": "Asset Creation and Storage",
+          "body": "From the structured extraction, Claude generates all proof asset formats. Each is stored in Notion with a defined naming convention and tagged by vertical and asset type.",
+          "labeled_sections": [
+            {
+              "label": "Asset Output Types",
+              "type": "numbered_list",
+              "items": [
+                "Written case study (600–900 words): Problem / Solution / Result with exact customer quotes",
+                "Video case study script: Intro hook + 3 key moments + CTA (for 90-second edit from interview footage)",
+                "Quote bank: 5–10 standalone quotes tagged by pain theme",
+                "Testimonial block: 2–3 sentence polished testimonial with name, title, company",
+                "Ad snippet: 1–2 line proof statement for LinkedIn single-image ad headline",
+                "Sales proof card: One-pager PDF — problem, solution, outcome, quote"
+              ]
+            },
+            {
+              "label": "File Naming Convention",
+              "type": "paragraph",
+              "text": "Format: [VERTICAL]-[COMPANY_SLUG]-[ASSET_TYPE]-[VERSION].md. Example: saas-acmecorp-case-study-v1.md. Store in Notion: Proof Asset Library > [Vertical] > [Company]. Tag with: vertical, primary_pain_theme, asset_type, date_created, approval_status."
+            }
+          ],
+          "tables": [
+            {
+              "columns": ["Asset Type", "Email", "LinkedIn DM", "LinkedIn Ad", "Sales Deck", "Website"],
+              "rows": [
+                ["Written case study", "Link in body", "Link in follow-up", "No", "Embed", "Publish"],
+                ["Quote bank", "1 quote per email", "1 quote per DM", "Headline", "Pull quotes", "Testimonial section"],
+                ["Ad snippet", "No", "No", "Primary headline", "No", "Hero section"],
+                ["Video case study", "Link", "Link", "Video ad", "Embed", "Embed"]
+              ]
+            }
+          ],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 3,
+      "title": "Workflow 3: Lookalike Account + Contact Discovery",
+      "intro": "With vertical profiles and TAL rules from Workflow 1, this workflow expands the addressable universe to find accounts and contacts that match your closed-won customers. The output is a raw list — tiering happens in Workflow 4.",
+      "substeps": [
+        {
+          "id": "3A",
+          "title": "Account Lookalike Discovery — DiscoLike + Ocean.io",
+          "body": "Seed DiscoLike with your closed-won company list for the top Tier A verticals. Export the lookalike results, then cross-reference with Ocean.io for firmographic enrichment and expansion.",
+          "labeled_sections": [
+            {
+              "label": "DiscoLike Setup Steps",
+              "type": "numbered_list",
+              "items": [
+                "Upload closed-won company domains (CSV) as seeds — use only Tier A vertical accounts",
+                "Set similarity threshold to 0.75 or higher",
+                "Filter by: employee range, country, and industry matching your TAL rules",
+                "Export the result — target 300–500 accounts per vertical"
+              ]
+            },
+            {
+              "label": "Suppression Rule — Run Before Discovery",
+              "type": "paragraph",
+              "text": "Always suppress existing customers, current open opportunities, and accounts lost in the last 12 months before running any discovery. Running on an un-suppressed list is the most common cause of embarrassing outreach to existing customers."
+            }
+          ],
+          "tables": [
+            {
+              "columns": ["Attribute", "Strong Lookalike (Include)", "Weak Lookalike (Suppress)"],
+              "rows": [
+                ["Employee count", "Within 40% of seed company range", "Outside 2x or 0.5x of seed range"],
+                ["Industry", "Exact vertical match or 1-level adjacent", "Different vertical or unclear category"],
+                ["Tech stack", "1+ shared tools with seed companies", "No tech stack overlap"],
+                ["Company age", "Within 3 years of seed company median", "Pre-revenue or 20+ years old"],
+                ["Funding stage", "Same stage +/- 1 round", "Bootstrapped when seeds are all funded"]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": []
+        },
+        {
+          "id": "3B",
+          "title": "Contact Lookalike Discovery — AI Ark",
+          "body": "Use AI Ark to find individuals at the lookalike accounts who match the champion and economic buyer profiles from Workflow 1. Target 2–3 contacts per account.",
+          "labeled_sections": [
+            {
+              "label": "Contact Selection Rules",
+              "type": "bullet_list",
+              "items": [
+                "Primary target: Job title matches primary contact titles from Workflow 1 vertical profile",
+                "Secondary target: One level up from primary (the economic buyer who approves budget)",
+                "Exclude: IT, HR, Finance unless Workflow 1 specifically identified these as buying roles",
+                "Preference: Contacts hired within the last 18 months (more likely to be in buying mode)",
+                "Preference: Contacts with recent LinkedIn activity in last 30 days"
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        },
+        {
+          "id": "3C",
+          "title": "CRM Engagement Match",
+          "body": "Before the lookalike list moves to Workflow 4, Claude queries CRM to identify which accounts already have activity — engagement, past sequences, or open opportunities.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: CRM Engagement Match",
+              "code": "System: You are a CRM analyst. Given a list of lookalike accounts and a CRM engagement export, identify:\n\n1. Accounts in CRM with engagement in the last 28 days (website visits, email opens, ad clicks)\n2. Accounts in CRM with no engagement in the last 90 days\n3. Accounts NOT in CRM (net new accounts)\n\nFor each account, return:\n- account_name, domain\n- crm_status: 'active_engagement' | 'cold_in_crm' | 'not_in_crm'\n- last_engagement_date (if applicable)\n- contact_count_in_crm\n\nMatch on domain name. Flag fuzzy matches (confidence <90%) for human review."
+            }
+          ],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 4,
+      "title": "Workflow 4: Signal Matching and Account Tiering",
+      "intro": "This workflow takes the lookalike account list and enriches each account with live pain signals. The output is a tiered account list: Tier 1 (ready now), Tier 2 (warm up with ads), Tier 3 (long-cycle nurture). Only Tier 1 gets direct outbound.",
+      "substeps": [
+        {
+          "id": "4A",
+          "title": "Signal Taxonomy — What Counts as a Pain Signal",
+          "body": "Not all signals are equal. Use this taxonomy to classify signal quality before applying weights. High-specificity signals closest to the pain your product solves carry the most weight.",
+          "labeled_sections": [],
+          "tables": [
+            {
+              "columns": ["Signal Type", "Example", "Pain Inference", "Signal Weight"],
+              "rows": [
+                ["SDR / BDR job posting", "Hiring 2+ SDRs", "Not booking enough meetings — pipeline is thin", "0.90"],
+                ["VP Sales or CRO hire", "New VP Sales in last 60 days", "Revenue org in transition — new leader building stack", "0.85"],
+                ["Revenue team growth >5%", "6+ new revenue hires in 30 days", "Scaling fast — need infrastructure to keep up", "0.85"],
+                ["SalesOps or RevOps tool install", "New Outreach or Salesloft detected", "Lead follow-up is poor — automating out of desperation", "0.75"],
+                ["RevOps hire", "Hiring RevOps Manager", "CRM / reporting is a mess — revenue ops broken", "0.75"],
+                ["Content engagement", "3+ content pieces consumed in 28 days", "In-market research — not pain-specific", "0.45"],
+                ["G2 / review site activity", "Profile views on competitor pages", "Evaluating alternatives — buying cycle active", "0.40"]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": [
+            {
+              "title": "28-Day Window Is Non-Negotiable",
+              "text": "Signals older than 28 days decay in relevance. A company that hired an SDR 90 days ago has already made their hiring decision. Only signals within the last 28 days count toward the Tier 1 definition."
+            }
+          ]
+        },
+        {
+          "id": "4B",
+          "title": "Signal Matching — Claude Scores Each Account",
+          "body": "For each lookalike account, Claude pulls available signals and calculates a signal score. Accounts scoring 60+ with engagement qualify for Tier 1.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Signal Scoring Per Account",
+              "code": "System: You are a B2B sales intelligence analyst. Score the following account based on active pain signals that suggest they are experiencing the problem our product solves.\n\nOur product solves: {{$json.product_pain_statement}}\n\nSignal Sources:\n- LinkedIn hiring data: {{$json.linkedin_hiring_data}}\n- Tech stack installs (last 30 days): {{$json.tech_installs}}\n- CRM engagement (last 28 days): {{$json.crm_engagement}}\n- Headcount change (30-day): {{$json.headcount_change}}\n\nSignal weights: {{$json.signal_weight_table}}\n\nReturn:\n{\n  \"account_name\": \"...\",\n  \"signals_detected\": [\n    { \"signal_type\": \"...\", \"evidence\": \"...\", \"recency_days\": N, \"weight\": N }\n  ],\n  \"total_signal_score\": 0-100,\n  \"account_tier\": \"Tier 1 | Tier 2 | Tier 3\",\n  \"primary_pain_hypothesis\": \"one sentence\",\n  \"confidence\": 0-100\n}"
+            }
+          ],
+          "tables": [
+            {
+              "columns": ["Tier", "Signal Score", "Engagement Requirement", "Action"],
+              "rows": [
+                ["Tier 1", "60+", "Brand engagement in last 28 days", "Direct outbound immediately"],
+                ["Tier 2", "40–59", "No engagement required", "Run ABM ads 2–4 weeks, then outbound"],
+                ["Tier 3", "0–39", "N/A", "Monthly monitoring, no active outbound"]
+              ]
+            }
+          ],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 5,
+      "title": "Workflow 5: Pain Signal to Problem Statement Engine",
+      "intro": "This is the intelligence layer that separates this system from generic outbound. The output is a per-contact problem statement that describes the buyer's current reality in language they recognize and feel. This is what earns a reply.",
+      "substeps": [
+        {
+          "id": "5A",
+          "title": "The Four Layers: Signal to Problem Statement",
+          "body": "Each layer is more specific and more resonant than the last. Do not skip layers. Jumping from signal to messaging is the most common cause of generic outbound.",
+          "labeled_sections": [
+            {
+              "label": "Layer Definitions",
+              "type": "numbered_list",
+              "items": [
+                "Signal: An observable event. Example: 'They posted a job for 2 SDRs.'",
+                "Pain: The business problem the signal reveals. Example: 'They are not booking enough meetings.'",
+                "Purchase Reason: The documented reason a similar company bought. Example: 'Bought because: team was losing 4+ hours/week to manual lead research with no improvement in meeting rate.'",
+                "Problem Statement: A one-line buyer-language description of the pain. Example: 'Flying blind on which accounts are worth the time — while the competition is moving faster.'"
+              ]
+            }
+          ],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Signal to Problem Statement Transformation",
+              "code": "System: You are a B2B messaging strategist. Transform raw signals into problem statements that describe a buyer's current reality in their own language.\n\nAccount: {{$json.account_name}}\nContact: {{$json.contact_name}}, {{$json.contact_title}}\nVertical: {{$json.vertical}}\nDetected pain signals: {{$json.signals_detected}}\nPrimary pain hypothesis: {{$json.primary_pain_hypothesis}}\nPurchase reasons from similar won accounts: {{$json.purchase_reasons}}\n\nTransformation framework:\n1. Observed signal -> what is actually happening at this company\n2. Inferred pain -> what business problem this signal reveals\n3. Likely business consequence -> what the pain is costing them\n4. Problem statement -> one sentence in buyer language that captures the pain\n5. Supporting proof -> which case study or quote best matches this pain\n6. Best CTA angle -> what offer is most relevant given this pain\n\nAdapt the problem statement to sound right to a {{$json.contact_title}}, not a generic 'decision maker.'\n\nReturn as structured JSON with confidence score."
+            }
+          ],
+          "tables": [],
+          "pro_tips": []
+        },
+        {
+          "id": "5B",
+          "title": "Strong vs Weak Problem Statement Examples",
+          "body": "Train your QA eye on these examples before reviewing Claude's output. The difference is often a single level of specificity.",
+          "labeled_sections": [],
+          "tables": [
+            {
+              "columns": ["Signal", "Weak Problem Statement", "Strong Problem Statement"],
+              "rows": [
+                ["SDR postings", "You're hiring SDRs and might need help with pipeline.", "Hiring more SDRs into a broken meeting-booking motion doesn't fix the root problem — it just scales the noise."],
+                ["RevOps hire", "We saw you're hiring a RevOps Manager.", "Flying blind on which deals will actually close this quarter while your CRM data sits three quarters behind reality."],
+                ["Revenue team growth", "Congrats on the team growth.", "Scaling headcount when the infrastructure can't keep up means Q3 looks exactly like Q2, just with more payroll."]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": [
+            {
+              "title": "Anti-Patterns to Avoid",
+              "text": "Never start a problem statement with 'We noticed...' or 'I saw that...' — this makes the message about your observation, not their pain. Never use corporate jargon. The best problem statements sound like something a frustrated executive would say at 11pm after a bad pipeline review."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 6,
+      "title": "Workflow 6: Messaging Engine",
+      "intro": "This workflow turns the structured data from Workflows 1–5 into outbound-ready copy for every channel. The core narrative structure is fixed. The proof, pain signal, persona, and vertical adapt to each contact. Output goes directly to Workflow 7 for distribution.",
+      "substeps": [
+        {
+          "id": "6A",
+          "title": "The Four-Beat Narrative Structure",
+          "body": "Every message in this system follows the same four-beat structure. The beats adapt in length and tone by channel, but the logic is always: proof opener, problem statement, pain signal echo, evidence + CTA.",
+          "labeled_sections": [
+            {
+              "label": "The Four Beats",
+              "type": "numbered_list",
+              "items": [
+                "BEAT 1 — Proof opener: 'We just helped {similar_company} add {outcome} by {your solution}.' Opens with evidence, not with you.",
+                "BEAT 2 — Problem statement: 'Before we worked together, {problem_statement}.' Makes the pain specific and visceral.",
+                "BEAT 3 — Pain signal echo: 'If you're seeing {pain_signal}, that's usually the same pattern we walk into right before this system starts working.' Shows you see their reality.",
+                "BEAT 4 — Evidence + CTA: 'Here's the 3-minute breakdown of the play we ran for {similar_company}: {case_study_link}.' Proof with a specific, low-commitment next step."
+              ]
+            }
+          ],
+          "code_blocks": [
+            {
+              "title": "Claude Prompt: Email Message Generation",
+              "code": "System: You are a B2B outbound copywriter. Write a cold email using the four-beat narrative exactly.\n\nInputs:\n- Similar company: {{$json.proof_company}}\n- Outcome achieved: {{$json.proof_outcome}}\n- Problem statement: {{$json.problem_statement}}\n- Pain signal observed: {{$json.pain_signal_evidence}}\n- Case study link: {{$json.case_study_url}}\n- Recipient: {{$json.contact_name}}, {{$json.contact_title}}\n- Vertical: {{$json.vertical}}\n\nRules:\n1. Subject line: 6 words or fewer. No clickbait.\n2. Email body: 5-7 sentences total.\n3. Do not mention your company name in the first two sentences.\n4. Do not use: leverage, optimize, synergy, world-class.\n5. Pain signal echo must reference something observable — not 'I noticed you visited our site.'\n6. CTA: One specific, low-commitment ask.\n\nReturn JSON with subject_line, email_body, confidence, personalization_elements_used."
+            }
+          ],
+          "pro_tips": [
+            {
+              "title": "Personalization vs Relevance",
+              "text": "Mentioning someone's company name or recent LinkedIn post is personalization. Describing the pain they are living through right now based on observable signals is relevance. Relevance drives replies. Build the latter first; add the former as a light touch."
+            }
+          ]
+        },
+        {
+          "id": "6B",
+          "title": "Channel Adaptation Rules",
+          "body": "The same core narrative is adapted for each channel. Pain and proof are identical — format, length, and tone change to match where the buyer is reading.",
+          "labeled_sections": [],
+          "tables": [
+            {
+              "columns": ["Channel", "Length", "Tone", "CTA", "Key Constraint"],
+              "rows": [
+                ["Cold email (Step 1)", "5–7 sentences", "Direct, peer-to-peer", "Specific 15-min ask", "No corporate jargon. Max 1 link."],
+                ["Email follow-up (Step 2)", "3–4 sentences", "Brief, adds new angle", "Re-offer or softer ask", "Reference step 1 without recapping it."],
+                ["LinkedIn DM (initial)", "3–4 sentences", "Conversational, warmer", "Question or observation", "No pitch in message 1."],
+                ["LinkedIn DM (follow-up)", "2–3 sentences", "Casual", "Share the case study link", "Mirror the email sequence, not copy it."],
+                ["LinkedIn ad copy", "Headline: 8 words max. Body: 2 sentences", "Arresting, pattern-interrupt", "Click to case study", "Lead with outcome number."],
+                ["Retargeting ad", "Headline: 6 words. Body: 1 sentence", "Social proof", "Click to case study or demo", "Use a customer quote as headline."]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 7,
+      "title": "Workflow 7: Multi-Channel Distribution Orchestration",
+      "intro": "This is the terminal workflow. It takes the tiered account list, approved messaging, and proof assets from the previous workflows and routes everything to the right channel. n8n handles orchestration. Humans approve before anything goes live.",
+      "substeps": [
+        {
+          "id": "7A",
+          "title": "Asset-to-Channel Routing Logic",
+          "body": "One set of structured inputs produces assets for every channel. n8n reads approved Notion records and routes each asset type to its destination automatically.",
+          "labeled_sections": [
+            {
+              "label": "Distribution Routing Map",
+              "type": "numbered_list",
+              "items": [
+                "Tier 1 contact with approved messaging → Outreach sequence enrollment (Steps 1–4: email, bump, DM note, final email)",
+                "Tier 1 account with no contact engagement → LinkedIn ABM ad set (n8n → LinkedIn Ads API)",
+                "Tier 2 account → LinkedIn ABM ad set only (no direct outbound until engagement signal fires)",
+                "Proof asset approved → LinkedIn organic post draft + website case study page + sales enablement upload"
+              ]
+            }
+          ],
+          "code_blocks": [
+            {
+              "title": "n8n: Tier 1 Contact to Outreach Enrollment",
+              "code": "Webhook Trigger: New Tier 1 contact approved in Notion\n│\n├── HTTP Request: Notion API — Get contact record\n│   (name, email, company, problem_statement, pain_signal, case_study_url)\n│\n├── HTTP Request: Outreach API — Create Prospect\n│   POST /prospects\n│   { email, firstName, lastName, account,\n│     customFields: { problemStatement, painSignal } }\n│\n├── HTTP Request: Outreach API — Add to Sequence\n│   POST /sequenceStates\n│   { prospectId, sequenceId: TIER1_SEQUENCE_ID, mailboxId }\n│\n└── HTTP Request: Notion API — Update record\n    { outreach_enrolled: true, enrolled_date: now }"
+            },
+            {
+              "title": "n8n: Tier 2 Account to LinkedIn Ad Campaign",
+              "code": "Webhook Trigger: New Tier 2 account approved in Notion\n│\n├── HTTP Request: Notion API — Get account record\n│\n├── HTTP Request: LinkedIn Ads API — Create Campaign\n│   POST /adCampaigns\n│   { name: 'ABM-{account}-{date}',\n│     targeting: { companyNames: [account_name] },\n│     objective: 'BRAND_AWARENESS', dailyBudget: 25 }\n│\n├── HTTP Request: LinkedIn Ads API — Create Creative\n│   POST /adCreatives\n│   { campaign: campaignId, headline: ad_headline,\n│     body: ad_body, destinationUrl: case_study_url }\n│\n└── Notion: Update account — linkedin_ad_active: true"
+            }
+          ],
+          "pro_tips": []
+        },
+        {
+          "id": "7B",
+          "title": "Outbound Sequence Architecture",
+          "body": "Every Tier 1 contact enters a 4-step sequence in Outreach. Steps are spaced to give time to engage before escalating.",
+          "labeled_sections": [],
+          "tables": [
+            {
+              "columns": ["Step", "Channel", "Day", "Content", "CTA"],
+              "rows": [
+                ["1", "Email", "Day 1", "Four-beat narrative: proof opener + problem statement + pain signal echo + case study link", "15-min call or 'worth a look?'"],
+                ["2", "Email", "Day 4", "Bump: 2 sentences. Reference case study. Add a different proof element (a quote).", "Same ask, lower commitment"],
+                ["3", "LinkedIn DM", "Day 7", "Conversational version. Reference email only if they opened it.", "Question about the pain signal topic"],
+                ["4", "Email", "Day 12", "Break-up email: 2 sentences. State what changed for similar company. Easy out offered.", "Reply 'not now' or book time"]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": [
+            {
+              "title": "Cadence Refresh Rule",
+              "text": "If a contact opens or clicks but does not reply after Step 4, move them to a 30-day hold. When a new pain signal fires for their account, re-enroll with updated messaging. Never re-use the same message twice."
+            }
+          ]
+        },
+        {
+          "id": "7C",
+          "title": "CRM Writeback and Activity Logging",
+          "body": "Every action taken by the distribution layer is written back to CRM and logged in Notion. This creates the measurement layer and ensures nothing is double-enrolled or lost.",
+          "labeled_sections": [
+            {
+              "label": "CRM Writeback Fields",
+              "type": "bullet_list",
+              "items": [
+                "Contact: outreach_enrolled (boolean), sequence_name, enrolled_date, problem_statement_used",
+                "Account: tier_assigned, tier_assigned_date, linkedin_ad_active, campaign_id",
+                "Activity: signal_detected (type + date), problem_statement_generated_date, messaging_approved_date",
+                "Pipeline attribution: first_touch_channel, first_touch_date, sequence_name, case_study_viewed (boolean)"
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 8,
+      "title": "Part IV — Build Layer: Claude Code Prompt Stack and Skills",
+      "intro": "This section defines the complete Claude Code architecture: the master orchestrator, individual Skills, their inputs and outputs, and the rules for confidence, fallback, and error handling.",
+      "substeps": [
+        {
+          "id": "8A",
+          "title": "Master Orchestrator Prompt",
+          "body": "The master orchestrator coordinates all seven workflows. It reads system state from Notion, determines which workflows are ready to run, executes them in order, and writes outputs back to the data layer.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Master Orchestrator Prompt",
+              "code": "System: You are the master orchestrator for the Agentic Pipeline System. Manage execution of 7 workflows in the correct order. Validate outputs at each step. Escalate to human reviewer when confidence falls below threshold.\n\nCurrent system state: {{$json.notion_system_state}}\n\nExecution rules:\n1. Never run Workflow N+1 if Workflow N has unapproved outputs in the human review queue\n2. If any skill returns confidence < 60, flag the output and pause the workflow\n3. If any skill returns confidence < 40, discard the output and log an error\n4. Write all outputs to Notion before proceeding to the next step\n5. Log every action: workflow_id, action_type, timestamp, confidence_score\n\nAvailable skills:\nvertical_intelligence | proof_extraction | lookalike_match |\nsignal_scoring | problem_statement_engine | messaging_engine | distribution_router\n\nDetermine which workflows are ready to run and execute them in order. Return an execution log."
+            }
+          ],
+          "pro_tips": [
+            {
+              "title": "Retry Rules",
+              "text": "If a skill fails due to API error or timeout, retry once after 30 seconds. If it fails a second time, log the failure, pause the workflow, and alert the human operator. Do not retry a third time — investigate root cause first."
+            }
+          ]
+        },
+        {
+          "id": "8B",
+          "title": "Skill Inventory",
+          "body": "Each Skill is a standalone Claude Code prompt file with defined inputs, outputs, confidence thresholds, and fallback rules.",
+          "labeled_sections": [],
+          "tables": [
+            {
+              "columns": ["Skill Name", "Workflow", "Confidence Threshold", "Fallback Rule"],
+              "rows": [
+                ["vertical_intelligence", "1", "70", "Flag for human review; do not generate TAL rules"],
+                ["proof_extraction", "2", "75", "Flag specific fields below threshold; do not publish"],
+                ["lookalike_match", "3", "65", "Suppress accounts below 0.65 similarity"],
+                ["signal_scoring", "4", "60", "Default to Tier 3 if score is unreliable"],
+                ["problem_statement_engine", "5", "65", "Use vertical-level problem statement as fallback"],
+                ["messaging_engine", "6", "70", "Route to human review queue; do not enroll"],
+                ["distribution_router", "7", "85", "Pause all distribution; alert human immediately"]
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "pro_tips": []
+        },
+        {
+          "id": "8C",
+          "title": "File Organization Rules",
+          "body": "All Claude Code prompts, skill files, and output schemas are stored in a consistent folder structure.",
+          "labeled_sections": [
+            {
+              "label": "Folder Structure",
+              "type": "bullet_list",
+              "items": [
+                "/skills/ — Individual skill prompt files (one .md file per skill)",
+                "/schemas/ — JSON schemas for every skill output type",
+                "/outputs/ — Timestamped JSON outputs from each workflow run",
+                "/logs/ — Execution logs per orchestrator run",
+                "/prompts/ — Master orchestrator and sub-agent prompts",
+                "/assets/ — Generated case studies, messaging, and ad copy (markdown files)"
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 9,
+      "title": "Part IV — Build Layer: Data Models, Schemas, and File Structures",
+      "intro": "Standardized schemas prevent the system from producing inconsistent outputs. Every skill output must conform to its schema before being written to Notion or CRM. Validation runs automatically via n8n Code nodes.",
+      "substeps": [
+        {
+          "id": "9A",
+          "title": "Core Output Schemas",
+          "body": "These are the minimum required fields for each primary output object.",
+          "labeled_sections": [],
+          "code_blocks": [
+            {
+              "title": "Schema: Account Intelligence Object",
+              "code": "{\n  \"account_id\": \"string (CRM ID)\",\n  \"account_name\": \"string\",\n  \"domain\": \"string\",\n  \"vertical\": \"string\",\n  \"tier\": \"Tier 1 | Tier 2 | Tier 3\",\n  \"signal_score\": \"integer 0-100\",\n  \"signals_detected\": [\n    {\n      \"signal_type\": \"string\",\n      \"evidence\": \"string\",\n      \"detected_date\": \"ISO 8601\",\n      \"weight\": \"float 0-1\"\n    }\n  ],\n  \"primary_pain_hypothesis\": \"string\",\n  \"problem_statement\": \"string\",\n  \"supporting_proof_asset\": \"string (Notion URL)\",\n  \"confidence\": \"integer 0-100\",\n  \"human_approved\": \"boolean\",\n  \"approved_by\": \"string\",\n  \"approved_at\": \"ISO 8601\"\n}"
+            },
+            {
+              "title": "Schema: Contact Messaging Object",
+              "code": "{\n  \"contact_id\": \"string (CRM ID)\",\n  \"account_id\": \"string\",\n  \"contact_name\": \"string\",\n  \"contact_title\": \"string\",\n  \"email\": \"string\",\n  \"vertical\": \"string\",\n  \"problem_statement\": \"string\",\n  \"pain_signal_used\": \"string\",\n  \"proof_company\": \"string\",\n  \"proof_outcome\": \"string\",\n  \"case_study_url\": \"string\",\n  \"messaging\": {\n    \"email_subject\": \"string\",\n    \"email_step_1\": \"string\",\n    \"email_step_2\": \"string\",\n    \"email_step_4\": \"string\",\n    \"linkedin_dm_step_3\": \"string\",\n    \"linkedin_ad_headline\": \"string\",\n    \"linkedin_ad_body\": \"string\"\n  },\n  \"confidence\": \"integer 0-100\",\n  \"messaging_approved\": \"boolean\",\n  \"outreach_enrolled\": \"boolean\"\n}"
+            }
+          ],
+          "tables": [],
+          "pro_tips": []
+        },
+        {
+          "id": "9B",
+          "title": "Notion Database Schema",
+          "body": "The system uses five Notion databases. Each has defined properties, relations, and status fields.",
+          "labeled_sections": [
+            {
+              "label": "Five Core Notion Databases",
+              "type": "numbered_list",
+              "items": [
+                "Vertical Intelligence DB — Properties: Vertical name, Score, Priority tier, TAL rules (text), Confidence, Approved (checkbox), Last updated",
+                "Proof Asset Library — Properties: Asset type, Vertical, Company, Pain theme, Approval status, Asset URL, Date created",
+                "Account Intelligence DB — Properties: Account name, Domain, Tier, Signal score, Signals (multi-select), Problem statement, Proof asset (relation), Approved (checkbox)",
+                "Contact Messaging DB — Properties: Contact name, Account (relation), Messaging status, Outreach enrolled, Campaign ID, Human reviewer, Approved (checkbox)",
+                "Human Review Queue — Properties: Item type, Source workflow, Status (Pending/Approved/Rejected), Assigned to, Due date, Notes"
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        }
+      ]
+    },
+    {
+      "type": "workflow_complete",
+      "step_number": 10,
+      "title": "The Complete System Architecture",
+      "intro": "This is the full end-to-end view of all seven workflows. The system runs weekly for Workflows 4–7 and quarterly for Workflows 1–3. Human review gates are marked at each mandatory checkpoint.",
+      "diagram": "CRM: 90-Day Closed-Won Export\n│\n└── [HUMAN GATE 1] Vertical Intelligence Engine (Workflow 1)\n    Vertical Scorecard + TAL Rules saved to Notion\n    │\n    ├── Proof Asset Factory (Workflow 2) <-- Customer Interviews\n    │   [HUMAN GATE 2] Editorial Review\n    │   Proof Asset Library saved to Notion\n    │\n    └── DiscoLike + Ocean.io + AI Ark (Workflow 3)\n        Lookalike Account + Contact List\n        │\n        └── Signal Sources: LinkedIn / Tech Data / CRM\n            Signal Matching + Account Tiering (Workflow 4) [Weekly]\n            [HUMAN GATE 3] Tier 1 List Review\n            │\n            └── Problem Statement Engine (Workflow 5)\n                Problem Statement per Contact --> CRM + Notion\n                │\n                └── Messaging Engine (Workflow 6)\n                    [HUMAN GATE 4] Messaging Review\n                    │\n                    └── n8n Distribution Router (Workflow 7)\n                        [HUMAN GATE 5] Distribution Approval\n                        ├── Outreach: Tier 1 Sequence Enrollment\n                        ├── LinkedIn Ads: Tier 1+2 ABM Campaigns\n                        └── LinkedIn DMs: Tier 1 Step 3\n                            CRM Writeback + Notion Activity Log\n                            Pipeline Attribution",
+      "metrics": [
+        { "metric": "Total workflows", "value": "7" },
+        { "metric": "Weekly active workflows", "value": "4 (Workflows 4–7)" },
+        { "metric": "Mandatory human review gates", "value": "5" },
+        { "metric": "Tier 1 accounts targeted per week", "value": "20–80" },
+        { "metric": "Pipeline sourced (proven result)", "value": "$4.3M" },
+        { "metric": "System build time (first)", "value": "3–4 weeks" },
+        { "metric": "Weekly operating time (steady state)", "value": "4–8 hours" }
+      ]
+    },
+    {
+      "type": "human_review",
+      "title": "Human Review and QA Framework",
+      "steps": [
+        "Gate 1 — Vertical Scorecard: Before TAL rules are generated or lookalike discovery begins, approve the vertical scorecard. Check: do top verticals match team intuition? Are confidence scores above 70? Are sample sizes adequate?",
+        "Gate 2 — Proof Asset Editorial: Every case study and testimonial must be reviewed for accuracy, voice, and customer approval before entering the proof asset library. Check: are all claims accurate and verifiable? Has the customer approved use of their name?",
+        "Gate 3 — Tier 1 Account List: Before any outbound or ad spend is triggered, review the Tier 1 list. Check: do the pain signals make sense? Are there any existing customers, current opportunities, or obvious bad fits?",
+        "Gate 4 — Messaging Review: Every piece of messaging for Tier 1 contacts must be reviewed before entering an Outreach sequence. Check: is the pain signal verifiable and recent? Is the problem statement accurate? Did Claude hallucinate any claims?",
+        "Gate 5 — Distribution Approval: Final check before n8n routes sequences and ads. Check: are contacts correctly matched to their messaging? Are ad budgets set correctly? Are all UTM parameters in place for pipeline attribution?"
+      ],
+      "time_investment": "Weekly time investment at steady state: Gate 3 (Tier 1 review): 20–30 minutes. Gate 4 (Messaging review): 30–60 minutes depending on list size. Gate 5 (Distribution approval): 15–20 minutes. Total: 65–110 minutes per week. First-build HITL time is significantly higher — budget 3–5 hours for Workflow 1 and Workflow 2 gates."
+    },
+    {
+      "type": "section",
+      "title": "Part V — Operations: KPIs and Measurement",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "The system generates pipeline. The measurement layer proves it, identifies where it is breaking, and tells you what to fix. Track these metrics in a weekly report from CRM and Notion data. Automate the reporting — do not rely on manual tracking."
+        },
+        {
+          "type": "h2",
+          "text": "Pipeline and Conversion KPIs"
+        },
+        {
+          "type": "table",
+          "columns": ["KPI", "Definition", "Target", "How to Measure"],
+          "rows": [
+            ["Marketing Sourced Pipeline", "New pipeline where first touch was this system (sequence, ad, or DM)", "Track vs quota target", "CRM: pipeline source = 'Agentic System'"],
+            ["Signal-to-Sequence Rate", "% of Tier 1 accounts that result in a contact enrolled in a sequence", ">60%", "Notion: Tier 1 accounts / sequences enrolled"],
+            ["Sequence Reply Rate", "% of enrolled contacts who reply to the sequence", ">12%", "Outreach sequence analytics"],
+            ["Signal-to-Meeting Conversion", "% of Tier 1 accounts resulting in a booked meeting", ">8%", "CRM: meetings booked / Tier 1 accounts"],
+            ["Tier 1 to Opportunity Conversion", "% of Tier 1 accounts converting to open opportunity", ">15%", "CRM: opportunities created / Tier 1 accounts"],
+            ["Vertical Win Rate", "% of opportunities in each target vertical that close won", "Track per vertical", "CRM: won deals / total deals by vertical"],
+            ["Case Study Utilization Rate", "% of sequences where a case study link was clicked", ">25%", "UTM tracking on case study URLs"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "System Health KPIs"
+        },
+        {
+          "type": "table",
+          "columns": ["KPI", "Definition", "Warning Threshold"],
+          "rows": [
+            ["Tier 1 List Size (Weekly)", "Number of accounts reaching Tier 1 each week", "<10 accounts/week = signal sources need refresh"],
+            ["Average Signal Confidence Score", "Mean confidence of Claude's signal scoring outputs", "<65 = data quality issue upstream"],
+            ["Messaging Approval Rate", "% of generated messages that pass human review", "<70% = prompt or data quality issue"],
+            ["Proof Asset Coverage", "% of target verticals with at least 1 approved case study", "<50% = interview sourcing is blocked"],
+            ["CRM Writeback Success Rate", "% of distribution actions that successfully write to CRM", "<95% = n8n node failure — investigate immediately"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Reporting Cadence"
+        },
+        {
+          "type": "table",
+          "columns": ["Report", "Frequency", "Audience", "Key Metrics"],
+          "rows": [
+            ["Weekly Pipeline Report", "Every Monday", "Revenue team", "Tier 1 list size, sequences enrolled, meetings booked"],
+            ["Monthly System Health Report", "First Monday of month", "RevOps + Marketing", "All KPIs above, signal quality trends, proof asset coverage"],
+            ["Quarterly Vertical Review", "Start of each quarter", "GTM leadership", "Vertical win rates, ACV trends, TAL rule updates needed"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part V — Operations: Operating Cadence",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "The system is only as good as its operating cadence. These tasks are not optional — skipping the weekly refresh means Tier 1 accounts get stale signals, and stale signals produce generic messaging. Assign owners before launch."
+        },
+        {
+          "type": "h2",
+          "text": "Daily and Weekly Tasks"
+        },
+        {
+          "type": "table",
+          "columns": ["Task", "Owner", "Cadence", "Time"],
+          "rows": [
+            ["Review Outreach reply notifications", "AE / SDR", "Daily", "10 min"],
+            ["Check n8n execution log for errors", "RevOps", "Daily", "5 min"],
+            ["Run signal matching + tiering (Workflow 4)", "Claude Code / RevOps trigger", "Monday weekly", "Automated"],
+            ["Review and approve Tier 1 list (Gate 3)", "Marketing or RevOps", "Monday weekly", "20–30 min"],
+            ["Run problem statement + messaging engines (Workflows 5+6)", "Claude Code / n8n", "Monday afternoon", "Automated"],
+            ["Review and approve Tier 1 messaging (Gate 4)", "Marketing or AE lead", "Tuesday weekly", "30–60 min"],
+            ["Trigger distribution + approve (Gate 5)", "RevOps", "Tuesday afternoon", "15–20 min"],
+            ["Review weekly KPI report", "GTM leadership", "Friday weekly", "15 min"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Monthly and Quarterly Tasks"
+        },
+        {
+          "type": "table",
+          "columns": ["Task", "Frequency", "Owner", "Notes"],
+          "rows": [
+            ["Refresh lookalike account + contact list (Workflow 3)", "Monthly", "RevOps", "Re-run DiscoLike and Ocean.io with updated seeds"],
+            ["Source and schedule new customer interviews", "Monthly", "Customer Success", "Target 1–2 new interviews per month"],
+            ["Re-run Vertical Intelligence Engine (Workflow 1)", "Quarterly", "RevOps + GTM leadership", "Update scorecard with new 90-day data"],
+            ["Audit CRM data quality", "Quarterly", "RevOps", "Check field population rates against readiness checklist"],
+            ["Refresh TAL rules based on new vertical scores", "Quarterly", "RevOps", "Update DiscoLike/Ocean.io filters after vertical review"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "number": 10,
+      "title": "Part V — Operations: 30-Day Implementation Plan",
+      "intro": "Week 1 sets up data and tools. Week 2 builds the core workflows. Week 3 generates the first assets and messaging. Week 4 distributes and measures. By day 30, the system should have its first Tier 1 outbound live.",
+      "substeps": [
+        {
+          "id": "10A",
+          "title": "Week 1 — Data Setup and Tool Stack Activation",
+          "body": "Before any Claude workflow runs, the data layer and tool stack must be clean and connected. Do not skip steps — everything downstream depends on data quality.",
+          "labeled_sections": [
+            {
+              "label": "Week 1 Checklist",
+              "type": "numbered_list",
+              "items": [
+                "Day 1–2: Export 90-day closed-won from CRM. Run the data cleaning prompt. Target 80%+ field population before proceeding.",
+                "Day 2–3: Set up Notion workspace with all 5 databases. Test n8n connections to Notion and CRM.",
+                "Day 3–4: Activate DiscoLike, Ocean.io, and AI Ark. Test lookalike discovery with 5–10 won domains.",
+                "Day 4–5: Run Vertical Intelligence Engine on clean CRM data. Review scorecard with leadership. Approve Tier A verticals.",
+                "Day 5: Identify 3–5 customers willing to do a 9-minute interview. Schedule for Week 2."
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": [
+            {
+              "title": "MVP vs Full Stack in Week 1",
+              "text": "You can launch MVP with just CRM + Claude API + n8n + Notion. DiscoLike, Ocean.io, and AI Ark can be added in Month 2. For an MVP run, manually build the lookalike list from your CRM's existing accounts and contacts instead of using discovery tools."
+            }
+          ]
+        },
+        {
+          "id": "10B",
+          "title": "Week 2 — Workflow Build (Workflows 1–4)",
+          "body": "Build the first four workflows. Focus on getting to a Tier 1 list by end of Week 2.",
+          "labeled_sections": [
+            {
+              "label": "Week 2 Build Plan",
+              "type": "numbered_list",
+              "items": [
+                "Day 6–7: Build Workflow 3 (Lookalike Discovery). Run full queries. Export and clean list. Load into Notion.",
+                "Day 7–8: Conduct 2–3 customer interviews (Workflow 2). Record and transcribe immediately after each call.",
+                "Day 8–9: Build Workflow 4 (Signal Matching). Set up signal data sources. Run signal scoring on lookalike list.",
+                "Day 9–10: Human review of Tier 1 list (Gate 3). Approve or adjust. Target: 20–50 Tier 1 accounts by end of Week 2."
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        },
+        {
+          "id": "10C",
+          "title": "Week 3 — Asset Generation and Messaging",
+          "body": "Run the Proof Asset Factory and Messaging Engine on the approved Tier 1 list. Plan for 3–4 hours of editorial work this week.",
+          "labeled_sections": [
+            {
+              "label": "Week 3 Plan",
+              "type": "numbered_list",
+              "items": [
+                "Day 11–12: Run proof extraction on interview transcripts. Generate first case study drafts. Send to customer for approval.",
+                "Day 12–13: Run problem statement engine on Tier 1 contacts. Spot-check 20% of outputs.",
+                "Day 13–14: Run messaging engine for all Tier 1 contacts. Generate email, DM, and ad copy per contact.",
+                "Day 14: Human messaging review (Gate 4). Approve all Tier 1 messaging before Week 4 distribution."
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": []
+        },
+        {
+          "id": "10D",
+          "title": "Week 4 — Distribution and First Measurement",
+          "body": "Enroll Tier 1 contacts in Outreach, launch LinkedIn ads for Tier 2, and set up reporting. First reply data should be available by Day 30.",
+          "labeled_sections": [
+            {
+              "label": "Week 4 Plan",
+              "type": "numbered_list",
+              "items": [
+                "Day 15–16: Configure Outreach sequences. Enroll approved Tier 1 contacts. Verify CRM writeback on first 5 contacts before bulk enrollment.",
+                "Day 16–17: Launch LinkedIn ABM ad campaigns. Start budgets at $25/day/campaign — scale after 7-day data.",
+                "Day 17–18: Set up weekly KPI report in Notion. Configure UTM tracking on all case study links.",
+                "Day 18–20: Monitor first 5 days of sends. Check for bounce, spam flag, or delivery issues.",
+                "Day 21–30: First full operating week on normal cadence. Run weekly checklist. Gather first signal-to-reply data."
+              ]
+            }
+          ],
+          "code_blocks": [],
+          "tables": [],
+          "pro_tips": [
+            {
+              "title": "Lean Team Version (1–2 Person Operation)",
+              "text": "If operating with a lean team, skip LinkedIn ad campaigns in Month 1. Focus only on Tier 1 email + LinkedIn DM outbound. This reduces weekly operating time to approximately 3 hours per week. Add ad distribution in Month 2 once messaging is validated through reply data."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "troubleshooting",
+      "rows": [
+        ["Fewer than 30 closed-won deals — vertical intelligence returns noise", "Expand the date window to 12–18 months. If still under 30, manually define 2 target verticals based on team knowledge. Revisit automated vertical analysis after 30+ deals accumulate."],
+        ["CRM industry field is inconsistent or mostly blank — pattern analysis fails", "Run a CRM cleanup sprint before launching. Bulk-enrich industry and employee count via Clearbit or Apollo. This is the single most common launch blocker."],
+        ["Lookalike list is huge (1,000+ accounts) but Tier 1 is tiny (fewer than 5 accounts)", "Signal sources are too thin. Add Sales Navigator as a signal source, lower the Tier 1 engagement requirement temporarily, or add a second signal type."],
+        ["Problem statements feel generic even after running the engine", "The purchase reasons extracted from CRM are not specific enough. Go back to source data — read CRM notes or listen to 5 win call recordings. Feed richer purchase reason data back into the engine."],
+        ["Messaging approval rate below 70% — too much is being rejected in QA", "Check signal confidence scores — if average is below 65, data quality is the problem. If confidence is high, the persona adaptation rules in the prompt need tightening."],
+        ["No customers willing to do a recorded interview — Proof Asset Factory stalls", "Offer an incentive or ask for 5 minutes instead of 9. Have Customer Success lead the scheduling. As a fallback, send the 5 interview questions by email and extract from written responses."],
+        ["n8n CRM writeback is failing silently — data not appearing in CRM", "Check the n8n execution log immediately. Most common causes: API key expired, rate limit hit, or field name mismatch. Add an error notification node to all critical n8n workflows."],
+        ["Over-automation — messaging going out without proper QA", "Audit your n8n workflow: distribution should only trigger when Notion 'messaging_approved' checkbox is true. Add an IF node that checks approval status before any Outreach or LinkedIn action fires."]
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Part VI — Templates and Appendices",
+      "content": [
+        {
+          "type": "h2",
+          "text": "Template 1: Customer Interview Questions"
+        },
+        {
+          "type": "table",
+          "columns": ["Minute", "Question", "What You're Extracting"],
+          "rows": [
+            ["0–1", "Can you briefly describe your role and what your team owns in terms of revenue?", "Context for persona adaptation"],
+            ["1–3", "What was the specific problem you were dealing with before we started? What was it actually costing you?", "Before state + business consequence"],
+            ["3–5", "What made you choose this solution over alternatives? What was the deciding factor?", "Primary purchase reason"],
+            ["5–7", "What has actually changed since you started using it? Any specific numbers?", "After state + measurable outcome"],
+            ["7–9", "Who else should be hearing about this? What would you say to a peer with the same problem?", "Testimonial language + proof snippet"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Template 2: Case Study Structure"
+        },
+        {
+          "type": "table",
+          "columns": ["Section", "Content", "Length"],
+          "rows": [
+            ["Headline", "[Outcome number]: How [Company] [achieved result] with [solution]", "1 line"],
+            ["The Problem", "In customer's own words: what was broken before purchase. Include business consequence.", "1–2 paragraphs"],
+            ["Why They Chose Us", "The specific deciding factor — in customer language. No marketing speak.", "1 paragraph"],
+            ["The Solution", "What specifically changed: implementation, workflow, new capability", "1–2 paragraphs"],
+            ["The Result", "Specific metric + time frame + customer quote confirming the outcome", "1 paragraph + 1 quote"],
+            ["Who This Is For", "2–3 sentence company profile description for targeting", "2–3 sentences"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Template 3: The Swipe Email"
+        },
+        {
+          "type": "paragraph",
+          "text": "This is the exact four-beat email template from the system that generated $4.3M in sourced pipeline. Fill in the brackets with your structured data outputs."
+        },
+        {
+          "type": "table",
+          "columns": ["Beat", "Template"],
+          "rows": [
+            ["Subject line", "[Outcome] for [vertical] companies like [similar_company]"],
+            ["Beat 1 — Proof opener", "We just helped {similar_company} add {outcome} by {your solution}."],
+            ["Beat 2 — Problem statement", "Before we worked together, {problem_statement}."],
+            ["Beat 3 — Pain signal echo", "If you're seeing {pain_signal}, that's usually the same pattern we walk into right before this system starts working."],
+            ["Beat 4 — Evidence + CTA", "Here's the 3-minute breakdown of the play we ran for {similar_company}: {case_study_link}"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Template 4: LinkedIn DM Sequence"
+        },
+        {
+          "type": "table",
+          "columns": ["Step", "Message Template"],
+          "rows": [
+            ["DM Step 1 (Connection request note)", "Hey {first_name} — I work with {vertical} teams on {pain_theme}. Thought it might be worth connecting."],
+            ["DM Step 2 (After acceptance)", "Thanks for connecting. Quick context — we just helped {similar_company} with {outcome}. Thought it might be relevant given {pain_signal}: {case_study_link}"],
+            ["DM Step 3 (Follow-up, if no reply)", "{problem_statement} — that's what was going on at {similar_company} before we worked together. Curious if it resonates with what you're seeing?"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Template 5: Signal Taxonomy Reference"
+        },
+        {
+          "type": "table",
+          "columns": ["Pain Signal", "Observable Evidence", "Inferred Pain", "Problem Statement Angle"],
+          "rows": [
+            ["SDR / BDR hiring", "2+ SDR job postings in 30 days", "Meeting booking rate is broken", "Scaling headcount into a broken motion"],
+            ["VP Sales / CRO hire", "New revenue leader in last 60 days", "Revenue org reset", "New leader inheriting a pipeline problem"],
+            ["Revenue team growth >5%", "5+ new revenue hires in 30 days", "Scaling fast, infrastructure lagging", "Growth without the infrastructure to sustain it"],
+            ["SalesOps tool install", "New Outreach/Salesloft detected", "Lead follow-up is poor", "Automating a broken process before fixing it"],
+            ["RevOps hire", "Hiring RevOps Manager or Director", "CRM and reporting in chaos", "Flying blind on which deals will actually close"],
+            ["Headcount cut >5%", "Significant LinkedIn headcount decline", "Revenue under pressure", "Under pressure to do more with less"]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Template 6: Pre-Launch QA Checklist"
+        },
+        {
+          "type": "table",
+          "columns": ["Check", "Status"],
+          "rows": [
+            ["Vertical scorecard reviewed and approved (Gate 1)", ""],
+            ["All proof assets reviewed and customer-approved where named (Gate 2)", ""],
+            ["Tier 1 list reviewed — existing customers and open opps removed (Gate 3)", ""],
+            ["All Tier 1 messaging reviewed — no hallucinated claims (Gate 4)", ""],
+            ["Outreach sequences configured and tested on 1 internal contact", ""],
+            ["LinkedIn ad campaigns set to minimum budget before full launch", ""],
+            ["CRM writeback tested on 5 contacts — fields appearing correctly", ""],
+            ["UTM parameters on all case study links confirmed active", ""],
+            ["Reporting Notion views configured and tested", ""],
+            ["Human reviewer assigned and briefed on weekly QA cadence", ""]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "series_complete",
+      "title": "You Now Have the Full Pipeline Operating System",
+      "body_paragraphs": [
+        "This playbook contains everything needed to build, operate, and measure an agentic pipeline generation system. The $4.3M in marketing-sourced pipeline documented here was generated by running these exact workflows — vertical intelligence, proof asset creation, lookalike discovery, signal matching, problem statement generation, messaging, and multi-channel distribution — as a connected machine with human review at every critical gate.",
+        "The system works because it starts from truth (your closed-won data), extends to relevance (real pain signals), and delivers proof (case studies your buyers actually recognize). It does not work if the data is bad, if human review gates are skipped, or if it is treated as a fire-and-forget automation instead of a managed operating system.",
+        "Build it once. Tune it weekly. Let the closed won and buyer intent do the heavy lifting."
+      ],
+      "summary_table": {
+        "columns": ["Part", "What It Covers", "Key Output"],
+        "rows": [
+          ["I — Strategy", "Thesis, ICP, definitions", "Strategic alignment before building"],
+          ["II — System Design", "Architecture, data requirements, workflow overview", "Blueprint for the full machine"],
+          ["III — Workflows 1–7", "Step-by-step build for each workflow", "Running workflows with HITL gates"],
+          ["IV — Build Layer", "Claude Code prompts, schemas, file structures", "Technical implementation guide"],
+          ["V — Operations", "KPIs, cadence, 30-day launch plan, troubleshooting", "Ongoing operating system"],
+          ["VI — Templates", "All interview, messaging, and QA templates", "Copy-paste implementation assets"]
+        ]
+      },
+      "additional_paragraphs": [
+        "Want this system built for your GTM motion? Connect with us at exitengine.io."
+      ],
+      "footer_text": "Exit Engine // Pipeline Generation System • Agentic Pipeline Playbook"
+    }
+  ]
+}
