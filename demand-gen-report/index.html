@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSM2D1X64C"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LSM2D1X64C');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demand Gen War Room — Exit Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            eeblue: '#4f6bf4',
+            eeink: '#1a1a1a',
+            eemuted: '#888780',
+            eeborder: '#d1d5db',
+            eecream: '#ffffff',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .wr-card {
+      position: relative;
+      background: #fff;
+      border-radius: 12px;
+      border: 0.5px solid #d1d5db;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-white text-eeink pb-24" data-demand-gen-route="intro">
+
+<header class="bg-white/90 border-b border-eeborder/80 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center min-h-9">
+      <img src="assets/exit-engine-logo.png" alt="Exit Engine" class="h-8 w-auto sm:h-9 max-w-[min(100vw-8rem,280px)] object-contain object-left" width="1166" height="260" decoding="async">
+      <span class="sr-only">Demand Gen War Room</span>
+    </div>
+    <a id="headerCalendlyLink" href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener noreferrer" class="shrink-0 rounded-md bg-eeblue px-4 py-2 text-xs font-semibold text-white hover:opacity-95">Schedule a Call</a>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+  <section id="intro-landing" class="max-w-2xl mx-auto pb-8" aria-labelledby="intro-heading">
+    <div class="wr-card p-6 md:p-10 shadow-sm">
+      <h1 id="intro-heading" class="text-2xl sm:text-3xl font-semibold text-eeink leading-tight tracking-tight mb-6">
+        Is your demand gen data actually telling you something useful?
+      </h1>
+      <div class="space-y-4 text-sm md:text-[15px] text-eeink/90 leading-relaxed">
+        <p>Most demand gen reporting looks fine on the surface. This is built to find where it isn&rsquo;t - across acquisition efficiency and channel performance.</p>
+        <p>The real problem isn&rsquo;t knowing what to measure. It&rsquo;s getting the underlying data consistent enough to review with confidence, every week.</p>
+        <p>I can connect your data sources and build the reporting layer so your team pulls up the right numbers every Monday — no manual work, no rebuilding.</p>
+        <p class="text-eemuted">If you want that running inside your operating rhythm, book a 20-minute call.</p>
+      </div>
+      <div class="mt-8 flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center gap-3">
+        <a id="introCalendlyLink" href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener noreferrer" class="inline-flex justify-center items-center rounded-lg border border-eeborder bg-white px-5 py-3 text-sm font-semibold text-eeink hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eeblue/40">
+          Book a 20-minute call →
+        </a>
+        <a id="btnStartReport" href="report/index.html" class="inline-flex justify-center items-center rounded-lg bg-eeblue px-5 py-3 text-sm font-semibold text-white hover:opacity-95 sm:ml-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eeblue/60 text-center">
+          Start the report
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var cal = 'https://calendly.com/ryan_carlin/30min';
+  var intro = document.getElementById('introCalendlyLink');
+  var head = document.getElementById('headerCalendlyLink');
+  if (intro) intro.href = cal;
+  if (head) head.href = cal;
+})();
+</script>
+</body>
+</html>

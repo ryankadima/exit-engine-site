@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSM2D1X64C"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LSM2D1X64C');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report — Demand Gen War Room — Exit Engine</title>
+  <link rel="stylesheet" href="../pdf-export.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            eeblue: '#4f6bf4',
+            eeink: '#1a1a1a',
+            eemuted: '#888780',
+            eeborder: '#d1d5db',
+            eecream: '#ffffff',
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    input, button, select, textarea {
+      font-family: inherit;
+    }
+    .wr-card {
+      position: relative;
+      background: #fff;
+      border-radius: 12px;
+      border: 0.5px solid #d1d5db;
+    }
+    .step-dot { flex: 1; height: 4px; border-radius: 2px; }
+    .step-active { background: #4f6bf4; }
+    .step-done { background: rgba(79, 107, 244, 0.35); }
+    .step-todo { background: #e5e7eb; }
+    .field.has-error input, .field.has-error .border-red-500 { border-color: #e24b4a !important; }
+    .field-error { display: none; font-size: 12px; color: #e24b4a; margin-top: 4px; }
+    .field.has-error .field-error { display: block; }
+    .gauge-shell {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      min-height: 240px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .gauge-chart-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      height: 210px;
+      margin: 0 auto;
+    }
+    .gauge-chart-wrap canvas {
+      display: block;
+    }
+    .gauge-value-display {
+      position: absolute;
+      left: 50%;
+      bottom: 18%;
+      transform: translateX(-50%);
+      z-index: 2;
+      font-size: 1.875rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: #1a1a1a;
+      pointer-events: none;
+      text-align: center;
+    }
+    @media print {
+      #pdfActionBar, #wizard-view, #intro-landing { display: none !important; }
+      #dashboard-view { display: block !important; }
+    }
+    .channel-block .ch-chevron {
+      display: inline-block;
+      transition: transform 0.15s ease;
+      transform: rotate(0deg);
+      font-size: 11px;
+      line-height: 1;
+      margin-top: 3px;
+      color: #888780;
+    }
+    .channel-block.is-expanded .ch-chevron {
+      transform: rotate(90deg);
+    }
+    .html2pdf__page-break {
+      page-break-before: always;
+      break-before: page;
+      height: 0;
+      margin: 0;
+      padding: 0;
+    }
+    /* PDF export: flex-1 gauge can collapse to ~0 when clones hang under #pdf-export-host */
+    #pdf-export-host .gauge-shell {
+      flex: none !important;
+      min-height: 240px !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-white text-eeink pb-24" data-demand-gen-route="report">
+
+<header class="bg-white/90 border-b border-eeborder/80 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center min-h-9">
+      <img src="../assets/exit-engine-logo.png" alt="Exit Engine" class="h-8 w-auto sm:h-9 max-w-[min(100vw-8rem,280px)] object-contain object-left" width="1166" height="260" decoding="async">
+      <span class="sr-only">Demand Gen War Room</span>
+    </div>
+    <a href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener" class="shrink-0 rounded-md bg-eeblue px-4 py-2 text-xs font-semibold text-white hover:opacity-95">Schedule a Call</a>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+  <div id="wizard-view" class="hidden">
+    <p class="text-xs text-eemuted mb-4 leading-relaxed max-w-3xl">All dollar amounts use the <strong class="text-eeink">same trailing 30-day window</strong> unless noted. The <strong>Rule of 40</strong> block uses <strong>annual YoY revenue growth (%)</strong> and <strong>FCF margin (%)</strong>, not month-over-month growth—see the definition on slide&nbsp;1.</p>
+    <div class="flex justify-end max-w-xl mb-3">
+      <button type="button" id="btnClearData" class="rounded-lg border border-eeborder px-3 py-1.5 text-xs font-semibold text-eemuted hover:bg-gray-50 hover:text-eeink">Clear Data</button>
+    </div>
+    <div class="flex gap-2 mb-6 max-w-xl" id="stepper" aria-hidden="true">
+      <div class="step-dot step-active" data-step="1"></div>
+      <div class="step-dot step-todo" data-step="2"></div>
+      <div class="step-dot step-todo" data-step="3"></div>
+    </div>
+
+    <div class="slide block max-w-xl" data-slide="1">
+      <div class="wr-card p-5 mb-4 shadow-sm">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-eeblue mb-4">Slide 1 — Acquisition efficiency</div>
+
+        <div class="field mb-4" id="field-totalSmSpend">
+          <label for="totalSmSpend" class="block text-sm font-medium mb-1">Total S&amp;M spend ($)</label>
+          <div class="flex gap-2">
+            <input type="number" id="totalSmSpend" min="0" step="0.01" class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm" placeholder="0.00">
+            <button type="button" id="openCalcModal" class="shrink-0 w-10 h-10 rounded-lg border border-eeborder bg-white text-eeblue font-bold hover:border-eeblue" title="Help me calculate" aria-label="Help me calculate S and M spend">?</button>
+          </div>
+          <div class="field-error" role="alert">Enter total S&amp;M spend or use the calculator.</div>
+        </div>
+        <div class="field mb-4" id="field-newArr">
+          <label for="newArr" class="block text-sm font-medium mb-1">New ARR added ($)</label>
+          <input type="number" id="newArr" min="0" step="0.01" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">Enter new ARR.</div>
+        </div>
+        <div class="field mb-4" id="field-newCustomers">
+          <label for="newCustomers" class="block text-sm font-medium mb-1">New customers (count)</label>
+          <input type="number" id="newCustomers" min="0" step="1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">Must be greater than zero.</div>
+        </div>
+        <div class="field mb-4" id="field-grossMargin">
+          <label for="grossMargin" class="block text-sm font-medium mb-1">Gross margin (%)</label>
+          <input type="number" id="grossMargin" min="0" max="100" step="0.1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">Enter 0–100.</div>
+        </div>
+        <div class="field mb-4" id="field-annualChurn">
+          <label for="annualChurn" class="block text-sm font-medium mb-1">Annual churn (%)</label>
+          <input type="number" id="annualChurn" min="0.01" max="100" step="0.01" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <p class="text-[11px] text-eemuted mt-1">Used for LTV.</p>
+          <div class="field-error" role="alert">Enter churn &gt; 0.</div>
+        </div>
+
+        <div class="border-t border-eeborder/60 pt-4 mt-2">
+          <p class="text-xs font-semibold text-eeink mb-1">Rule of 40 inputs</p>
+          <p class="text-[11px] text-eemuted mb-3 leading-relaxed"><strong>Rule of 40</strong> = <strong>annual revenue growth (YoY) %</strong> + <strong>FCF margin %</strong>. Enter each as <strong>percentage points</strong>: <strong>25</strong> means 25% (not 0.25). FCF margin can be negative.</p>
+          <div class="grid grid-cols-3 gap-2 text-[10px] uppercase text-eemuted font-semibold mb-1">
+            <span></span><span>YoY rev %</span><span>FCF margin %</span>
+          </div>
+          <div class="space-y-2">
+            <div class="grid grid-cols-3 gap-2 items-center">
+              <span class="text-xs text-eemuted">Month 1</span>
+              <div class="field mb-0" id="field-revM2"><input type="number" id="revM2" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 28" title="Annual YoY revenue growth, %"></div>
+              <div class="field mb-0" id="field-fcfM2"><input type="number" id="fcfM2" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 9" title="FCF margin, %"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 items-center">
+              <span class="text-xs text-eemuted">Month 2</span>
+              <div class="field mb-0" id="field-revM1"><input type="number" id="revM1" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 31" title="Annual YoY revenue growth, %"></div>
+              <div class="field mb-0" id="field-fcfM1"><input type="number" id="fcfM1" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 9" title="FCF margin, %"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 items-center">
+              <span class="text-xs text-eemuted">Current</span>
+              <div class="field mb-0" id="field-revM0"><input type="number" id="revM0" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 34" title="Annual YoY revenue growth, %"></div>
+              <div class="field mb-0" id="field-fcfM0"><input type="number" id="fcfM0" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1.5 text-sm" placeholder="e.g. 9" title="FCF margin, %"></div>
+            </div>
+          </div>
+          <p class="text-[11px] text-eemuted mt-2">Rows are reporting month; values are still <strong>annual</strong> YoY growth and margin for that period. Dashboard headline = Current YoY rev % + Current FCF margin % vs. the <strong>40</strong> Rule of 40 benchmark.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide hidden max-w-xl" data-slide="2">
+      <div class="wr-card p-5 mb-4 shadow-sm">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-eeblue mb-4">Slide 2 — Funnel health</div>
+        <div class="field mb-4" id="field-qualifiedOpps">
+          <label for="qualifiedOpps" class="block text-sm font-medium mb-1">Qualified opportunities (current)</label>
+          <input type="number" id="qualifiedOpps" min="0" step="1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">Required.</div>
+        </div>
+        <div class="field mb-4" id="field-winRate">
+          <label for="winRate" class="block text-sm font-medium mb-1">Win rate (%)</label>
+          <input type="number" id="winRate" min="0" max="100" step="0.1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">0–100.</div>
+        </div>
+        <div class="field mb-4" id="field-salesCycle">
+          <label for="salesCycle" class="block text-sm font-medium mb-1">Sales cycle (days)</label>
+          <input type="number" id="salesCycle" min="1" step="1" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm">
+          <div class="field-error" role="alert">≥ 1 day.</div>
+        </div>
+
+        <div class="border-t border-eeborder/60 pt-4 mt-2">
+          <p class="text-xs font-semibold text-eeink mb-2">Velocity trends &amp; levers (optional)</p>
+          <p class="text-[11px] text-eemuted mb-3">Month 2 and Month 1 optional fields power the pipeline velocity sparkline and arrows on the dashboard.</p>
+          <p class="text-[10px] uppercase font-semibold text-eemuted mb-2">Month 2</p>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div><label class="text-[11px] text-eemuted">Qual. opps</label><input type="number" id="qualM1" min="0" step="1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">Win %</label><input type="number" id="winM1" min="0" max="100" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">ACV ($)</label><input type="number" id="acvM1" min="0" step="0.01" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">Cycle (days)</label><input type="number" id="cycleM1" min="1" step="1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+          </div>
+          <p class="text-[10px] uppercase font-semibold text-eemuted mb-2">Month 1</p>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] text-eemuted">Qual. opps</label><input type="number" id="qualM2" min="0" step="1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">Win %</label><input type="number" id="winM2" min="0" max="100" step="0.1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">ACV ($)</label><input type="number" id="acvM2" min="0" step="0.01" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+            <div><label class="text-[11px] text-eemuted">Cycle (days)</label><input type="number" id="cycleM2" min="1" step="1" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide hidden max-w-xl" data-slide="3">
+      <div class="wr-card p-5 mb-4 shadow-sm">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-eeblue mb-4">Slide 3 — Channel performance</div>
+        <p class="text-xs text-eemuted mb-4">Up to 12 channels · trailing 30 days. Each row starts collapsed; click it to edit. <strong>Total channel spend</strong> = direct ad spend + other spend (salaries, tools, overhead tied to that channel).</p>
+        <div id="channel-rows"></div>
+        <button type="button" id="addChannelBtn" class="mt-2 w-full rounded-lg border border-eeborder py-2 text-sm font-semibold text-eeink bg-white hover:bg-gray-50">+ Add channel</button>
+        <p id="channel-form-error" class="hidden text-sm text-red-500 mt-3" role="alert"></p>
+      </div>
+    </div>
+
+    <div class="max-w-xl flex justify-between gap-3 mt-2">
+      <button type="button" id="btnBack" class="invisible rounded-lg border border-eeborder px-4 py-2 text-sm font-semibold bg-white">Back</button>
+      <button type="button" id="btnNext" class="rounded-lg bg-eeblue px-5 py-2 text-sm font-semibold text-white hover:opacity-95 ml-auto">Next</button>
+    </div>
+  </div>
+
+  <div id="dashboard-view" class="hidden">
+    <div id="pdfRoot">
+      <div class="flex flex-wrap justify-end gap-2 mb-4 print:hidden">
+        <button type="button" id="btnEditInputs" class="rounded-lg border border-eeborder bg-white px-4 py-2 text-xs font-semibold">Edit inputs</button>
+      </div>
+
+      <div class="wr-card overflow-hidden mb-0 rounded-b-none border-b-0">
+        <div class="flex flex-wrap justify-center border-b border-eeborder" role="tablist">
+          <button type="button" class="tab border-b-2 border-eeblue bg-eeblue/5 px-4 py-3 text-xs font-semibold text-eeblue" role="tab" aria-selected="true" data-tab="channels">Channels</button>
+          <button type="button" class="tab border-b-2 border-transparent px-4 py-3 text-xs font-semibold text-eemuted hover:text-eeink" role="tab" aria-selected="false" data-tab="acquisition">Acquisition</button>
+        </div>
+      </div>
+
+      <div class="wr-card rounded-t-none border-t-0 p-4 md:p-6 shadow-sm min-h-[400px]">
+        <div id="panel-acquisition" class="tab-panel hidden" role="tabpanel">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-eeblue mb-4">Acquisition efficiency</p>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="wr-card p-4 min-h-[300px] flex flex-col">
+              <p class="text-xs font-bold uppercase tracking-wide text-eemuted mb-3">Magic number</p>
+              <div class="gauge-shell flex-1">
+                <div class="gauge-chart-wrap">
+                  <canvas id="chartMagic"></canvas>
+                  <p id="gaugeValue" class="gauge-value-display">—</p>
+                </div>
+              </div>
+              <p id="gaugeZones" class="text-center text-[10px] text-eemuted mt-1"></p>
+              <p id="kpiSubMagic" class="text-center text-[11px] text-eemuted mt-2"></p>
+            </div>
+            <div class="wr-card p-4 min-h-[280px]">
+              <p class="text-xs font-bold uppercase tracking-wide text-eemuted mb-1">Rule of 40</p>
+              <p class="text-[10px] text-eemuted mb-2 leading-snug">YoY revenue growth + FCF margin (% points each)</p>
+              <div class="h-56"><canvas id="chartRule40"></canvas></div>
+            </div>
+            <div class="wr-card p-4 md:col-span-2">
+              <p class="text-xs font-bold uppercase tracking-wide text-eemuted mb-2">CAC payback — cumulative gross profit</p>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="md:col-span-2 h-56"><canvas id="chartPayback"></canvas></div>
+                <div class="space-y-2 text-xs text-eeink">
+                  <div class="border border-eeborder rounded-lg p-2"><span class="text-eemuted block text-[10px] uppercase">CAC</span><span id="statCAC">—</span></div>
+                  <div class="border border-eeborder rounded-lg p-2"><span class="text-eemuted block text-[10px] uppercase">MRR / customer</span><span id="statMRR">—</span></div>
+                  <div class="border border-eeborder rounded-lg p-2"><span class="text-eemuted block text-[10px] uppercase">Gross margin</span><span id="statGM">—</span></div>
+                  <div class="border border-eeborder rounded-lg p-2"><span class="text-eemuted block text-[10px] uppercase">Payback</span><span id="statPB">—</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div class="wr-card p-4">
+              <p class="text-xs font-bold uppercase text-eemuted mb-2">Pipeline velocity</p>
+              <p id="heroVelocity" class="text-3xl md:text-4xl font-bold text-eeink mb-4">—</p>
+              <div class="h-40"><canvas id="chartVelocity"></canvas></div>
+            </div>
+            <div class="wr-card p-4">
+              <p class="text-xs font-bold uppercase text-eemuted mb-3">Velocity levers</p>
+              <div id="leverList" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="panel-channels" class="tab-panel block" role="tabpanel">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-eeblue mb-4">Channel performance</p>
+          <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
+            <div class="w-full md:w-1/2 md:min-w-0">
+              <div class="wr-card p-4">
+                <p class="text-xs font-bold uppercase text-eemuted mb-2">CAC vs CLTV</p>
+                <p class="text-[11px] text-eemuted mb-2">X = CAC (channel spend &divide; (deals &times; win %)). Y = CLTV (slide 3 override or blended from slide 1). Bubble size = deals.</p>
+                <div class="h-72"><canvas id="chartBubble"></canvas></div>
+              </div>
+            </div>
+            <div class="w-full md:w-1/2 md:min-w-0 flex flex-col gap-3">
+              <div class="w-full overflow-x-auto border border-eeborder rounded-xl bg-white">
+                <table id="channel-performance-table" class="w-full table-fixed text-sm" style="border-collapse: separate; border-spacing: 0.65rem 0;">
+                  <colgroup>
+                    <col style="width: 28%">
+                    <col style="width: 14%">
+                    <col style="width: 20%">
+                    <col style="width: 20%">
+                    <col style="width: 18%">
+                  </colgroup>
+                  <thead>
+                    <tr class="border-b border-eeborder text-left text-xs uppercase tracking-wide text-eemuted">
+                      <th class="px-3 py-2 leading-tight">Channel</th>
+                      <th class="px-3 py-2 text-right leading-tight">Deals</th>
+                      <th class="px-3 py-2 text-right leading-tight"><abbr title="Customer lifetime value" class="no-underline cursor-help">CLTV</abbr></th>
+                      <th class="px-3 py-2 text-right leading-tight"><abbr title="Customer acquisition cost per won customer" class="no-underline cursor-help">CAC</abbr></th>
+                      <th class="px-3 py-2 text-right leading-tight"><abbr title="CLTV ÷ CAC" class="no-underline cursor-help">LTV:CAC</abbr></th>
+                    </tr>
+                  </thead>
+                  <tbody id="channel-table-body" class="leading-tight"></tbody>
+                  <tfoot id="channel-table-foot" class="text-sm bg-gray-50"></tfoot>
+                </table>
+              </div>
+              <p class="w-full text-xs sm:text-sm text-eemuted leading-relaxed"><strong>Deals</strong> = pipeline opportunities for the channel (slide 3). <strong>CLTV</strong> = customer lifetime value per won customer (optional channel LTV on slide 3, otherwise blended CLTV from slide 1). <strong>CAC</strong> = customer acquisition cost per <em>won</em> customer: total channel spend &divide; (deals &times; win %), using blended win % from slide 2. <strong>LTV:CAC</strong> = CLTV &divide; CAC.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="pdfActionBar" class="fixed bottom-0 left-0 right-0 z-[100] flex justify-center border-t border-eeborder bg-white/95 py-3 backdrop-blur print:hidden">
+  <button type="button" onclick="downloadDemandPdf()" class="rounded-md border border-eeborder bg-white px-5 py-2 text-xs font-semibold text-eeink shadow-sm hover:bg-gray-50">Download PDF</button>
+</div>
+
+<div id="calcModal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black/45 p-4" role="dialog" aria-modal="true" aria-labelledby="calcTitle">
+  <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl border border-eeborder bg-white p-6 shadow-xl">
+    <h2 id="calcTitle" class="text-lg font-bold">Spend calculator</h2>
+    <p class="mt-1 text-xs text-eemuted leading-relaxed">Trailing <strong>30-day</strong> amounts. Sums ad, salaries, software, overhead into Total S&amp;M spend.</p>
+    <div class="mt-4 space-y-3">
+      <div><label class="text-sm font-medium" for="calcAd">Total ad spend ($)</label><input type="number" id="calcAd" min="0" step="0.01" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"></div>
+      <div><label class="text-sm font-medium" for="calcSalaries">Team salaries ($)</label><input type="number" id="calcSalaries" min="0" step="0.01" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"></div>
+      <div><label class="text-sm font-medium" for="calcSoftware">Software costs ($)</label><input type="number" id="calcSoftware" min="0" step="0.01" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"></div>
+      <div><label class="text-sm font-medium" for="calcOverhead">Overhead / other ($)</label><input type="number" id="calcOverhead" min="0" step="0.01" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"></div>
+    </div>
+    <div id="calcRunningSum" class="mt-4 rounded-lg bg-eecream px-3 py-2 text-sm font-semibold">Sum: $0.00</div>
+    <div class="mt-4 flex justify-end gap-2">
+      <button type="button" id="closeCalcModal" class="rounded-lg border border-eeborder px-4 py-2 text-sm font-semibold">Cancel</button>
+      <button type="button" id="applyCalcSum" class="rounded-lg bg-eeblue px-4 py-2 text-sm font-semibold text-white">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script src="../app.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+/**
+ * Dedicated PDF export layout — fixed dimensions, not responsive dashboard styles.
+ * Scoped under #pdf-export-host only.
+ */
+
+#pdf-export-host {
+  box-sizing: border-box;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a1a1a;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Letter landscape at 96 CSS px/in: 11in × 8.5in */
+#pdf-export-host .pdf-export-page {
+  box-sizing: border-box;
+  width: 1056px;
+  min-height: 816px;
+  padding: 28px 32px 32px;
+  background: #fff;
+  page-break-after: always;
+}
+
+#pdf-export-host .pdf-exp-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4f6bf4;
+  margin: 0 0 12px;
+}
+
+#pdf-export-host .pdf-exp-channels-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+#pdf-export-host .pdf-exp-card {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px 16px;
+  box-sizing: border-box;
+}
+
+#pdf-export-host .pdf-exp-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888780;
+  margin: 0 0 6px;
+}
+
+#pdf-export-host .pdf-exp-card-sub {
+  font-size: 10px;
+  line-height: 1.45;
+  color: #888780;
+  margin: 0 0 10px;
+}
+
+#pdf-export-host .pdf-exp-chart-slot {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#pdf-export-host .pdf-exp-chart-slot canvas {
+  display: block;
+  max-width: 100%;
+}
+
+#pdf-export-host .pdf-exp-table-wrap {
+  width: 100%;
+  overflow: visible;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
+#pdf-export-host .pdf-exp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+#pdf-export-host .pdf-exp-table th,
+#pdf-export-host .pdf-exp-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#pdf-export-host .pdf-exp-table th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #888780;
+  background: #fafafa;
+}
+
+#pdf-export-host .pdf-exp-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pdf-export-host .pdf-exp-footnote {
+  margin-top: 14px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #888780;
+}
+
+/* Acquisition: fixed rows */
+#pdf-export-host .pdf-exp-acq-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+#pdf-export-host .pdf-exp-acq-magic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 200px;
+}
+
+#pdf-export-host .pdf-exp-gauge-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+
+#pdf-export-host .pdf-exp-gauge-zones {
+  font-size: 9px;
+  color: #888780;
+  text-align: center;
+  margin-top: 4px;
+}
+
+#pdf-export-host .pdf-exp-acq-row-payback {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 16px;
+  margin-bottom: 14px;
+  align-items: stretch;
+}
+
+#pdf-export-host .pdf-exp-stat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#pdf-export-host .pdf-exp-stat {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+}
+
+#pdf-export-host .pdf-exp-stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #888780;
+  display: block;
+  margin-bottom: 2px;
+}
+
+#pdf-export-host .pdf-exp-acq-row-vel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+#pdf-export-host .pdf-exp-vel-hero {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.1;
+}
+
+#pdf-export-host .pdf-exp-lever-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+  background: #fff;
+}
+
+#pdf-export-host .pdf-exp-lever-row:last-child {
+  margin-bottom: 0;
+}
+
+#pdf-export-host .pdf-exp-empty {
+  font-size: 11px;
+  color: #888780;
+  padding: 12px;
+}

@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Intelligence Report · Exit Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary-blue: #4f6bf4;
+      --purple: #7b6fd4;
+      --blue-cta: #2563eb;
+      --green: #22c55e;
+      --amber: #ef9f27;
+      --red: #e24b4a;
+      --teal: #14b8a6;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fb;
+      --border-tertiary: rgba(128, 128, 128, 0.12);
+      --text-muted: #888780;
+      --text: #1a1a1a;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .header-wrap {
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-tertiary);
+    }
+    .header {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-logo { height: 32px; width: auto; }
+    .header-title-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .header-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .header-title .blur-field {
+      min-width: 140px;
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 24px 28px;
+    }
+
+    .section-label {
+      color: var(--primary-blue);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .card {
+      background: var(--bg-primary);
+      border: 0.5px solid var(--border-tertiary);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .badge.green { background: #e1f5ee; color: #0f6e56; }
+    .badge.amber { background: #faeeda; color: #854f0b; }
+    .badge.red { background: #fcebeb; color: #a32d2d; }
+    .badge.blue { background: #e6f1fb; color: #185fa5; }
+    .badge.purple { background: #ede9fc; color: #5b21b6; }
+    .badge.hot {
+      background: linear-gradient(135deg, rgba(226, 75, 74, 0.12), rgba(239, 159, 39, 0.15));
+      color: #9a3412;
+      border: 1px solid rgba(226, 75, 74, 0.2);
+    }
+
+    /* Top account header */
+    .account-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .account-identity {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 200px;
+    }
+    .account-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .blur-field {
+      display: inline-block;
+      filter: blur(5px);
+      user-select: none;
+      background: linear-gradient(90deg, #e5e7eb, #d1d5db);
+      color: transparent;
+      border-radius: 4px;
+      padding: 2px 8px;
+      min-width: 120px;
+      min-height: 22px;
+      vertical-align: middle;
+    }
+    .blur-field.sm { min-width: 80px; }
+    .domain-partial {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .domain-partial .hidden {
+      filter: blur(4px);
+      opacity: 0.65;
+      margin: 0 2px;
+    }
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px 16px;
+      width: 100%;
+      margin-top: 4px;
+    }
+    @media (max-width: 1100px) {
+      .meta-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .meta-item .k {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+    .meta-item .v {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* Two column row — same split + gutter as committee row below */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+    .grid-2.grid-committee-row {
+      align-items: stretch;
+      margin-bottom: 0;
+    }
+    @media (max-width: 960px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-2 > .signals-card {
+        height: auto;
+        min-height: 520px;
+      }
+    }
+    .ai-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+      min-height: 0;
+    }
+    .grid-2 > * {
+      min-height: 0;
+      min-width: 0;
+    }
+
+    /* Active Account Signals: full-height rail vs stacked right column; chart-dominant + 4-row list */
+    .grid-2 > .signals-card {
+      height: 100%;
+      min-height: 0;
+    }
+    .signals-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+    }
+    .signals-card-header {
+      flex-shrink: 0;
+    }
+    .signals-card .section-label { margin-bottom: 6px; }
+    .signals-card .card-title { margin-bottom: 0; }
+    .signals-chart-zone {
+      flex: 1 1 0;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .signals-density-wrap {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 10px 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      border: 0.5px solid var(--border-tertiary);
+      overflow: hidden;
+    }
+    .signals-density-chart {
+      flex: 1 1 auto;
+      min-height: 228px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .signals-density-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      min-height: 228px;
+    }
+    /* Exactly 4 full rows: viewport height = 4 × fixed row block (no partial 5th row) */
+    .signals-list-scroll {
+      flex-shrink: 0;
+      --signals-row-block: 70px;
+      height: calc(4 * var(--signals-row-block));
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin: 0 -4px 0 0;
+      padding-right: 4px;
+      border-top: 1px solid var(--border-tertiary);
+      padding-top: 8px;
+    }
+    .signals-list-scroll .signal-row {
+      height: var(--signals-row-block);
+      min-height: var(--signals-row-block);
+      max-height: var(--signals-row-block);
+      box-sizing: border-box;
+      align-items: center;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+    .signals-list-scroll .signal-main {
+      overflow: hidden;
+    }
+    .signals-list-scroll .signal-source {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .signals-list-scroll::-webkit-scrollbar { width: 4px; }
+    .signals-list-scroll::-webkit-scrollbar-track { background: transparent; }
+    .signals-list-scroll::-webkit-scrollbar-thumb {
+      background: rgba(136, 135, 128, 0.45);
+      border-radius: 2px;
+    }
+    .signals-list-scroll { scrollbar-width: thin; scrollbar-color: var(--text-muted) transparent; }
+
+    /* Signal rows */
+    .signal-list { display: flex; flex-direction: column; gap: 0; }
+    .signal-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border-tertiary);
+    }
+    .signal-row:last-child { border-bottom: none; }
+    .signal-main { min-width: 0; }
+    .signal-cat {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+    .signal-cat--hiring { background: rgba(34, 197, 94, 0.14); color: #15803d; }
+    .signal-cat--intent { background: rgba(96, 165, 250, 0.16); color: #1d4ed8; }
+    .signal-cat--engagement { background: rgba(123, 111, 212, 0.12); color: #5b21b6; }
+    .signal-cat--committee { background: rgba(234, 140, 22, 0.14); color: #9a3412; }
+    .signal-cat--tech { background: rgba(45, 212, 191, 0.16); color: #0d9488; }
+    .signal-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+    .signal-source { font-size: 11px; color: var(--text-muted); }
+    .signal-quality {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .signal-quality.high { background: #e1f5ee; color: #0f6e56; }
+    .signal-quality.med { background: #faeeda; color: #854f0b; }
+    .signal-decay {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* AI module */
+    .ai-summary {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #374151;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      border-left: 3px solid var(--primary-blue);
+    }
+    .evidence-list { margin: 0 0 12px 0; padding-left: 18px; }
+    .evidence-list li {
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+    .pattern-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .pattern-tags--stack {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      margin-bottom: 0;
+      gap: 6px;
+    }
+    .pattern-tag {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(79, 107, 244, 0.08);
+      color: #4338ca;
+      border: 1px solid rgba(79, 107, 244, 0.2);
+    }
+    .confidence-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /*
+     * CompositeGauge — semicircular arc meter (0–100), product-native tokens.
+     * Override: style="--composite-gauge-pct: 0.84" on .composite-gauge
+     */
+    .composite-gauge {
+      --composite-gauge-pct: 0.84;
+      --composite-gauge-arc-len: 245.04; /* π × 78 (viewBox geometry) */
+      padding-top: 12px;
+      border-top: 1px solid var(--border-tertiary);
+      margin-top: 4px;
+    }
+    .composite-gauge--standalone {
+      padding-top: 0;
+      border-top: none;
+      margin-top: 0;
+      position: relative;
+    }
+    .composite-gauge--standalone::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border-tertiary);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .composite-gauge-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+    .composite-gauge-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin: 0;
+      padding-right: 12px;
+    }
+    .composite-gauge-head .composite-pattern-analysis-title {
+      margin: 0;
+      padding-left: 24px;
+    }
+    .composite-gauge-stage {
+      position: relative;
+      width: 100%;
+      max-width: 208px;
+      margin: 0 0 6px 0;
+    }
+    .composite-gauge-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      color: var(--primary-blue);
+    }
+    .composite-gauge-track {
+      fill: none;
+      stroke: rgba(128, 128, 128, 0.14);
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+    .composite-gauge-value-arc {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 7;
+      stroke-linecap: round;
+      /* Arc length ≈ π × 78 user units; long gap prevents pattern repeat on semicircle */
+      stroke-dasharray: calc(var(--composite-gauge-pct, 0.84) * var(--composite-gauge-arc-len, 245.04)) 500;
+      stroke-dashoffset: 0;
+      transition: stroke-dasharray 0.45s ease;
+    }
+    /* Arc baseline y=100 in viewBox 0 0 200 112 → 12/112 of SVG height above bottom of stage */
+    .composite-gauge-readout {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% * 12 / 112);
+      transform: translateX(-50%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .composite-gauge-score {
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .composite-gauge-foot {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .composite-gauge-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 0;
+      min-height: 0;
+    }
+    .composite-gauge-meter-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 12px 10px;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .composite-gauge-meter-col .composite-gauge-stage {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: -10px;
+    }
+    .composite-gauge-meter-col .composite-gauge-foot {
+      justify-content: center;
+      width: 100%;
+      max-width: 208px;
+    }
+    .composite-pattern-analysis {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 14px 16px 10px 24px;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .composite-pattern-analysis-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 100%;
+    }
+    @media (max-width: 420px) {
+      .composite-gauge--standalone::before {
+        display: none;
+      }
+      .composite-gauge-head {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .composite-gauge-head .composite-gauge-title {
+        padding-right: 0;
+      }
+      .composite-gauge-head .composite-pattern-analysis-title {
+        padding-left: 0;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-tertiary);
+      }
+      .composite-gauge-main {
+        grid-template-columns: 1fr;
+      }
+      .composite-gauge-meter-col {
+        padding: 8px;
+      }
+      .composite-gauge-meter-col .composite-gauge-stage {
+        margin-top: 0;
+      }
+      .composite-pattern-analysis {
+        border-left: none;
+        border-top: 1px solid var(--border-tertiary);
+        padding: 16px 8px 4px;
+        margin-top: 2px;
+      }
+    }
+    .composite-pattern-analysis-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+    .composite-pattern-analysis .pattern-tags--stack {
+      gap: 8px;
+    }
+    .composite-pattern-analysis .pattern-tag {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 10px;
+    }
+    .email-blur {
+      filter: blur(4px);
+      opacity: 0.75;
+      user-select: none;
+    }
+
+    /* Segmented control */
+    .segment-wrap { margin-bottom: 12px; }
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 3px;
+      border: 1px solid var(--border-tertiary);
+    }
+    .segmented button {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .segmented button:hover { color: var(--text); }
+    .segmented button.active {
+      background: var(--bg-primary);
+      color: var(--primary-blue);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .committee-panels {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .committee-panel {
+      display: none;
+      animation: fade 0.2s ease;
+      flex: 0 0 auto;
+    }
+    .committee-panel.active { display: block; }
+    @keyframes fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .person-card {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) minmax(132px, 38%);
+      grid-template-areas: "avatar main capture";
+      column-gap: 14px;
+      align-items: start;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      border: 1px solid var(--border-tertiary);
+    }
+    .person-avatar-wrap {
+      grid-area: avatar;
+      align-self: start;
+    }
+    .person-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 1px solid var(--border-tertiary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      background: var(--bg-primary);
+    }
+    .person-main { grid-area: main; min-width: 0; }
+    .person-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+    .person-email {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .person-title { font-size: 12px; color: #374151; margin-bottom: 0; }
+    .person-role-badge { margin-bottom: 8px; }
+    .signal-capture {
+      grid-area: capture;
+      align-self: stretch;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #4b5563;
+      margin: 0;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .signal-capture strong { color: var(--text); font-weight: 600; }
+    @media (max-width: 640px) {
+      .person-card {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "avatar"
+          "main"
+          "capture";
+      }
+    }
+
+    /* Stakeholders + execution cards: match signals row header rhythm */
+    .committee-enrichment-card .section-label,
+    .execution-routing-card .section-label {
+      margin-bottom: 6px;
+    }
+    .committee-enrichment-card .card-title,
+    .execution-routing-card .card-title {
+      margin-bottom: 10px;
+    }
+
+    .committee-enrichment-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .execution-routing-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .committee-ai-instructions {
+      flex-shrink: 0;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-tertiary);
+    }
+    .committee-ai-instructions-heading {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .committee-ai-instructions-shell {
+      position: relative;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      padding: 8px 8px 34px 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .committee-ai-instructions-textarea {
+      display: block;
+      width: 100%;
+      min-height: 72px;
+      max-height: 160px;
+      padding: 0;
+      margin: 0;
+      border: none;
+      background: transparent;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+    .committee-ai-instructions-textarea::placeholder {
+      color: #9ca3af;
+    }
+    .committee-ai-instructions-textarea:focus {
+      outline: none;
+    }
+    .btn-committee-ai-save {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid var(--blue-cta);
+      background: var(--blue-cta);
+      color: #fff;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-committee-ai-save:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    /* Lead routing / execution (paired with committee card) */
+    .routing-execution-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 0;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .routing-persona-target {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--primary-blue);
+      background: #eff6ff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(37, 99, 235, 0.12);
+    }
+    .routing-body {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .routing-copy { flex: 1; min-width: 260px; max-width: 640px; }
+    .routing-copy--execution { min-width: 0; max-width: none; }
+    .routing-copy h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .routing-copy ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+    .routing-copy li { margin-bottom: 3px; }
+    .routing-copy--execution li:last-child { margin-bottom: 0; }
+    .routing-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .routing-actions--stack {
+      flex-direction: column;
+      align-items: stretch;
+      flex-wrap: nowrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .routing-actions--stack .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+    .btn-quiet {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      border-color: var(--border-tertiary);
+    }
+    .btn {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 9px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--border-tertiary);
+      background: var(--bg-primary);
+      color: var(--text-muted);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn:hover {
+      border-color: #d1d5db;
+      color: var(--text);
+    }
+    .btn-primary {
+      background: var(--blue-cta);
+      color: #fff;
+      border-color: var(--blue-cta);
+      font-weight: 600;
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #fff;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 8px;
+      font-family: 'DM Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header-wrap">
+  <div class="header">
+    <img class="header-logo" src="../revops-dashboard/exit-engine-logo.png" alt="Exit Engine">
+    <div class="header-title-wrap">
+      <div class="header-title" aria-label="Account name redacted, Intel">
+        <span class="blur-field" aria-hidden="true">████████████</span>
+        Intel
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Row 1: Company header -->
+  <div class="card">
+    <div class="section-label">Account record</div>
+    <div class="account-header">
+      <div class="account-identity">
+        <div class="account-label-row">
+          <span class="blur-field" aria-hidden="true">███████████</span>
+          <span class="badge hot">Hot Account</span>
+          <span class="badge purple">Pattern Match Detected</span>
+          <span class="badge red">Priority 1</span>
+        </div>
+        <div class="domain-partial">
+          <span class="hidden">████</span>app.<span class="hidden">████████</span>.com
+        </div>
+      </div>
+      <div class="status-row">
+        <span class="badge blue">GTM Intel</span>
+        <span class="badge green">Sync healthy</span>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="k">Segment</div>
+        <div class="v">B2B SaaS</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Employee count</div>
+        <div class="v">31</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">HQ</div>
+        <div class="v">San Francisco, CA</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Funding / ownership</div>
+        <div class="v">Lightspeed-backed</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">GTM status</div>
+        <div class="v">Expansion Readiness</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Last activity</div>
+        <div class="v">2h ago</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Assigned owner</div>
+        <div class="v">R. Carlin</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Last sync</div>
+        <div class="v">8 min ago</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">CRM</div>
+        <div class="v">HubSpot · Active</div>
+      </div>
+      <div class="meta-item">
+        <div class="k">Intent window</div>
+        <div class="v">Compressed (14d)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Signals + AI -->
+  <div class="grid-2">
+    <div class="card signals-card" style="margin-bottom: 0;">
+      <div class="signals-card-header">
+        <div class="section-label">Signals</div>
+        <div class="card-title" style="margin-top: -4px;">Detected Account Signals</div>
+      </div>
+
+      <div class="signals-chart-zone">
+        <div class="signals-density-wrap">
+          <div class="signals-density-chart">
+            <svg class="signals-density-svg signals-density-svg--scatter" viewBox="0 0 400 205" preserveAspectRatio="none" role="img" focusable="false" aria-label="Signal cluster map: sparse early activity toward lower left, converging to dense high-intent concentration toward upper right">
+              <title>Account signal cluster intensity</title>
+              <g id="signals-scatter-cloud" class="signals-scatter-cloud"></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="signals-list-scroll">
+        <div class="signal-list">
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--hiring">Hiring</span>
+              <div class="signal-title">VP Revenue hired</div>
+              <div class="signal-source">LinkedIn · Title change · verified</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 21 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--committee">Committee</span>
+              <div class="signal-title">Founder’s Office role added</div>
+              <div class="signal-source">Org chart delta · People Data Labs</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 18 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--hiring">Hiring</span>
+              <div class="signal-title">Senior Partner Manager hired</div>
+              <div class="signal-source">ATS feed · Greenhouse webhook</div>
+            </div>
+            <span class="signal-quality med">Elevated</span>
+            <span class="signal-decay">decays in 30 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--intent">Intent</span>
+              <div class="signal-title">Pricing page revisits (6× / 5d)</div>
+              <div class="signal-source">First-party web · segment anonymous</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 7 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--hiring">Hiring</span>
+              <div class="signal-title">Hiring: Sales Ops (open req)</div>
+              <div class="signal-source">Job board scrape · LinkedIn Jobs</div>
+            </div>
+            <span class="signal-quality med">Elevated</span>
+            <span class="signal-decay">decays in 45 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--tech">Tech / Ops</span>
+              <div class="signal-title">CRM migration activity detected</div>
+              <div class="signal-source">Technographic · partner signal</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 12 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--intent">Intent</span>
+              <div class="signal-title">Intent spike: pipeline automation</div>
+              <div class="signal-source">Bombora · topic cluster</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 9 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--hiring">Hiring</span>
+              <div class="signal-title">GTM headcount growth (+4 QoQ)</div>
+              <div class="signal-source">Modeled from public headcount</div>
+            </div>
+            <span class="signal-quality med">Elevated</span>
+            <span class="signal-decay">decays in 60 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--engagement">Engagement</span>
+              <div class="signal-title">Demo traffic from paid retargeting</div>
+              <div class="signal-source">Ads + product analytics join</div>
+            </div>
+            <span class="signal-quality med">Elevated</span>
+            <span class="signal-decay">decays in 5 days</span>
+          </div>
+          <div class="signal-row">
+            <div class="signal-main">
+              <span class="signal-cat signal-cat--engagement">Engagement</span>
+              <div class="signal-title">RevOps workflow content engagement</div>
+              <div class="signal-source">Gated asset · 3 stakeholders</div>
+            </div>
+            <span class="signal-quality high">Strong</span>
+            <span class="signal-decay">decays in 11 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-column">
+      <div class="card" style="margin-bottom: 0;">
+        <div
+          class="composite-gauge composite-gauge--standalone"
+          role="meter"
+          aria-label="Total Account Composite Score"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="84"
+          aria-valuetext="84 out of 100"
+        >
+          <div class="composite-gauge-head">
+            <div class="composite-gauge-title">Total Account Composite Score</div>
+            <div class="composite-pattern-analysis-title">Pattern Analysis</div>
+          </div>
+          <div class="composite-gauge-main">
+            <div class="composite-gauge-meter-col">
+              <div class="composite-gauge-stage">
+                <svg
+                  class="composite-gauge-svg"
+                  viewBox="0 0 200 112"
+                  role="img"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    class="composite-gauge-track"
+                    d="M 22 100 A 78 78 0 0 1 178 100"
+                  />
+                  <path
+                    class="composite-gauge-value-arc"
+                    d="M 22 100 A 78 78 0 0 1 178 100"
+                  />
+                </svg>
+                <div class="composite-gauge-readout">
+                  <span class="composite-gauge-score">84</span>
+                </div>
+              </div>
+              <div class="composite-gauge-foot">
+                <span class="badge green">High confidence</span>
+              </div>
+            </div>
+            <div class="composite-pattern-analysis">
+              <div class="composite-pattern-analysis-inner">
+                <div class="pattern-tags pattern-tags--stack">
+                  <span class="pattern-tag">GTM rebuild pattern</span>
+                  <span class="pattern-tag">Expansion readiness pattern</span>
+                  <span class="pattern-tag">Pre-scale systems maturity pattern</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom: 0;">
+        <div class="section-label">Model output</div>
+        <div class="card-title" style="margin-top: -4px;">AI Pattern Match Analysis</div>
+        <p class="ai-summary">
+          This account is showing a coordinated pre-expansion pattern across leadership hiring, GTM operations behavior, and repeat engagement with pipeline infrastructure content. The signal cluster resembles accounts entering an active systems-upgrade window.
+        </p>
+        <div class="confidence-line">Confidence framing: High agreement across independent sources · temporal compression inside 14-day intent window</div>
+        <ul class="evidence-list">
+          <li>Revenue leadership hiring preceded operational research behavior by ~11 days.</li>
+          <li>New cross-functional business operations role suggests strategic buildout, not backfill.</li>
+          <li>Multiple GTM stakeholders touched workflow-related content within the same week.</li>
+          <li>Signal timing is compressed inside a high-intent window vs. peer cohort baseline.</li>
+          <li>Similar pattern historically mapped to active buying cycles in mid-market SaaS.</li>
+        </ul>
+        <div class="confidence-line" style="margin-bottom:0;"><strong style="color:var(--text);font-weight:600;">Pattern type:</strong> Multi-threaded GTM systems upgrade (pre-expansion)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Buyer committee (left) + Execution (right) — same 1fr / 1fr + 14px gutter as Signals + AI -->
+  <div class="grid-2 grid-committee-row">
+    <div class="card committee-enrichment-card" style="margin-bottom: 0;">
+      <div class="section-label">Stakeholders</div>
+      <div class="card-title" style="margin-top: -4px;">Buyer Committee Enrichment</div>
+      <div class="segment-wrap">
+        <div class="segmented" role="tablist" aria-label="Committee role">
+          <button type="button" id="tab-economic" class="active" role="tab" aria-selected="true" data-panel="economic">Economic Buyer</button>
+          <button type="button" id="tab-champion" role="tab" aria-selected="false" data-panel="champion">Champion</button>
+          <button type="button" id="tab-influencer" role="tab" aria-selected="false" data-panel="influencer">Influencer</button>
+        </div>
+      </div>
+      <div class="committee-panels">
+        <div class="committee-panel active" id="panel-economic" role="tabpanel" aria-labelledby="tab-economic">
+          <div class="person-card">
+            <div class="person-avatar-wrap">
+              <img class="person-avatar" src="assets/persona-headshot.png" alt="" width="72" height="72" data-persona-avatar="economic">
+            </div>
+            <div class="person-main">
+              <div class="person-name">Ryan Carlin</div>
+              <div class="person-email">ryan@exitengine.us</div>
+              <div class="person-role-badge"><span class="badge blue">Economic Buyer</span></div>
+              <div class="person-title">VP of Revenue Operations</div>
+            </div>
+            <div class="signal-capture"><strong>Signal capture:</strong> Viewed pricing page twice in 72h, joined RevOps webinar, recently promoted from Sr. Director.</div>
+          </div>
+        </div>
+        <div class="committee-panel" id="panel-champion" role="tabpanel" hidden aria-labelledby="tab-champion">
+          <div class="person-card">
+            <div class="person-avatar-wrap">
+              <img class="person-avatar" src="assets/persona-headshot.png" alt="" width="72" height="72" data-persona-avatar="champion">
+            </div>
+            <div class="person-main">
+              <div class="person-name">Alex Romero</div>
+              <div class="person-email">alex.romero@<span class="email-blur">acme-corp</span>.com</div>
+              <div class="person-role-badge"><span class="badge purple">Champion</span></div>
+              <div class="person-title">Director of Demand Generation</div>
+            </div>
+            <div class="signal-capture"><strong>Signal capture:</strong> Clicked retargeting asset, engaged with pipeline efficiency content, opened outbound email twice, revisited integrations page.</div>
+          </div>
+        </div>
+        <div class="committee-panel" id="panel-influencer" role="tabpanel" hidden aria-labelledby="tab-influencer">
+          <div class="person-card">
+            <div class="person-avatar-wrap">
+              <img class="person-avatar" src="assets/persona-headshot.png" alt="" width="72" height="72" data-persona-avatar="influencer">
+            </div>
+            <div class="person-main">
+              <div class="person-name">Priya Shah</div>
+              <div class="person-email">priya.shah@<span class="email-blur">acme-corp</span>.com</div>
+              <div class="person-role-badge"><span class="badge green">Influencer</span></div>
+              <div class="person-title">Senior Sales Operations Manager</div>
+            </div>
+            <div class="signal-capture"><strong>Signal capture:</strong> Downloaded workflow template, visited integrations page, associated with CRM cleanup initiative, viewed ops automation content.</div>
+          </div>
+        </div>
+      </div>
+      <div class="committee-ai-instructions">
+        <div class="committee-ai-instructions-heading">Give AI Instructions</div>
+        <div class="committee-ai-instructions-shell">
+          <textarea
+            id="committee-ai-instructions-input"
+            class="committee-ai-instructions-textarea"
+            rows="3"
+            placeholder="Text box to inform the execution"
+            aria-label="Instructions to inform the execution"></textarea>
+          <button type="button" class="btn-committee-ai-save">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card execution-routing-card" style="margin-bottom: 0;">
+      <div class="section-label">Execution</div>
+      <div class="card-title" style="margin-top: -4px;">Lead Routing · Recommended Action</div>
+      <div class="routing-execution-inner" id="execution-routing-root" role="region" aria-live="polite" aria-label="Recommended action for selected stakeholder">
+        <span class="routing-persona-target" id="execution-persona-label">For Economic Buyer</span>
+        <div class="routing-copy routing-copy--execution">
+          <h3 id="execution-headline">This contact is ready for Executive RevOps Modernization Sequence</h3>
+          <ul id="execution-bullets">
+            <li>Lead with business case framing around pipeline efficiency and operating leverage.</li>
+            <li>Use pricing + workflow proof points based on recent high-intent engagement.</li>
+            <li>Route to AE-led outreach with concise executive follow-up.</li>
+            <li>Push CRM tag: economic-buyer / high-intent</li>
+          </ul>
+        </div>
+        <div class="routing-actions routing-actions--stack">
+          <button type="button" class="btn btn-primary" id="btn-fire-sequence">Fire Sequence</button>
+          <button type="button" class="btn" id="btn-push-crm">Push to CRM</button>
+          <button type="button" class="btn btn-quiet" id="btn-view-workflow">View Workflow</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer-note">Confidential · Exit Engine internal intelligence surface · illustrative data</p>
+</div>
+
+<script>
+(function buildSignalsScatterDensityChart() {
+  var g = document.getElementById('signals-scatter-cloud');
+  if (!g) return;
+
+  var x0 = 28;
+  var x1 = 372;
+  var yTop = 38;
+  var yBot = 194;
+  var wPlot = x1 - x0;
+  var hPlot = yBot - yTop;
+  var ySpreadMul = 1.62;
+
+  function randn() {
+    var u = 0;
+    var v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
+
+  var heatStops = [
+    { t: 0, rgb: [49, 46, 129] },
+    { t: 0.18, rgb: [29, 78, 216] },
+    { t: 0.32, rgb: [8, 145, 178] },
+    { t: 0.48, rgb: [22, 163, 74] },
+    { t: 0.62, rgb: [202, 138, 4] },
+    { t: 0.78, rgb: [234, 88, 12] },
+    { t: 1, rgb: [220, 38, 38] }
+  ];
+
+  function heatToRgb(h) {
+    h = clamp(h, 0, 1);
+    var a = 0;
+    var b = 1;
+    var si;
+    for (si = 0; si < heatStops.length - 1; si++) {
+      if (h <= heatStops[si + 1].t) {
+        a = si;
+        b = si + 1;
+        break;
+      }
+    }
+    var t0 = heatStops[a].t;
+    var t1 = heatStops[b].t;
+    var u = t1 === t0 ? 0 : (h - t0) / (t1 - t0);
+    var ca = heatStops[a].rgb;
+    var cb = heatStops[b].rgb;
+    var r = Math.round(ca[0] + (cb[0] - ca[0]) * u);
+    var gg = Math.round(ca[1] + (cb[1] - ca[1]) * u);
+    var bb = Math.round(ca[2] + (cb[2] - ca[2]) * u);
+    return 'rgb(' + r + ',' + gg + ',' + bb + ')';
+  }
+
+  var hotX = 348;
+  var hotY = 48;
+
+  var points = [];
+
+  function addPoint(tProgress, spreadScale, weight) {
+    var t = clamp(tProgress, 0, 1);
+    var spread = (38 * Math.pow(1 - t, 1.15) + 2.4) * spreadScale;
+    var x = x0 + t * wPlot + randn() * spread * 0.88;
+    var y = yBot - t * hPlot + randn() * spread * 0.82 * ySpreadMul;
+    x = clamp(x, x0, x1);
+    y = clamp(y, yTop, yBot);
+    var nx = (x - hotX) / wPlot;
+    var ny = (y - hotY) / hPlot;
+    var dist = Math.sqrt(nx * nx + ny * ny);
+    var along = 0.52 * t + 0.28 * (1 - y / yBot);
+    var localHot = Math.max(0, 1 - dist * 1.65);
+    var h = clamp(0.38 * along + 0.55 * localHot + 0.12 * t * localHot + weight * 0.08, 0, 1);
+    points.push({ x: x, y: y, h: h });
+  }
+
+  var i;
+  /* Extra samples: ~10% of dots are skipped so full circles stay inside plot bounds */
+  for (i = 0; i < 380; i++) {
+    var tBias = Math.pow(Math.random(), 0.38);
+    addPoint(tBias, 1, 0);
+  }
+  for (i = 0; i < 132; i++) {
+    addPoint(0.55 + Math.random() * 0.45, 0.55 + Math.random() * 0.35, 0.15);
+  }
+  for (i = 0; i < 105; i++) {
+    addPoint(0.78 + Math.random() * 0.22, 0.22 + Math.random() * 0.25, 0.45);
+  }
+  for (i = 0; i < 60; i++) {
+    addPoint(0.88 + Math.random() * 0.12, 0.12 + Math.random() * 0.14, 0.85);
+  }
+
+  points.sort(function (a, b) {
+    return a.h - b.h;
+  });
+
+  function circleFullyInsidePlot(cx, cy, r) {
+    return cx - r >= x0 && cx + r <= x1 && cy - r >= yTop && cy + r <= yBot;
+  }
+
+  g.innerHTML = '';
+  var NS = 'http://www.w3.org/2000/svg';
+  for (i = 0; i < points.length; i++) {
+    var p = points[i];
+    var rad = 2.1 + p.h * 2.7;
+    if (!circleFullyInsidePlot(p.x, p.y, rad)) {
+      continue;
+    }
+    var c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', p.x.toFixed(2));
+    c.setAttribute('cy', p.y.toFixed(2));
+    c.setAttribute('r', rad.toFixed(2));
+    c.setAttribute('fill', heatToRgb(p.h));
+    c.setAttribute('fill-opacity', (0.38 + p.h * 0.42).toFixed(3));
+    c.setAttribute('stroke', 'none');
+    c.setAttribute('pointer-events', 'none');
+    g.appendChild(c);
+  }
+})();
+
+(function () {
+  var PERSONA_CONFIG = {
+    economic: {
+      headshotSrc: 'assets/persona-headshot.png',
+      executionForLabel: 'Economic Buyer',
+      sequenceName: 'Executive RevOps Modernization Sequence',
+      bullets: [
+        'Lead with business case framing around pipeline efficiency and operating leverage.',
+        'Use pricing + workflow proof points based on recent high-intent engagement.',
+        'Route to AE-led outreach with concise executive follow-up.',
+        'Push CRM tag: economic-buyer / high-intent'
+      ]
+    },
+    champion: {
+      headshotSrc: 'assets/persona-headshot.png',
+      executionForLabel: 'Champion',
+      sequenceName: 'Demand Gen Systems Upgrade Sequence',
+      bullets: [
+        'Lead with campaign-to-pipeline attribution and automation workflow messaging.',
+        'Trigger persona-aligned email + LinkedIn follow-up.',
+        'Emphasize integration depth and execution speed.',
+        'Push CRM tag: champion / workflow-engaged'
+      ]
+    },
+    influencer: {
+      headshotSrc: 'assets/persona-headshot.png',
+      executionForLabel: 'Influencer',
+      sequenceName: 'Sales Ops Evaluation Sequence',
+      bullets: [
+        'Lead with operational workflow, integration, and process-efficiency proof points.',
+        'Route technical follow-up with implementation-focused messaging.',
+        'Highlight CRM hygiene, automation, and handoff improvements.',
+        'Push CRM tag: influencer / ops-evaluator'
+      ]
+    }
+  };
+
+  var buttons = document.querySelectorAll('.segmented button');
+  var panels = {
+    economic: document.getElementById('panel-economic'),
+    champion: document.getElementById('panel-champion'),
+    influencer: document.getElementById('panel-influencer')
+  };
+  var labelEl = document.getElementById('execution-persona-label');
+  var headlineEl = document.getElementById('execution-headline');
+  var bulletsEl = document.getElementById('execution-bullets');
+  var fireBtn = document.getElementById('btn-fire-sequence');
+
+  function applyHeadshots() {
+    Object.keys(PERSONA_CONFIG).forEach(function (key) {
+      var img = document.querySelector('img[data-persona-avatar="' + key + '"]');
+      if (img) img.src = PERSONA_CONFIG[key].headshotSrc;
+    });
+  }
+
+  function renderExecution(panelKey) {
+    var cfg = PERSONA_CONFIG[panelKey];
+    if (!cfg || !labelEl || !headlineEl || !bulletsEl) return;
+    labelEl.textContent = 'For ' + cfg.executionForLabel;
+    headlineEl.textContent = 'This contact is ready for ' + cfg.sequenceName;
+    bulletsEl.innerHTML = '';
+    cfg.bullets.forEach(function (text) {
+      var li = document.createElement('li');
+      li.textContent = text;
+      bulletsEl.appendChild(li);
+    });
+    if (fireBtn) {
+      fireBtn.setAttribute(
+        'aria-label',
+        'Fire sequence: ' + cfg.sequenceName + ' for ' + cfg.executionForLabel
+      );
+    }
+  }
+
+  function show(panelKey) {
+    Object.keys(panels).forEach(function (key) {
+      var p = panels[key];
+      if (!p) return;
+      var on = key === panelKey;
+      p.classList.toggle('active', on);
+      p.hidden = !on;
+    });
+    buttons.forEach(function (btn) {
+      var active = btn.getAttribute('data-panel') === panelKey;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    renderExecution(panelKey);
+  }
+
+  applyHeadshots();
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      show(btn.getAttribute('data-panel'));
+    });
+  });
+  show('economic');
+})();
+</script>
+</body>
+</html>
