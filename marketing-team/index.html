@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Marketing Team OS — Exit Engine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="A diagnostic for founders and CMOs scaling past $50M ARR. Answer 8 questions, get a personalized marketing team blueprint." />
+
+  <link rel="stylesheet" href="app.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Data (plain JS) loaded BEFORE the babel scripts so window globals exist -->
+  <script src="app-content.js"></script>
+
+  <!-- Babel components -->
+  <script type="text/babel" src="app-shared.jsx"></script>
+  <script type="text/babel" src="app-diagnostic.jsx"></script>
+  <script type="text/babel" src="app-output.jsx"></script>
+  <script type="text/babel" src="app-library.jsx"></script>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    // ---------------------------------------------------------------
+    // HERO
+    // ---------------------------------------------------------------
+    const Hero = ({ onStart }) => (
+      <section id="top" className="hero">
+        <div className="container">
+          <Eyebrow>FOR FOUNDERS · CMOs · OPERATORS</Eyebrow>
+          <h1 className="display" style={{ marginTop: 20, marginBottom: 24, maxWidth: "14ch" }}>
+            Restructure your marketing team for 2026
+          </h1>
+          <p className="lede" style={{ marginBottom: 32 }}>
+            A diagnostic for founders and CMOs scaling past $50M ARR. Answer 8
+            questions, get a personalized blueprint for your next hire, your AI
+            agent stack, and your 90-day path.
+          </p>
+          <div className="hero-cta-row">
+            <Btn size="lg" onClick={onStart}>
+              Run the diagnostic <ArrowUR />
+            </Btn>
+            <Btn kind="ghost" size="lg" onClick={() => scrollToId("library")}>
+              See the 4R model
+            </Btn>
+          </div>
+          <div className="hero-meta">
+            <span>~3 MIN</span>
+            <span className="dot">·</span>
+            <span>NO EMAIL GATE</span>
+            <span className="dot">·</span>
+            <span>PERSONALIZED OUTPUT</span>
+            <span className="dot">·</span>
+            <span>BUILT FOR exitengine.us/team</span>
+          </div>
+        </div>
+      </section>
+    );
+
+    // ---------------------------------------------------------------
+    // CONTEXT STRIP — the 4R model intro
+    // ---------------------------------------------------------------
+    const Context = () => (
+      <section id="context" className="section tight soft">
+        <div className="container">
+          <SectionNum n="02">THE 4R MODEL</SectionNum>
+          <div className="grid" style={{ gridTemplateColumns: "1.2fr 1fr", gap: 64, alignItems: "start" }}>
+            <h2 className="h1" style={{ maxWidth: "20ch" }}>
+              Four functions. Not four headcounts.
+            </h2>
+            <p className="lede">
+              The 4R model names what marketing actually does at $2–50M B2B SaaS.
+              Each function gets owned by a human — sometimes one person owns two,
+              sometimes a single function gets a whole team. Stage decides the shape.
+            </p>
+          </div>
+
+          <div className="context-grid">
+            {ROLES.map((r) => (
+              <div className="context-cell" key={r.key}>
+                <span className="num">№ {r.n}</span>
+                <h4 className="h4">{r.name}</h4>
+                <p className="small" style={{ color: "var(--ee-ink-2)" }}>{r.hook}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="context-thesis">
+            <Eyebrow>THE THESIS</Eyebrow>
+            <div>
+              <p className="h3" style={{ maxWidth: "26ch", marginBottom: 12 }}>
+                AI is the operational layer underneath these four humans.
+              </p>
+              <p className="lede" style={{ color: "var(--ee-ink-3)" }}>
+                Humans govern strategy, 100% of the time. Agents extend the team
+                you have — they don't replace the team you need to build.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+
+    // ---------------------------------------------------------------
+    // DIAGNOSTIC WRAPPER — section header + the Diagnostic component
+    // Manages all the diagnostic state at App level.
+    // ---------------------------------------------------------------
+    const DiagnosticSection = ({ answers, setAnswer, step, setStep, complete, onComplete, onRetake, blueprint, onJumpToAgent }) => (
+      <section id="diagnostic" className="section tight">
+        <div className="container">
+          <SectionNum n="03">THE DIAGNOSTIC</SectionNum>
+          <div className="grid" style={{ gridTemplateColumns: "1.2fr 1fr", gap: 64, marginBottom: 48, alignItems: "start" }}>
+            <h2 className="h1" style={{ maxWidth: "18ch" }}>
+              Your blueprint, in 8 questions.
+            </h2>
+            <p className="lede">
+              The right side fills in as you answer. We compute a priority hire,
+              an AI leverage score, and a 90-day path tuned to your stage. No
+              email, no gate.
+            </p>
+          </div>
+
+          {!complete ? (
+            <Diagnostic
+              answers={answers}
+              setAnswer={setAnswer}
+              step={step}
+              setStep={setStep}
+              onComplete={onComplete}
+            />
+          ) : (
+            <div className="card mute" style={{ padding: 28, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+              <div>
+                <Eyebrow>DIAGNOSTIC COMPLETE</Eyebrow>
+                <h3 className="h3" style={{ marginTop: 8 }}>
+                  Your blueprint is below — {blueprint.moveType === "hire" ? "priority hire" : "priority gap"}: <span style={{ color: "var(--ee-blue)" }}>{blueprint.priorityRole.name}</span>.
+                </h3>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Btn kind="ghost" size="sm" onClick={onRetake}>↻ Retake</Btn>
+                <Btn size="sm" onClick={() => scrollToId("output")}>Jump to blueprint ↓</Btn>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+
+    // ---------------------------------------------------------------
+    // FINAL CTA (anchor)
+    // ---------------------------------------------------------------
+    const FinalCTA = () => (
+      <section id="book" className="section inv">
+        <div className="container">
+          <div className="final-cta">
+            <div>
+              <Eyebrow onDark>§06 · DONE WITH YOU</Eyebrow>
+              <h2 className="display" style={{ fontSize: "clamp(48px, 6vw, 76px)", lineHeight: 0.98, marginTop: 16, marginBottom: 20, maxWidth: "16ch" }}>
+                Want help building this for your team?
+              </h2>
+              <p className="lede" style={{ marginBottom: 28, maxWidth: 540 }}>
+                I implement the 4R structure and deploy the agent stack inside
+                your company in 90 days. Operator-to-operator. No retainer drag,
+                no agency theater.
+              </p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <Btn size="lg">Book 30 minutes with Ryan <ArrowUR /></Btn>
+                <Btn kind="ghost" size="lg" className="on-dark">Email ryan@exitengine.us</Btn>
+              </div>
+            </div>
+
+            <div className="final-cta-box">
+              <div className="row">
+                <span className="k">TRACK RECORD</span>
+                <span className="v">Carrot.com · Roaming Hunger · 7 other B2B SaaS</span>
+              </div>
+              <div className="row">
+                <span className="k">FORMAT</span>
+                <span className="v">Done-with-you · 90-day engagements</span>
+              </div>
+              <div className="row">
+                <span className="k">STAGE</span>
+                <span className="v">$2 – 50M ARR B2B SaaS</span>
+              </div>
+              <div className="row">
+                <span className="k">CALL</span>
+                <span className="v">30 min · no pitch · plan + intros</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+
+    // ---------------------------------------------------------------
+    // APP — top-level composition + diagnostic state
+    // ---------------------------------------------------------------
+    const App = () => {
+      const [answers, setAnswers] = React.useState({});
+      const [step, setStep] = React.useState(0);
+      const [complete, setComplete] = React.useState(false);
+      const [highlightAgentKey, setHighlightAgentKey] = React.useState(null);
+
+      const setAnswer = (id, value) => setAnswers((prev) => ({ ...prev, [id]: value }));
+
+      const onStart = () => {
+        scrollToId("diagnostic");
+        // optional: focus the first option after scroll settles
+        setTimeout(() => {
+          const first = document.querySelector(".diag-options .opt");
+          if (first) first.focus();
+        }, 600);
+      };
+
+      const onComplete = () => {
+        setComplete(true);
+        // scroll to output after a short paint
+        setTimeout(() => scrollToId("output"), 320);
+      };
+
+      const onRetake = () => {
+        setAnswers({});
+        setStep(0);
+        setComplete(false);
+        setTimeout(() => scrollToId("diagnostic"), 100);
+      };
+
+      const onJumpToAgent = (key) => {
+        setHighlightAgentKey(key);
+        setTimeout(() => scrollToId("agents"), 100);
+      };
+
+      const blueprint = complete ? computeBlueprint(answers) : null;
+
+      return (
+        <>
+          <Nav />
+          <Hero onStart={onStart} />
+          <Context />
+          <DiagnosticSection
+            answers={answers}
+            setAnswer={setAnswer}
+            step={step}
+            setStep={setStep}
+            complete={complete}
+            onComplete={onComplete}
+            onRetake={onRetake}
+            blueprint={blueprint}
+            onJumpToAgent={onJumpToAgent}
+          />
+          {complete && blueprint && (
+            <Output
+              blueprint={blueprint}
+              onRetake={onRetake}
+              onJumpToAgent={onJumpToAgent}
+            />
+          )}
+          <FourRLibrary
+            highlightKey={complete && blueprint ? blueprint.priorityKey : null}
+            currentArrIdx={complete && blueprint ? blueprint.arrIdx : null}
+          />
+          <AgentLibrary
+            highlightAgentKey={highlightAgentKey}
+            onDeepLink={setHighlightAgentKey}
+          />
+          <FinalCTA />
+          <Footer />
+        </>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>

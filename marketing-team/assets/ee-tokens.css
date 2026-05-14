@@ -1,0 +1,202 @@
+/* =============================================================
+   Exit Engine — Design Tokens
+   Colors + Type
+   ============================================================= */
+
+/* ---- Webfonts (Google Fonts) ----
+   Display: Archivo Black — heavy geometric block, matches the logo.
+   Body:    Archivo — same family, regular weights for unified voice.
+   Mono:    JetBrains Mono — operator/builder vibe, neutral pairing.
+*/
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* ---------- COLORS ---------- */
+
+  /* Brand */
+  --ee-blue:        #1E54F2;   /* Primary brand blue (logo arrow) */
+  --ee-blue-600:    #1A48D6;   /* Hover */
+  --ee-blue-700:    #163CB5;   /* Pressed */
+  --ee-blue-100:    #E5ECFE;   /* Tint / background wash */
+  --ee-blue-50:     #F2F5FE;   /* Faintest tint */
+
+  /* Ink (foreground) */
+  --ee-ink:         #0E1116;   /* Near-black, body + heading text */
+  --ee-ink-2:       #2A2F38;   /* Secondary text */
+  --ee-ink-3:       #5A616E;   /* Tertiary / captions */
+  --ee-ink-4:       #8A909C;   /* Disabled / muted */
+
+  /* Surface */
+  --ee-bg:          #FFFFFF;   /* Primary background */
+  --ee-bg-soft:     #FAFAFB;   /* Section break / alt rows */
+  --ee-bg-mute:     #F2F3F5;   /* Cards, inputs */
+  --ee-line:        #E6E8EC;   /* Hairline borders */
+  --ee-line-strong: #C9CDD4;   /* Stronger dividers */
+
+  /* Semantic */
+  --ee-success:     #0E8A4F;
+  --ee-success-bg:  #E6F5EE;
+  --ee-warn:        #B36B00;
+  --ee-warn-bg:     #FFF3DD;
+  --ee-danger:      #C8202F;
+  --ee-danger-bg:   #FBE7E9;
+
+  /* Inverted (for dark sections, used sparingly) */
+  --ee-ink-inv:     #FFFFFF;
+  --ee-bg-inv:      #0E1116;
+
+  /* ---------- TYPE ---------- */
+  --ee-font-display: "Archivo Black", "Archivo", ui-sans-serif, sans-serif;
+  --ee-font-sans:    "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --ee-font-mono:    "JetBrains Mono", ui-monospace, "Menlo", monospace;
+
+  /* Type scale (modular, ~1.25) */
+  --ee-fs-display:  72px;   /* Hero */
+  --ee-fs-h1:       48px;
+  --ee-fs-h2:       36px;
+  --ee-fs-h3:       24px;
+  --ee-fs-h4:       18px;
+  --ee-fs-body:     16px;
+  --ee-fs-small:    14px;
+  --ee-fs-micro:    12px;
+
+  --ee-lh-tight:    1.05;
+  --ee-lh-snug:     1.2;
+  --ee-lh-normal:   1.45;
+  --ee-lh-loose:    1.65;
+
+  --ee-tracking-tight:   -0.025em;   /* Big display */
+  --ee-tracking-snug:    -0.015em;   /* Headings */
+  --ee-tracking-normal:  0;
+  --ee-tracking-eyebrow: 0.12em;     /* All-caps labels */
+
+  /* ---------- SPACING ---------- */
+  --ee-s-1:  4px;
+  --ee-s-2:  8px;
+  --ee-s-3:  12px;
+  --ee-s-4:  16px;
+  --ee-s-5:  24px;
+  --ee-s-6:  32px;
+  --ee-s-7:  48px;
+  --ee-s-8:  64px;
+  --ee-s-9:  96px;
+  --ee-s-10: 128px;
+
+  /* ---------- RADII ---------- */
+  --ee-r-1:  4px;    /* Tight (badges) */
+  --ee-r-2:  8px;    /* Inputs */
+  --ee-r-3:  12px;   /* Cards */
+  --ee-r-4:  20px;   /* Big cards */
+  --ee-r-pill: 999px;
+
+  /* ---------- SHADOWS ---------- */
+  --ee-shadow-1: 0 1px 2px rgba(14, 17, 22, 0.04), 0 1px 1px rgba(14, 17, 22, 0.03);
+  --ee-shadow-2: 0 4px 12px rgba(14, 17, 22, 0.06), 0 2px 4px rgba(14, 17, 22, 0.04);
+  --ee-shadow-3: 0 12px 32px rgba(14, 17, 22, 0.10), 0 4px 8px rgba(14, 17, 22, 0.04);
+  --ee-shadow-blue: 0 8px 24px rgba(30, 84, 242, 0.18);
+
+  /* ---------- MOTION ---------- */
+  --ee-ease:        cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ee-ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ee-dur-fast:    120ms;
+  --ee-dur-base:    200ms;
+  --ee-dur-slow:    320ms;
+}
+
+/* =============================================================
+   SEMANTIC ELEMENT STYLES
+   Use these directly on h1, p, code, etc. or as @apply-style refs.
+   ============================================================= */
+
+html { color: var(--ee-ink); background: var(--ee-bg); }
+
+body {
+  font-family: var(--ee-font-sans);
+  font-size: var(--ee-fs-body);
+  line-height: var(--ee-lh-normal);
+  color: var(--ee-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ee-font-display);
+  color: var(--ee-ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* h1/h2/.ee-display use Archivo Black (single-weight 400, intrinsically heavy).
+   h3/h4 drop down to Archivo Bold for hierarchy contrast. */
+h1, h2 {
+  font-family: "Archivo Black", "Archivo", ui-sans-serif, sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: var(--ee-fs-h1);
+  line-height: var(--ee-lh-tight);
+  letter-spacing: var(--ee-tracking-tight);
+}
+
+h2 {
+  font-size: var(--ee-fs-h2);
+  line-height: var(--ee-lh-snug);
+  letter-spacing: var(--ee-tracking-snug);
+}
+
+h3 {
+  font-family: "Archivo", ui-sans-serif, sans-serif;
+  font-size: var(--ee-fs-h3);
+  font-weight: 800;
+  line-height: var(--ee-lh-snug);
+  letter-spacing: var(--ee-tracking-snug);
+}
+
+h4 {
+  font-family: "Archivo", ui-sans-serif, sans-serif;
+  font-size: var(--ee-fs-h4);
+  font-weight: 700;
+  line-height: var(--ee-lh-snug);
+}
+
+p {
+  margin: 0 0 var(--ee-s-4) 0;
+  color: var(--ee-ink-2);
+  line-height: var(--ee-lh-loose);
+  text-wrap: pretty;
+}
+
+small, .ee-small { font-size: var(--ee-fs-small); color: var(--ee-ink-3); }
+
+.ee-eyebrow {
+  font-family: var(--ee-font-sans);
+  font-size: var(--ee-fs-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--ee-tracking-eyebrow);
+  color: var(--ee-blue);
+}
+
+.ee-display {
+  font-family: "Archivo Black", "Archivo", sans-serif;
+  font-size: var(--ee-fs-display);
+  font-weight: 400;
+  line-height: var(--ee-lh-tight);
+  letter-spacing: var(--ee-tracking-tight);
+  color: var(--ee-ink);
+}
+
+code, pre, .ee-mono {
+  font-family: var(--ee-font-mono);
+  font-size: 0.92em;
+  color: var(--ee-ink);
+}
+
+a {
+  color: var(--ee-blue);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--ee-dur-fast) var(--ee-ease);
+}
+a:hover { color: var(--ee-blue-600); text-decoration: underline; }
