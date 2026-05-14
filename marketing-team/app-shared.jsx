@@ -61,7 +61,7 @@ const ArrowR = ({ size = 14, color = "currentColor" }) => (
   </svg>
 );
 
-const Btn = ({ children, kind = "primary", size, block, onClick, disabled, href, style, ...rest }) => {
+const Btn = ({ children, kind = "primary", size, block, onClick, disabled, href, style, className, ...rest }) => {
   const cls = [
     "btn",
     kind === "primary" && "btn-primary",
@@ -70,7 +70,7 @@ const Btn = ({ children, kind = "primary", size, block, onClick, disabled, href,
     size === "sm" && "sm",
     size === "lg" && "lg",
     block && "block",
-    rest.className,
+    className,
   ]
     .filter(Boolean)
     .join(" ");
@@ -82,6 +82,7 @@ const Btn = ({ children, kind = "primary", size, block, onClick, disabled, href,
       disabled={disabled}
       href={href}
       style={style}
+      {...rest}
     >
       {children}
     </Tag>
@@ -122,10 +123,7 @@ const Nav = () => {
             <a key={id} href={"#" + id} onClick={(e) => goTo(id, e)}>{label}</a>
           ))}
         </div>
-        <Btn size="sm" onClick={() => {
-          const el = document.getElementById("book");
-          if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
-        }}>
+        <Btn size="sm" href="https://calendly.com/ryan_carlin/30min" target="_blank" rel="noopener">
           Book a call <ArrowUR />
         </Btn>
       </div>
