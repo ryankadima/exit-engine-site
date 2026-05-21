@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exit Engine - ABM Revenue Engine for Athena</title>
+  <meta name="description" content="A strategic GTM assessment and execution system purpose-built for Athena's two-motion go-to-market.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ee-bg: #FFFFFF;
+      --ee-bg-inv: #0E1116;
+      --ee-bg-soft: #FAFAFB;
+      --ee-ink: #0E1116;
+      --ee-ink-2: #3D4451;
+      --ee-ink-3: #6B7280;
+      --ee-ink-4: #9CA3AF;
+      --ee-ink-inv: #FFFFFF;
+      --ee-blue: #1E54F2;
+      --ee-blue-600: #1A48D4;
+      --ee-line: #E6E8EC;
+      --ee-line-strong: #D1D5DB;
+
+      --ee-font-display: 'Archivo Black', sans-serif;
+      --ee-font-sans: 'Archivo', sans-serif;
+      --ee-font-mono: 'JetBrains Mono', monospace;
+
+      --ee-fs-h1: 56px;
+      --ee-fs-h2: 36px;
+      --ee-fs-h3: 24px;
+      --ee-fs-body: 18px;
+      --ee-fs-small: 16px;
+      --ee-fs-micro: 14px;
+
+      --ee-lh-tight: 1.1;
+      --ee-lh-snug: 1.3;
+      --ee-lh-normal: 1.5;
+      --ee-lh-loose: 1.7;
+
+      --ee-s-1: 4px;
+      --ee-s-2: 8px;
+      --ee-s-3: 12px;
+      --ee-s-4: 16px;
+      --ee-s-5: 24px;
+      --ee-s-6: 32px;
+      --ee-s-7: 48px;
+      --ee-s-8: 64px;
+      --ee-s-9: 96px;
+      --ee-s-10: 128px;
+
+      --ee-r-2: 8px;
+      --ee-r-3: 12px;
+      --ee-r-pill: 999px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ee-font-sans);
+      font-size: var(--ee-fs-body);
+      line-height: var(--ee-lh-normal);
+      color: var(--ee-ink);
+      background: var(--ee-bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 var(--ee-s-5);
+    }
+
+    /* Sticky Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(14, 17, 22, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--ee-s-4) var(--ee-s-5);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .nav-logo { display: flex; align-items: center; gap: var(--ee-s-3); color: var(--ee-ink-inv); text-decoration: none; }
+    .nav-logo svg { display: block; }
+    .nav-logo .wordmark {
+      font-family: var(--ee-font-sans);
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--ee-s-2);
+      padding: 10px 18px;
+      background: var(--ee-blue);
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--ee-font-sans);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: var(--ee-r-2);
+      transition: background 0.15s ease;
+    }
+    .nav-cta:hover { background: var(--ee-blue-600); }
+
+    /* Typography */
+    .label {
+      font-family: var(--ee-font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ee-blue);
+      margin-bottom: var(--ee-s-4);
+    }
+
+    h1 {
+      font-family: var(--ee-font-display);
+      font-size: var(--ee-fs-h1);
+      line-height: var(--ee-lh-tight);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--ee-s-5);
+    }
+
+    h2 {
+      font-family: var(--ee-font-sans);
+      font-size: var(--ee-fs-h2);
+      font-weight: 800;
+      line-height: var(--ee-lh-snug);
+      letter-spacing: -0.01em;
+      margin-bottom: var(--ee-s-5);
+    }
+
+    h3 {
+      font-family: var(--ee-font-sans);
+      font-size: var(--ee-fs-h3);
+      font-weight: 700;
+      line-height: var(--ee-lh-snug);
+      margin-bottom: var(--ee-s-4);
+    }
+
+    .subheading {
+      font-size: 22px;
+      line-height: var(--ee-lh-normal);
+      color: var(--ee-ink-2);
+      font-weight: 400;
+    }
+
+    p { margin-bottom: var(--ee-s-5); }
+    p:last-child { margin-bottom: 0; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--ee-s-2);
+      padding: 16px 28px;
+      font-family: var(--ee-font-sans);
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      border-radius: var(--ee-r-2);
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--ee-blue);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(30, 84, 242, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--ee-blue-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(30, 84, 242, 0.35);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ee-ink);
+      border: 1px solid var(--ee-line-strong);
+    }
+    .btn-ghost:hover { background: var(--ee-bg-soft); }
+    .btn-ghost.on-dark {
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+    .btn-ghost.on-dark:hover { background: rgba(255,255,255,0.08); }
+    .btn-arrow { font-size: 18px; line-height: 1; }
+
+    .cta-group {
+      display: flex;
+      gap: var(--ee-s-4);
+      flex-wrap: wrap;
+      margin-top: var(--ee-s-6);
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--ee-bg-inv);
+      color: var(--ee-ink-inv);
+      padding: var(--ee-s-9) 0 var(--ee-s-10);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--ee-bg-soft));
+      opacity: 0;
+    }
+    .hero .label { color: var(--ee-blue); }
+    .hero h1 { color: var(--ee-ink-inv); max-width: 900px; }
+    .hero .subheading {
+      color: rgba(255, 255, 255, 0.78);
+      max-width: 760px;
+    }
+    .hero-meta {
+      font-family: var(--ee-font-mono);
+      font-size: var(--ee-fs-micro);
+      color: rgba(255,255,255,0.45);
+      margin-top: var(--ee-s-7);
+      display: flex;
+      gap: var(--ee-s-5);
+      flex-wrap: wrap;
+    }
+    .hero-meta span::before {
+      content: '·';
+      color: var(--ee-blue);
+      margin-right: var(--ee-s-2);
+      font-weight: 700;
+    }
+
+    section { padding: var(--ee-s-9) 0; }
+
+    .bg-soft { background: var(--ee-bg-soft); }
+    .bg-dark { background: var(--ee-bg-inv); color: var(--ee-ink-inv); }
+    .bg-dark .label { color: var(--ee-blue); }
+    .bg-dark h2 { color: var(--ee-ink-inv); }
+    .bg-dark p { color: rgba(255, 255, 255, 0.85); }
+
+    .section-intro { max-width: 800px; }
+
+    /* Grid Layouts */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--ee-s-6);
+      margin-top: var(--ee-s-7);
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--ee-s-6);
+      margin-top: var(--ee-s-7);
+    }
+
+    /* Phase Cards */
+    .phase-card {
+      border: 1px solid var(--ee-line);
+      padding: var(--ee-s-6);
+      background: var(--ee-bg);
+      border-radius: var(--ee-r-3);
+      display: flex;
+      flex-direction: column;
+    }
+    .phase-card.featured {
+      border-color: var(--ee-ink);
+      box-shadow: 0 10px 40px rgba(14, 17, 22, 0.08);
+    }
+    .phase-card .label { margin-bottom: var(--ee-s-3); }
+    .phase-card h3 { margin-bottom: var(--ee-s-2); }
+    .price {
+      font-family: var(--ee-font-mono);
+      font-size: var(--ee-fs-small);
+      font-weight: 500;
+      color: var(--ee-ink);
+      margin-bottom: var(--ee-s-5);
+    }
+    .divider {
+      height: 1px;
+      background: var(--ee-line);
+      margin: var(--ee-s-5) 0;
+    }
+    .phase-card ul, .team-capabilities ul {
+      list-style: none;
+      margin-bottom: var(--ee-s-5);
+    }
+    .phase-card li, .team-capabilities li {
+      padding-left: var(--ee-s-4);
+      position: relative;
+      margin-bottom: var(--ee-s-3);
+      font-size: var(--ee-fs-small);
+      line-height: var(--ee-lh-normal);
+    }
+    .phase-card li::before, .team-capabilities li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: var(--ee-blue);
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .note {
+      font-size: var(--ee-fs-micro);
+      color: var(--ee-ink-3);
+      font-style: italic;
+      line-height: var(--ee-lh-normal);
+      margin-top: auto;
+    }
+    .team-capabilities p {
+      margin-bottom: var(--ee-s-3);
+      font-size: var(--ee-fs-small);
+    }
+
+    /* Feature Cards (Why This Works) */
+    .feature-card {
+      padding: var(--ee-s-5) 0;
+    }
+    .feature-card .feature-num {
+      font-family: var(--ee-font-mono);
+      font-size: 12px;
+      color: var(--ee-blue);
+      font-weight: 500;
+      margin-bottom: var(--ee-s-3);
+      letter-spacing: 0.08em;
+    }
+    .feature-card h3 { margin-bottom: var(--ee-s-4); }
+    .feature-card p {
+      font-size: var(--ee-fs-small);
+      line-height: var(--ee-lh-normal);
+      color: var(--ee-ink-2);
+    }
+
+    /* CTA Section (Final) */
+    .cta-final {
+      background: var(--ee-bg-inv);
+      color: var(--ee-ink-inv);
+      padding: var(--ee-s-10) 0;
+      text-align: left;
+    }
+    .cta-final h2 { color: #fff; max-width: 800px; }
+    .cta-final p {
+      color: rgba(255,255,255,0.78);
+      max-width: 720px;
+      font-size: 20px;
+    }
+
+    /* Contact form */
+    .contact-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--ee-r-3);
+      padding: var(--ee-s-7);
+      margin-top: var(--ee-s-7);
+      max-width: 560px;
+    }
+    .contact-card label {
+      display: block;
+      font-family: var(--ee-font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: var(--ee-s-2);
+    }
+    .contact-card input, .contact-card textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--ee-r-2);
+      padding: 12px 14px;
+      color: #fff;
+      font-family: var(--ee-font-sans);
+      font-size: 15px;
+      margin-bottom: var(--ee-s-4);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .contact-card input:focus, .contact-card textarea:focus {
+      outline: none;
+      border-color: var(--ee-blue);
+      background: rgba(255,255,255,0.08);
+    }
+    .contact-card textarea { resize: vertical; min-height: 100px; }
+    .contact-card .btn-primary { width: 100%; justify-content: center; }
+
+    /* Footer */
+    footer {
+      background: var(--ee-bg-inv);
+      color: rgba(255,255,255,0.45);
+      padding: var(--ee-s-7) 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: var(--ee-fs-micro);
+    }
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--ee-s-4);
+    }
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    footer a:hover { color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      :root { --ee-fs-h1: 36px; --ee-fs-h2: 28px; --ee-fs-h3: 20px; }
+      .two-col, .three-col { grid-template-columns: 1fr; gap: var(--ee-s-5); }
+      section { padding: var(--ee-s-8) 0; }
+      .hero { padding: var(--ee-s-8) 0; }
+      .cta-final { padding: var(--ee-s-8) 0; }
+      .subheading { font-size: 18px; }
+      .nav-cta { padding: 8px 14px; font-size: 13px; }
+      .hero-meta { gap: var(--ee-s-3); font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="Exit Engine">
+        <img src="logo.png" alt="Exit Engine" height="32" style="display:block;">
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container">
+      <div class="label">Prepared for athenaag.com</div>
+      <h1>Your SDRs are working 4,000 accounts. They have no idea who to call next.</h1>
+      <p class="subheading">A strategic assessment and execution system purpose-built for your two-motion GTM.</p>
+    </div>
+  </header>
+
+  <!-- Problem -->
+  <section class="bg-soft" id="problem">
+    <div class="container">
+      <div class="section-intro">
+        <div class="label">The Problem</div>
+        <h2>Activity without intelligence</h2>
+        <p>You have two distinct go-to-market motions - 150 high-value accounts that close at 40% when you get in the room, and 4,000 demand-gen accounts your SDRs are working through sequencing tools, outbound, and marketing channels.</p>
+        <p>The problem isn't effort. Your team is running HeyReach, LinkedIn, cold outbound, cold calling, and ads. The problem is that none of it is connected to a scoring layer that tells your SDRs which accounts are warm right now - and which ones are worth getting in the room for.</p>
+        <p>Without that intelligence, your SDRs are working a random list. And in a finite account universe, every touchpoint matters.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section id="solution">
+    <div class="container">
+      <div class="section-intro">
+        <div class="label">The Solution</div>
+        <h2>The ABM Revenue Engine</h2>
+        <p>Exit Engine builds hybrid ABM and demand-gen systems for B2B revenue teams. The ABM Revenue Engine is a two-phase engagement that gives your SDRs the intelligence layer they're missing - so they stop prospecting and start closing.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="phase-card featured">
+          <div class="label">Phase 1</div>
+          <h3>GTM Strategy Assessment</h3>
+          <div class="price">$7,000 · 30 days</div>
+          <div class="divider"></div>
+          <ul>
+            <li>Top 100 accounts list your SDRs should target immediately</li>
+            <li>Account scoring model for the 4k account list</li>
+            <li>Tier 1 ABM prioritization for the 150 accounts</li>
+            <li>Full campaign audit — what's creating meetings &amp; deals, what's wasted</li>
+            <li>ICP &amp; closed won/lost analysis</li>
+            <li>SDR account routing logic for both motions</li>
+            <li>Documented systems map</li>
+            <li>90-day execution roadmap with Phase 2 scope and investment</li>
+          </ul>
+          <p class="note">Assessment fee credited toward Phase 2 if you proceed.</p>
+        </div>
+
+        <div class="phase-card">
+          <div class="label">Phase 2</div>
+          <h3>Embedded GTM Execution</h3>
+          <div class="price">$8,500–$10,000 / month</div>
+          <div class="divider"></div>
+          <p>Scoped directly from assessment findings. You get a fractional GTM team embedded in your revenue motion — without the overhead of hiring.</p>
+          <div class="team-capabilities">
+            <p><strong>Team capabilities:</strong></p>
+            <ul>
+              <li>ABM practitioner — 15+ years experience</li>
+              <li>Demand gen and GTM campaign execution</li>
+              <li>GTM engineering</li>
+              <li>Marketing engineering</li>
+              <li>Copywriting, design, and development resources</li>
+            </ul>
+          </div>
+          <p class="note">Fully loaded in-house equivalent: $300,000–$500,000/year.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why This Works -->
+  <section class="bg-soft" id="why">
+    <div class="container">
+      <div class="section-intro">
+        <div class="label">Why This Works</div>
+        <h2>Built for a finite account universe</h2>
+      </div>
+
+      <div class="three-col">
+        <div class="feature-card">
+          <div class="feature-num">01</div>
+          <h3>Two motions, one system</h3>
+          <p>Most GTM consultants optimize one motion. We build the intelligence layer that connects your ABM and demand gen into a single prioritized output for your SDR team.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-num">02</div>
+          <h3>Signals over activity</h3>
+          <p>We analyze your closed-won data to identify what a ready-to-convert account looks like - then score your entire account universe against those signals on a set cadence.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-num">03</div>
+          <h3>SDRs execute, not prospect</h3>
+          <p>The output is a prioritized list of accounts to work today, with routing logic that tells each SDR exactly where to focus — delivered in Slack/CRM and where your SDRs work daily.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-final" id="book">
+    <div class="container">
+      <div class="label">Next Step</div>
+      <h2>Let's walk through this Wednesday.</h2>
+      <p>The assessment is scoped specifically around your two GTM motions, your existing campaign stack, and your 4,000-account universe. By the end of 30 days, you'll know exactly which accounts your SDRs should be working and have a clear execution plan to build the full system around it.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="logo.png" alt="Exit Engine" height="24" style="display:block;">
+      </div>
+      <div>
+        <a href="https://exitengine.us">exitengine.us</a> ·
+        <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
