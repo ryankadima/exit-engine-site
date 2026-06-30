@@ -59,7 +59,7 @@ transition:color 120ms;cursor:pointer;}\
 .ee-ft a:hover{color:#fff;}\
 .ee-ft-inner{display:grid;grid-template-columns:1fr 2fr;gap:64px;padding-bottom:56px;\
 border-bottom:1px solid rgba(255,255,255,.1);}\
-.ee-ft-brand img{height:28px;width:auto;display:block;filter:invert(1) hue-rotate(180deg) saturate(1.4);\
+.ee-ft-brand img{height:28px;width:auto;display:block;filter:brightness(0) invert(1);\
 margin-bottom:16px;}\
 .ee-ft-brand p{font-size:14px;line-height:1.55;max-width:28ch;color:rgba(255,255,255,.55);margin:0;}\
 .ee-ft-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}\

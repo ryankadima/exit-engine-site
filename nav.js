@@ -8,7 +8,7 @@
   "use strict";
 
   var CALENDLY = "https://calendly.com/ryan_carlin/30min";
-  var LOGO = "https://gokadima.com/wp-content/uploads/exit-engine-logo.png";
+  var LOGO = "/logo.png"; // local transparent wordmark (no baked-in white background)
 
   // Ensure the Calendly popup widget is available, then run cb(ok).
   // Self-loads widget.js/widget.css if the host page didn't include them,
@@ -72,7 +72,7 @@ backdrop-filter:blur(20px);border-bottom:1px solid #E6E8EC;}\
 .ee-nav-inner{max-width:1140px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;\
 justify-content:space-between;gap:32px;}\
 .ee-nav-logo{display:flex;align-items:center;text-decoration:none;}\
-.ee-nav-logo img{height:22px;width:auto;display:block;}\
+.ee-nav-logo img{height:33px;width:auto;display:block;}\
 .ee-nav-desktop{display:flex;align-items:center;gap:36px;}\
 .ee-nav-links{display:flex;align-items:center;gap:32px;}\
 .ee-navlink{position:relative;font-size:14px;font-weight:500;text-decoration:none;padding:4px 0;color:#5A616E;\
