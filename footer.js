@@ -48,9 +48,6 @@
 
   // ---- page-aware hrefs: local section where it exists, else canonical /abm ----
   var hSystem  = isAbm ? "#system"  : "#approach";    // The Audit / Build / Handover
-  var hProblem = isAbm ? "#problem" : "#problem";
-  var hProof   = isAbm ? "#proof"   : "/abm#proof";   // no proof section on home
-  var hFaq     = isAbm ? "#faq"     : "#faq";
 
   // ---- styles (scoped ee-ft-*, hardcoded colors so no token dependency) ----
   var css = '\
@@ -72,6 +69,8 @@ text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-weight:600;
 font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:rgba(255,255,255,.45);\
 text-transform:uppercase;letter-spacing:.08em;}\
 .ee-ft-accent{color:#1E54F2;}\
+.ee-ft-base a{display:inline;padding:0;color:inherit;text-decoration:underline;text-underline-offset:2px;}\
+.ee-ft-base a:hover{color:#fff;}\
 @media (max-width:720px){\
 .ee-ft-inner{grid-template-columns:1fr;gap:40px;}\
 .ee-ft-cols{grid-template-columns:1fr;gap:28px;}\
@@ -98,22 +97,19 @@ text-transform:uppercase;letter-spacing:.08em;}\
 <a href="' + hSystem + '">The Handover</a>\
 </div>\
 <div>\
-<div class="ee-ft-title">Index</div>\
-<a href="' + hProblem + '">The problem</a>\
-<a href="' + hProof + '">Proof</a>\
-<a href="' + hFaq + '">FAQ</a>\
+<div class="ee-ft-title">Services</div>\
+<a href="/abm">ABM</a>\
 </div>\
 <div>\
 <div class="ee-ft-title">Reach</div>\
 <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a>\
 <a href="' + CALENDLY + '" data-cal>Book a call</a>\
-<a href="#">LinkedIn</a>\
+<a href="https://www.linkedin.com/company/the-exit-engine" target="_blank" rel="noopener">LinkedIn</a>\
 </div>\
 </div>\
 </div>\
 <div class="ee-ft-wrap ee-ft-base">\
-<span>© 2026 Exit Engine · exitengine.us</span>\
-<span>Coverage before spend. <span class="ee-ft-accent">↗</span></span>\
+<span>© 2026 Exit Engine · exitengine.us · <a href="/privacy">Privacy</a></span>\
 </div>';
 
   function mount() {

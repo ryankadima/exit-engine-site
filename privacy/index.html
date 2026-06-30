@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Exit Engine</title>
+    <meta name="description" content="Privacy Policy for Kadima LLC dba Exit Engine — how we collect, use, and protect personal information.">
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LSM2D1X64C"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-LSM2D1X64C');
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+      /* ---------- Exit Engine design tokens (homepage subset) ---------- */
+      :root {
+        --ee-ink:    #0E1116;
+        --ee-ink-2:  #2A2F38;
+        --ee-ink-3:  #5A616E;
+        --ee-bg:     #FFFFFF;
+        --ee-bg-soft:#FAFAFB;
+        --ee-line:   #E6E8EC;
+        --ee-font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+        --ee-font-mono: "JetBrains Mono", ui-monospace, "Menlo", monospace;
+        --ee-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      /* Smooth cross-document page transitions (Chromium 126+, Safari 18.2+) */
+      @view-transition { navigation: auto; }
+      ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 220ms; }
+
+      html { color: var(--ee-ink); background: var(--ee-bg); }
+      body {
+        font-family: var(--ee-font-sans);
+        font-size: 16px;
+        line-height: 1.45;
+        color: var(--ee-ink);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* ---------- Legal document — black text only, no blue accents ---------- */
+      .ee-doc { max-width: 800px; margin: 0 auto; padding: 96px 32px 112px; }
+
+      .ee-doc h1 {
+        font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400;
+        font-size: clamp(34px, 5vw, 52px); line-height: 1.05; letter-spacing: -0.025em;
+        margin: 0 0 14px; text-wrap: balance;
+      }
+      .ee-doc .ee-updated {
+        font-family: var(--ee-font-mono); font-size: 12px; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--ee-ink-3); margin: 0 0 28px;
+      }
+      .ee-doc .ee-lead { font-size: 18px; line-height: 1.65; color: var(--ee-ink-2); }
+
+      .ee-doc h2 {
+        font-family: "Archivo", sans-serif; font-weight: 800;
+        font-size: 24px; line-height: 1.2; letter-spacing: -0.015em; color: var(--ee-ink);
+        margin: 56px 0 16px; padding-top: 32px; border-top: 1px solid var(--ee-line);
+      }
+      .ee-doc h3 {
+        font-family: "Archivo", sans-serif; font-weight: 700;
+        font-size: 18px; line-height: 1.3; color: var(--ee-ink); margin: 32px 0 10px;
+      }
+      .ee-doc p { font-size: 16px; line-height: 1.7; color: var(--ee-ink-2); margin: 0 0 16px; }
+      .ee-doc ul { margin: 0 0 16px; padding-left: 22px; }
+      .ee-doc li { font-size: 16px; line-height: 1.7; color: var(--ee-ink-2); margin: 0 0 8px; }
+      .ee-doc strong { color: var(--ee-ink); font-weight: 700; }
+      .ee-doc a { color: var(--ee-ink); text-decoration: underline; text-underline-offset: 2px; transition: opacity 120ms var(--ee-ease); }
+      .ee-doc a:hover { opacity: 0.65; }
+
+      .ee-doc table { width: 100%; border-collapse: collapse; margin: 8px 0 24px; font-size: 14px; }
+      .ee-doc th, .ee-doc td { text-align: left; vertical-align: top; padding: 11px 14px; border: 1px solid var(--ee-line); line-height: 1.5; }
+      .ee-doc th { font-weight: 700; color: var(--ee-ink); background: var(--ee-bg-soft); }
+      .ee-doc td { color: var(--ee-ink-2); }
+
+      /* key/value table (Section 1) — no header row, bold left column */
+      .ee-kv td:first-child { font-weight: 700; color: var(--ee-ink); white-space: nowrap; width: 1%; background: var(--ee-bg-soft); }
+
+      .ee-doc .ee-addr { font-size: 16px; line-height: 1.7; color: var(--ee-ink-2); }
+    </style>
+</head>
+<body>
+    <script src="/nav.js"></script>
+
+    <main class="ee-page">
+      <article class="ee-doc">
+
+        <h1>Privacy Policy</h1>
+        <p class="ee-updated">Last Updated: June 30, 2026</p>
+
+        <p class="ee-lead">This Privacy Policy explains how <strong>Kadima LLC</strong>, doing business as <strong>Exit Engine</strong> ("Exit Engine," "we," "us," or "our"), collects, uses, discloses, and protects personal information in connection with our website, marketing services, and outreach activities.</p>
+        <p>By using our website or otherwise interacting with us, you acknowledge that you have read and understood this Privacy Policy.</p>
+
+        <h2>1. Who We Are</h2>
+        <table class="ee-kv">
+          <tbody>
+            <tr><td>Legal entity</td><td>Kadima LLC</td></tr>
+            <tr><td>Doing business as</td><td>Exit Engine</td></tr>
+            <tr><td>Mailing address</td><td>6620 Maryland Drive, Los Angeles, CA 90048</td></tr>
+            <tr><td>Website</td><td><a href="https://exitengine.us">exitengine.us</a></td></tr>
+            <tr><td>Privacy contact</td><td><a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a></td></tr>
+          </tbody>
+        </table>
+        <p>Exit Engine is a marketing agency. We provide go-to-market, demand generation, and related marketing services to business clients. In the course of running our own business, we also market our services — including through advertising, social media (such as LinkedIn), and business-to-business email outreach.</p>
+
+        <h2>2. Scope of This Policy</h2>
+        <p>This Privacy Policy applies to personal information we collect:</p>
+        <ul>
+          <li>From visitors to our website;</li>
+          <li>From prospective and current clients and their representatives;</li>
+          <li>From business contacts we identify and reach out to as part of our own marketing (including cold email outreach); and</li>
+          <li>From third-party data providers, advertising platforms, and publicly available sources.</li>
+        </ul>
+        <p>This Policy does <strong>not</strong> cover personal information that we process <strong>on behalf of our clients</strong> as a service provider or processor. When we handle data under a client's instructions as part of delivering services, that data is governed by our agreement with that client and by the client's own privacy policy. If you have questions about data a specific company holds about you, please contact that company directly.</p>
+
+        <h2>3. Personal Information We Collect</h2>
+        <p>We collect the categories of personal information described below. The specific information we collect depends on how you interact with us.</p>
+
+        <h3>3.1 Information you provide directly</h3>
+        <ul>
+          <li><strong>Contact and identity details</strong> — name, business email address, phone number, job title, company name, and mailing address.</li>
+          <li><strong>Communications</strong> — the contents of messages, form submissions, email replies, and other correspondence you send us.</li>
+          <li><strong>Marketing and inquiry information</strong> — details you share when you request information, book a call, subscribe to content, or discuss a potential engagement.</li>
+        </ul>
+
+        <h3>3.2 Information we collect automatically</h3>
+        <p>When you visit our website, we and our service providers may automatically collect:</p>
+        <ul>
+          <li><strong>Device and technical data</strong> — IP address, browser type, operating system, and device identifiers.</li>
+          <li><strong>Usage data</strong> — pages viewed, links clicked, referring/exit pages, time on site, and similar analytics.</li>
+          <li><strong>Approximate location</strong> — general geographic location inferred from your IP address.</li>
+          <li><strong>Cookies and similar technologies</strong> — see Section 7.</li>
+        </ul>
+
+        <h3>3.3 Information we obtain from third parties</h3>
+        <p>Because we are a marketing agency that conducts our own outbound prospecting, we also obtain business contact information from third-party sources, including:</p>
+        <ul>
+          <li>Business data and contact-enrichment providers;</li>
+          <li>Advertising and social media platforms (such as LinkedIn);</li>
+          <li>Publicly available sources, including company websites and public professional profiles; and</li>
+          <li>Referrals and shared marketing partners.</li>
+        </ul>
+        <p>This information typically includes business names, job titles, business email addresses, employer and industry information, and professional details relevant to determining whether our services may be a fit.</p>
+
+        <h3>3.4 California categories of personal information</h3>
+        <p>Under the California Consumer Privacy Act (as amended by the California Privacy Rights Act) ("CCPA"), the categories of personal information we have collected in the past 12 months are:</p>
+        <table>
+          <thead>
+            <tr><th>CCPA Category</th><th>Examples</th><th>Collected?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>A. Identifiers</strong></td><td>Name, email, phone, IP address, online identifiers</td><td>Yes</td></tr>
+            <tr><td><strong>B. Customer records</strong> (Cal. Civ. Code § 1798.80)</td><td>Name, contact details, billing information</td><td>Yes</td></tr>
+            <tr><td><strong>C. Protected classifications</strong></td><td>Age, gender, etc.</td><td>No (not intentionally collected)</td></tr>
+            <tr><td><strong>D. Commercial information</strong></td><td>Services considered or purchased, engagement history</td><td>Yes</td></tr>
+            <tr><td><strong>E. Biometric information</strong></td><td>Fingerprints, faceprints</td><td>No</td></tr>
+            <tr><td><strong>F. Internet/network activity</strong></td><td>Browsing and site interaction data</td><td>Yes</td></tr>
+            <tr><td><strong>G. Geolocation data</strong></td><td>Approximate location from IP address</td><td>Yes</td></tr>
+            <tr><td><strong>H. Sensory data</strong></td><td>Audio, visual (e.g., recorded calls, if applicable)</td><td>Only if you participate in a recorded call</td></tr>
+            <tr><td><strong>I. Professional/employment information</strong></td><td>Job title, employer, industry</td><td>Yes</td></tr>
+            <tr><td><strong>J. Education information</strong></td><td>Non-public education records</td><td>No</td></tr>
+            <tr><td><strong>K. Inferences</strong></td><td>Profiles reflecting preferences, interests, fit</td><td>Yes</td></tr>
+            <tr><td><strong>L. Sensitive personal information</strong></td><td>Government IDs, account logins, precise geolocation, etc.</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <p>We do <strong>not</strong> collect sensitive personal information as defined by the CCPA, and we do <strong>not</strong> use or disclose sensitive personal information for purposes that would trigger a right to limit its use.</p>
+
+        <h2>4. Sources of Personal Information</h2>
+        <p>We collect personal information from:</p>
+        <ul>
+          <li><strong>You directly</strong>, when you contact us, submit a form, reply to us, or engage our services.</li>
+          <li><strong>Automatically</strong>, through your interaction with our website and emails.</li>
+          <li><strong>Third parties</strong>, including data and contact-enrichment providers, advertising and social media platforms, referral partners, and publicly available sources.</li>
+        </ul>
+
+        <h2>5. How We Use Personal Information</h2>
+        <p>We use personal information for the following business purposes:</p>
+        <ul>
+          <li>To operate, maintain, and improve our website;</li>
+          <li>To respond to inquiries and communicate with you;</li>
+          <li>To market our services, including through advertising, social media, and email outreach;</li>
+          <li>To identify and evaluate prospective clients and business contacts;</li>
+          <li>To provide, manage, and improve our services to clients;</li>
+          <li>To process transactions and manage billing;</li>
+          <li>To analyze usage and measure the effectiveness of our marketing;</li>
+          <li>To maintain the security and integrity of our systems;</li>
+          <li>To comply with legal obligations and enforce our agreements; and</li>
+          <li>For any other purpose disclosed to you at the time of collection or to which you consent.</li>
+        </ul>
+        <p>We will not collect additional categories of personal information or use the information we collected for materially different, unrelated, or incompatible purposes without providing you notice.</p>
+
+        <h2>6. How We Disclose Personal Information</h2>
+        <p>We may disclose personal information to the following categories of recipients:</p>
+        <ul>
+          <li><strong>Service providers and vendors</strong> that perform functions on our behalf — for example, website hosting, analytics, email and CRM platforms, data enrichment, and payment processing. These parties are contractually limited to using the information only to perform services for us.</li>
+          <li><strong>Advertising and social media platforms</strong>, in connection with our marketing campaigns and measurement.</li>
+          <li><strong>Professional advisors</strong>, such as lawyers, accountants, and auditors.</li>
+          <li><strong>Business transfer recipients</strong>, in connection with a merger, acquisition, financing, or sale of assets.</li>
+          <li><strong>Legal and regulatory authorities</strong>, when required by law, legal process, or to protect our rights, safety, or property.</li>
+        </ul>
+        <p>In the preceding 12 months, we have disclosed the following categories of personal information for a business purpose: <strong>Identifiers (A), Customer Records (B), Commercial Information (D), Internet/Network Activity (F), Geolocation (G), Professional/Employment Information (I), and Inferences (K).</strong></p>
+        <p>We do <strong>not</strong> sell personal information in exchange for money.</p>
+
+        <h2>7. Cookies and Tracking Technologies</h2>
+        <p>We and our service providers use cookies, pixels, tags, and similar technologies to operate our website, analyze traffic, and support advertising. These technologies may collect device and usage information as described in Section 3.2.</p>
+        <p>We use the following general categories:</p>
+        <ul>
+          <li><strong>Strictly necessary</strong> — required for the site to function.</li>
+          <li><strong>Analytics</strong> — help us understand how visitors use the site (for example, web analytics tools).</li>
+          <li><strong>Advertising</strong> — support our marketing, including measuring ad performance and showing relevant ads on third-party platforms.</li>
+        </ul>
+        <p>You can control cookies through your browser settings and, where available, through any cookie banner or preference tool on our website. Disabling some cookies may affect site functionality.</p>
+        <p><strong>Global Privacy Control (GPC):</strong> Where required by law, we treat a recognized opt-out preference signal — such as the Global Privacy Control — as a valid request to opt out of the sharing of personal information for the browser or device from which it is sent.</p>
+
+        <h2>8. Advertising and "Sharing" of Personal Information</h2>
+        <p>We use third-party advertising and social media platforms (such as LinkedIn and other ad networks) to promote our services. In doing so, we may allow these platforms to collect information through cookies and similar technologies, or we may provide certain identifiers to them, so that ads can be delivered and measured.</p>
+        <p>Under the CCPA, some of this activity may be considered <strong>"sharing"</strong> for <strong>cross-context behavioral advertising</strong> (showing you ads based on your activity across different websites), even though no money changes hands.</p>
+        <p><strong>You have the right to opt out of this sharing.</strong> To exercise it, see Section 11 and our <strong>"Do Not Sell or Share My Personal Information"</strong> mechanism described there, or send a recognized opt-out preference signal such as GPC.</p>
+        <p>We do not knowingly share the personal information of consumers under 16 years of age for cross-context behavioral advertising.</p>
+
+        <h2>9. Marketing Communications and Cold Outreach</h2>
+        <p>As a marketing agency, we engage in business-to-business outreach, including email. If you receive marketing email from us:</p>
+        <ul>
+          <li>We aim to send relevant, business-related communications consistent with applicable law, including the federal CAN-SPAM Act.</li>
+          <li>Every marketing email includes a way to <strong>unsubscribe</strong>. You can also email us at <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a> to opt out at any time.</li>
+          <li>We will honor opt-out requests promptly. Note that we may still send you non-marketing messages necessary to administer an existing relationship (for example, responses to your inquiries or service-related messages if you are a client).</li>
+        </ul>
+        <p>If you would like us to remove your information from our prospecting lists entirely, contact us at <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a> and we will process your request, subject to our recordkeeping and legal obligations.</p>
+
+        <h2>10. Data Retention</h2>
+        <p>We retain personal information for as long as necessary to fulfill the purposes described in this Policy, including to provide our services, maintain business records, comply with legal obligations, resolve disputes, and enforce our agreements. When personal information is no longer needed, we take reasonable steps to delete, de-identify, or securely store it.</p>
+        <p>Retention periods vary based on the type of information and the context, including whether you are a client, a prospect, or a website visitor.</p>
+
+        <h2>11. Your California Privacy Rights</h2>
+        <p>If you are a California resident, the CCPA provides you with the following rights, subject to certain exceptions:</p>
+        <ul>
+          <li><strong>Right to Know / Access</strong> — You may request that we disclose the categories and specific pieces of personal information we have collected about you, the categories of sources, the business or commercial purposes for collecting it, and the categories of third parties to whom we disclosed it.</li>
+          <li><strong>Right to Delete</strong> — You may request that we delete personal information we collected from you.</li>
+          <li><strong>Right to Correct</strong> — You may request that we correct inaccurate personal information we maintain about you.</li>
+          <li><strong>Right to Opt Out of Sale/Sharing</strong> — You may opt out of the "sale" or "sharing" of your personal information. As noted above, we do not sell personal information for money, but certain advertising activity may qualify as "sharing."</li>
+          <li><strong>Right to Limit Use of Sensitive Personal Information</strong> — Because we do not use or disclose sensitive personal information for purposes that trigger this right, no separate limitation mechanism is required. We will update this Policy if that changes.</li>
+          <li><strong>Right to Non-Discrimination</strong> — We will not discriminate against you for exercising any of your privacy rights.</li>
+        </ul>
+
+        <h3>How to exercise your rights</h3>
+        <p>You may submit a request by:</p>
+        <ul>
+          <li><strong>Email:</strong> <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a></li>
+          <li><strong>Mail:</strong> Kadima LLC dba Exit Engine, 6620 Maryland Drive, Los Angeles, CA 90048</li>
+          <li><strong>Opt out of sharing:</strong> Use the <strong>"Do Not Sell or Share My Personal Information"</strong> link on our website, or send a Global Privacy Control signal from your browser.</li>
+        </ul>
+        <p><strong>Verification.</strong> To protect your information, we will take reasonable steps to verify your identity before responding to a Right to Know, Delete, or Correct request. We may ask you to provide information that we can match against our records. We will not fulfill a request unless we can reasonably verify your identity.</p>
+        <p><strong>Authorized agents.</strong> You may use an authorized agent to submit a request on your behalf. We may require the agent to provide proof of authorization and may require you to verify your own identity directly with us.</p>
+        <p><strong>Response timing.</strong> We will confirm receipt of your request within 10 business days and respond substantively within 45 calendar days, with the possibility of a 45-day extension when reasonably necessary and permitted by law. There is no fee to submit a request unless it is excessive, repetitive, or manifestly unfounded.</p>
+
+        <h2>12. Other U.S. State Privacy Rights</h2>
+        <p>Depending on where you live, you may have rights similar to those above under other state privacy laws (for example, in Virginia, Colorado, Connecticut, Utah, Texas, and other states with comprehensive privacy laws). These generally include rights to access, correct, delete, and obtain a portable copy of your personal information, and to opt out of targeted advertising and certain profiling. To exercise any available rights, contact us at <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a>. We will honor rights to the extent they apply to you.</p>
+
+        <h2>13. Data Security</h2>
+        <p>We maintain reasonable administrative, technical, and physical safeguards designed to protect personal information against unauthorized access, use, alteration, and disclosure. However, no method of transmission or storage is completely secure, and we cannot guarantee absolute security.</p>
+
+        <h2>14. Children's Privacy</h2>
+        <p>Our website and services are directed to businesses and professionals, not to children. We do not knowingly collect personal information from children under 16. If you believe a child has provided us personal information, please contact us at <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a> so we can delete it.</p>
+
+        <h2>15. Third-Party Websites and Links</h2>
+        <p>Our website and communications may contain links to third-party websites and platforms (such as LinkedIn and other social media). We are not responsible for the privacy practices of those third parties. We encourage you to review their privacy policies before providing them with personal information.</p>
+
+        <h2>16. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. When we do, we will revise the "Last Updated" date above. Material changes will be communicated as required by law. Your continued use of our website after the effective date of a revised Policy constitutes acceptance of the changes.</p>
+
+        <h2>17. Contact Us</h2>
+        <p>If you have questions or concerns about this Privacy Policy or our privacy practices, or if you would like to exercise your rights, please contact us:</p>
+        <p class="ee-addr">
+          <strong>Kadima LLC dba Exit Engine</strong><br>
+          6620 Maryland Drive<br>
+          Los Angeles, CA 90048<br>
+          Email: <a href="mailto:ryan@exitengine.us">ryan@exitengine.us</a><br>
+          Website: <a href="https://exitengine.us">exitengine.us</a>
+        </p>
+
+      </article>
+    </main>
+
+    <script src="/footer.js"></script>
+</body>
+</html>
