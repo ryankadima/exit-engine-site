@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABM Revenue Engine — Exit Engine</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <meta name="description" content="Account-based marketing installed as infrastructure: a signal-based revenue engine that scores accounts, watches for buying signals, and routes the right play to the right rep. Built, documented, and handed to your team.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+/* =============================================================
+   Exit Engine — Design Tokens
+   Colors + Type
+   ============================================================= */
+
+/* ---- Webfonts (Google Fonts) ----
+   Display: Archivo Black — heavy geometric block, matches the logo.
+   Body:    Archivo — same family, regular weights for unified voice.
+   Mono:    JetBrains Mono — operator/builder vibe, neutral pairing.
+*/
+:root {
+  /* ---------- COLORS ---------- */
+
+  /* Brand */
+  --ee-blue:        #1E54F2;   /* Primary brand blue (logo arrow) */
+  --ee-blue-600:    #1A48D6;   /* Hover */
+  --ee-blue-700:    #163CB5;   /* Pressed */
+  --ee-blue-100:    #E5ECFE;   /* Tint / background wash */
+  --ee-blue-50:     #F2F5FE;   /* Faintest tint */
+
+  /* Ink (foreground) */
+  --ee-ink:         #0E1116;   /* Near-black, body + heading text */
+  --ee-ink-2:       #2A2F38;   /* Secondary text */
+  --ee-ink-3:       #5A616E;   /* Tertiary / captions */
+  --ee-ink-4:       #8A909C;   /* Disabled / muted */
+
+  /* Surface */
+  --ee-bg:          #FFFFFF;   /* Primary background */
+  --ee-bg-soft:     #FAFAFB;   /* Section break / alt rows */
+  --ee-bg-mute:     #F2F3F5;   /* Cards, inputs */
+  --ee-line:        #E6E8EC;   /* Hairline borders */
+  --ee-line-strong: #C9CDD4;   /* Stronger dividers */
+
+  /* Semantic */
+  --ee-success:     #0E8A4F;
+  --ee-success-bg:  #E6F5EE;
+  --ee-warn:        #B36B00;
+  --ee-warn-bg:     #FFF3DD;
+  --ee-danger:      #C8202F;
+  --ee-danger-bg:   #FBE7E9;
+
+  /* Inverted (for dark sections, used sparingly) */
+  --ee-ink-inv:     #FFFFFF;
+  --ee-bg-inv:      #0E1116;
+
+  /* ---------- TYPE ---------- */
+  --ee-font-display: "Archivo Black", "Archivo", ui-sans-serif, sans-serif;
+  --ee-font-sans:    "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --ee-font-mono:    "JetBrains Mono", ui-monospace, "Menlo", monospace;
+
+  /* Type scale (modular, ~1.25) */
+  --ee-fs-display:  72px;   /* Hero */
+  --ee-fs-h1:       48px;
+  --ee-fs-h2:       36px;
+  --ee-fs-h3:       24px;
+  --ee-fs-h4:       18px;
+  --ee-fs-body:     16px;
+  --ee-fs-small:    14px;
+  --ee-fs-micro:    12px;
+
+  --ee-lh-tight:    1.05;  /* @kind other */
+  --ee-lh-snug:     1.2;   /* @kind other */
+  --ee-lh-normal:   1.45;  /* @kind other */
+  --ee-lh-loose:    1.65;  /* @kind other */
+
+  --ee-tracking-tight:   -0.025em;   /* Big display */
+  --ee-tracking-snug:    -0.015em;   /* Headings */
+  --ee-tracking-normal:  0;
+  --ee-tracking-eyebrow: 0.12em;     /* All-caps labels */
+
+  /* ---------- SPACING ---------- */
+  --ee-s-1:  4px;
+  --ee-s-2:  8px;
+  --ee-s-3:  12px;
+  --ee-s-4:  16px;
+  --ee-s-5:  24px;
+  --ee-s-6:  32px;
+  --ee-s-7:  48px;
+  --ee-s-8:  64px;
+  --ee-s-9:  96px;
+  --ee-s-10: 128px;
+
+  /* ---------- RADII ---------- */
+  --ee-r-1:  4px;    /* Tight (badges) */
+  --ee-r-2:  8px;    /* Inputs */
+  --ee-r-3:  12px;   /* Cards */
+  --ee-r-4:  20px;   /* Big cards */
+  --ee-r-pill: 999px;
+
+  /* ---------- SHADOWS ---------- */
+  --ee-shadow-1: 0 1px 2px rgba(14, 17, 22, 0.04), 0 1px 1px rgba(14, 17, 22, 0.03);
+  --ee-shadow-2: 0 4px 12px rgba(14, 17, 22, 0.06), 0 2px 4px rgba(14, 17, 22, 0.04);
+  --ee-shadow-3: 0 12px 32px rgba(14, 17, 22, 0.10), 0 4px 8px rgba(14, 17, 22, 0.04);
+  --ee-shadow-blue: 0 8px 24px rgba(30, 84, 242, 0.18);
+
+  /* ---------- MOTION ---------- */
+  --ee-ease:        cubic-bezier(0.2, 0.7, 0.2, 1);  /* @kind other */
+  --ee-ease-out:    cubic-bezier(0, 0, 0.2, 1);      /* @kind other */
+  --ee-dur-fast:    120ms;  /* @kind other */
+  --ee-dur-base:    200ms;  /* @kind other */
+  --ee-dur-slow:    320ms;  /* @kind other */
+}
+
+/* =============================================================
+   SEMANTIC ELEMENT STYLES
+   Use these directly on h1, p, code, etc. or as @apply-style refs.
+   ============================================================= */
+
+html { color: var(--ee-ink); background: var(--ee-bg); }
+
+body {
+  font-family: var(--ee-font-sans);
+  font-size: var(--ee-fs-body);
+  line-height: var(--ee-lh-normal);
+  color: var(--ee-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ee-font-display);
+  color: var(--ee-ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* h1/h2/.ee-display use Archivo Black (single-weight 400, intrinsically heavy).
+   h3/h4 drop down to Archivo Bold for hierarchy contrast. */
+h1, h2 {
+  font-family: "Archivo Black", "Archivo", ui-sans-serif, sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: var(--ee-fs-h1);
+  line-height: var(--ee-lh-tight);
+  letter-spacing: var(--ee-tracking-tight);
+}
+
+h2 {
+  font-size: var(--ee-fs-h2);
+  line-height: var(--ee-lh-snug);
+  letter-spacing: var(--ee-tracking-snug);
+}
+
+h3 {
+  font-family: "Archivo", ui-sans-serif, sans-serif;
+  font-size: var(--ee-fs-h3);
+  font-weight: 800;
+  line-height: var(--ee-lh-snug);
+  letter-spacing: var(--ee-tracking-snug);
+}
+
+h4 {
+  font-family: "Archivo", ui-sans-serif, sans-serif;
+  font-size: var(--ee-fs-h4);
+  font-weight: 700;
+  line-height: var(--ee-lh-snug);
+}
+
+p {
+  margin: 0 0 var(--ee-s-4) 0;
+  color: var(--ee-ink-2);
+  line-height: var(--ee-lh-loose);
+  text-wrap: pretty;
+}
+
+small, .ee-small { font-size: var(--ee-fs-small); color: var(--ee-ink-3); }
+
+.ee-eyebrow {
+  font-family: var(--ee-font-sans);
+  font-size: var(--ee-fs-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--ee-tracking-eyebrow);
+  color: var(--ee-blue);
+}
+
+.ee-display {
+  font-family: "Archivo Black", "Archivo", sans-serif;
+  font-size: var(--ee-fs-display);
+  font-weight: 400;
+  line-height: var(--ee-lh-tight);
+  letter-spacing: var(--ee-tracking-tight);
+  color: var(--ee-ink);
+}
+
+code, pre, .ee-mono {
+  font-family: var(--ee-font-mono);
+  font-size: 0.92em;
+  color: var(--ee-ink);
+}
+
+a {
+  color: var(--ee-blue);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--ee-dur-fast) var(--ee-ease);
+}
+a:hover { color: var(--ee-blue-600); text-decoration: underline; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--ee-font-sans);
+  color: var(--ee-ink);
+  background: var(--ee-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ee-container { max-width: 1140px; margin: 0 auto; padding: 0 32px; width: 100%; }
+
+/* ---------- Buttons ---------- */
+.ee-btn {
+  font-family: var(--ee-font-sans); font-weight: 600; font-size: 14px;
+  padding: 11px 18px; border-radius: 8px; border: 1px solid transparent;
+  cursor: pointer; line-height: 1; letter-spacing: -0.005em;
+  transition: all 120ms var(--ee-ease);
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ee-btn-sm { padding: 8px 14px; font-size: 13px; }
+.ee-btn-lg { padding: 14px 22px; font-size: 15px; }
+.ee-btn-primary { background: var(--ee-blue); color: #fff; }
+.ee-btn-primary:hover { background: var(--ee-blue-600); box-shadow: var(--ee-shadow-blue); }
+.ee-btn-primary:active { background: var(--ee-blue-700); transform: translateY(1px); }
+.ee-btn-ghost { background: transparent; color: var(--ee-ink); border: 1px solid var(--ee-line); }
+.ee-btn-ghost:hover { border-color: var(--ee-ink); }
+
+/* ---------- Eyebrow / accents ---------- */
+.ee-eyebrow {
+  font-family: var(--ee-font-sans); font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--ee-blue);
+  margin-bottom: 18px;
+}
+.ee-accent { color: var(--ee-blue); }
+.ee-accent-light { color: #87A3FF; }
+.ee-dot { color: var(--ee-ink-4); margin: 0 8px; }
+
+.ee-h2 {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400; font-size: 44px;
+  line-height: 1.05; letter-spacing: -0.025em; margin: 0 0 16px;
+  text-wrap: balance;
+}
+.ee-sub {
+  font-family: var(--ee-font-sans); font-size: 17px; line-height: 1.6;
+  color: var(--ee-ink-2); max-width: 640px; margin: 0 0 48px;
+}
+
+/* ---------- Nav ---------- */
+.ee-nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.0);
+  transition: all 200ms var(--ee-ease);
+}
+.ee-nav.is-scrolled {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--ee-line);
+}
+.ee-nav-inner {
+  max-width: 1140px; margin: 0 auto; padding: 0 32px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+}
+.ee-nav-logo img { height: 22px; display: block; }
+.ee-nav-links { display: flex; gap: 28px; }
+.ee-nav-links a {
+  font-family: var(--ee-font-sans); font-size: 14px; font-weight: 500;
+  color: var(--ee-ink-2); text-decoration: none;
+  transition: color 120ms var(--ee-ease);
+}
+.ee-nav-links a:hover { color: var(--ee-ink); }
+
+/* ---------- Hero ---------- */
+.ee-hero { padding: 96px 0 80px; }
+.ee-hero-inner { max-width: 1140px; margin: 0 auto; padding: 0 32px; }
+.ee-display {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400;
+  font-size: clamp(56px, 8vw, 96px);
+  line-height: 0.98; letter-spacing: -0.03em;
+  margin: 0 0 24px; max-width: 14ch;
+  text-wrap: balance;
+}
+.ee-lede {
+  font-family: var(--ee-font-sans); font-weight: 400;
+  font-size: 19px; line-height: 1.55;
+  color: var(--ee-ink-2);
+  max-width: 56ch; margin: 0 0 32px;
+  text-wrap: pretty;
+}
+.ee-hero-cta { display: flex; gap: 12px; margin-bottom: 40px; }
+.ee-hero-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--ee-font-mono); font-size: 12px;
+  color: var(--ee-ink-3); text-transform: uppercase; letter-spacing: 0.06em;
+  padding-top: 24px; border-top: 1px solid var(--ee-line);
+}
+.ee-hero-meta b { color: var(--ee-ink); font-weight: 600; }
+
+/* ---------- Logos strip ---------- */
+.ee-logos { padding: 56px 0; border-top: 1px solid var(--ee-line); border-bottom: 1px solid var(--ee-line); background: var(--ee-bg-soft); }
+.ee-logos-label {
+  font-family: var(--ee-font-mono); font-size: 11px;
+  color: var(--ee-ink-3); text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+.ee-logos-row {
+  display: flex; flex-wrap: wrap; gap: 48px; align-items: center;
+}
+.ee-logo-mark {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400; font-size: 18px;
+  color: var(--ee-ink-3); letter-spacing: 0.05em;
+}
+
+/* ---------- Stats ---------- */
+.ee-stats { padding: 96px 0; }
+.ee-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+  margin-top: 8px;
+}
+.ee-stat { padding-left: 20px; border-left: 2px solid var(--ee-blue); }
+.ee-stat-num {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400; font-size: 56px;
+  line-height: 1; letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 12px;
+}
+.ee-stat-suffix { color: var(--ee-blue); }
+.ee-stat-label {
+  font-family: var(--ee-font-sans); font-size: 13px; line-height: 1.45;
+  color: var(--ee-ink-3);
+}
+
+/* ---------- Work ---------- */
+.ee-work { padding: 96px 0; border-top: 1px solid var(--ee-line); background: var(--ee-bg-soft); }
+.ee-work-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.ee-work-card {
+  background: #fff; border: 1px solid var(--ee-line);
+  border-radius: 12px; padding: 28px;
+  transition: border-color 200ms var(--ee-ease), transform 200ms var(--ee-ease);
+}
+.ee-work-card:hover { border-color: var(--ee-ink); transform: translateY(-1px); }
+.ee-work-eyebrow {
+  font-family: var(--ee-font-mono); font-size: 10px;
+  color: var(--ee-blue); text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 700; margin-bottom: 14px;
+}
+.ee-work-title {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400;
+  font-size: 26px; line-height: 1.15; letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+.ee-work-body {
+  font-family: var(--ee-font-sans); font-size: 15px; line-height: 1.6;
+  color: var(--ee-ink-2); margin: 0 0 20px;
+}
+.ee-work-meta {
+  font-family: var(--ee-font-mono); font-size: 11px;
+  color: var(--ee-ink-3); text-transform: uppercase; letter-spacing: 0.06em;
+  padding-top: 14px; border-top: 1px solid var(--ee-line);
+}
+
+/* ---------- Process ---------- */
+.ee-process { padding: 96px 0; }
+.ee-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ee-step {
+  display: grid; grid-template-columns: 120px 1fr;
+  gap: 32px; padding: 28px 0;
+  border-top: 1px solid var(--ee-line);
+}
+.ee-step:last-child { border-bottom: 1px solid var(--ee-line); }
+.ee-step-n {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400; font-size: 44px;
+  color: var(--ee-blue); line-height: 1; letter-spacing: -0.02em;
+}
+.ee-step-title {
+  font-family: "Archivo", sans-serif; font-weight: 800;
+  font-size: 24px; line-height: 1.2; letter-spacing: -0.015em;
+  margin: 0 0 8px;
+}
+.ee-step-body p {
+  font-family: var(--ee-font-sans); font-size: 16px; line-height: 1.6;
+  color: var(--ee-ink-2); margin: 0; max-width: 60ch;
+}
+
+/* ---------- Anchor ---------- */
+.ee-anchor {
+  background: var(--ee-bg-inv); color: #fff;
+  padding: 96px 0;
+}
+.ee-anchor-eyebrow {
+  font-family: var(--ee-font-sans); font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: #87A3FF; margin-bottom: 32px;
+}
+.ee-anchor-quote {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400;
+  font-size: clamp(32px, 4vw, 52px); line-height: 1.15; letter-spacing: -0.025em;
+  margin: 0 0 32px; max-width: 22ch; color: #fff;
+  text-wrap: balance;
+}
+.ee-anchor-sig {
+  font-family: var(--ee-font-mono); font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* ---------- Testimonial ---------- */
+.ee-testimonial { padding: 96px 0; border-top: 1px solid var(--ee-line); }
+.ee-quote {
+  font-family: "Archivo", sans-serif; font-weight: 800;
+  font-size: 30px; line-height: 1.3; letter-spacing: -0.015em;
+  color: var(--ee-ink); margin: 0 0 24px; max-width: 28ch;
+  text-wrap: balance;
+}
+.ee-attrib {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--ee-font-mono); font-size: 12px;
+  color: var(--ee-ink-3); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.ee-attrib-name { color: var(--ee-ink); font-weight: 600; }
+
+/* ---------- FAQ ---------- */
+.ee-faq { padding: 96px 0; background: var(--ee-bg-soft); border-top: 1px solid var(--ee-line); }
+.ee-faq-list { display: flex; flex-direction: column; }
+.ee-faq details {
+  border-top: 1px solid var(--ee-line);
+}
+.ee-faq details:last-child { border-bottom: 1px solid var(--ee-line); }
+.ee-faq summary {
+  display: flex; align-items: center; justify-content: space-between;
+  list-style: none; cursor: pointer;
+  padding: 20px 0;
+  font-family: "Archivo", sans-serif; font-weight: 800; font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ee-ink);
+}
+.ee-faq summary::-webkit-details-marker { display: none; }
+.ee-faq-icon {
+  font-family: var(--ee-font-display); font-weight: 400;
+  font-size: 22px; color: var(--ee-ink-3);
+  transition: transform 200ms var(--ee-ease);
+}
+.ee-faq details[open] .ee-faq-icon { transform: rotate(45deg); color: var(--ee-blue); }
+.ee-faq-body {
+  font-family: var(--ee-font-sans); font-size: 15px; line-height: 1.65;
+  color: var(--ee-ink-2);
+  padding: 0 0 24px; max-width: 64ch;
+}
+
+/* ---------- CTA ---------- */
+.ee-cta { padding: 128px 0; text-align: center; }
+.ee-cta-title {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400;
+  font-size: clamp(40px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.03em;
+  margin: 0 0 16px;
+}
+.ee-cta-sub {
+  font-family: var(--ee-font-sans); font-size: 17px; line-height: 1.55;
+  color: var(--ee-ink-2); max-width: 50ch; margin: 0 auto 32px;
+}
+
+/* ---------- Footer ---------- */
+/* ---------- Modal ---------- */
+.ee-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(14,17,22,0.5);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 24px;
+  animation: fadeIn 200ms var(--ee-ease);
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.ee-modal {
+  background: #fff; border-radius: 20px; padding: 40px;
+  max-width: 560px; width: 100%; position: relative;
+  box-shadow: var(--ee-shadow-3);
+}
+.ee-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ee-line);
+  background: #fff; cursor: pointer; font-size: 22px; line-height: 1;
+  color: var(--ee-ink-3);
+  transition: all 120ms;
+}
+.ee-modal-close:hover { background: var(--ee-bg-mute); color: var(--ee-ink); }
+.ee-modal-title {
+  font-family: "Archivo Black", "Archivo", sans-serif; font-weight: 400; font-size: 26px;
+  letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 8px;
+}
+.ee-modal-sub { font-size: 14px; color: var(--ee-ink-3); margin: 0 0 24px; line-height: 1.5; }
+
+.ee-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ee-form-row { display: flex; flex-direction: column; gap: 6px; }
+.ee-form-row-full { grid-column: 1 / -1; }
+.ee-form-row label {
+  font-family: var(--ee-font-mono); font-size: 10px; font-weight: 600;
+  color: var(--ee-ink-3); text-transform: uppercase; letter-spacing: 0.08em;
+}
+.ee-form-row input, .ee-form-row select, .ee-form-row textarea {
+  font-family: var(--ee-font-sans); font-size: 14px; color: var(--ee-ink);
+  padding: 10px 12px; border-radius: 8px; border: 1px solid var(--ee-line-strong);
+  background: #fff; outline: none;
+  transition: border-color 120ms, box-shadow 120ms;
+  resize: vertical;
+}
+.ee-form-row input:focus,
+.ee-form-row select:focus,
+.ee-form-row textarea:focus {
+  border-color: var(--ee-blue);
+  box-shadow: 0 0 0 3px rgba(30,84,242,0.15);
+}
+.ee-form-actions {
+  grid-column: 1 / -1;
+  display: flex; justify-content: flex-end; gap: 12px;
+  padding-top: 8px;
+}
+.ee-modal-success { text-align: center; padding: 16px 0; }
+.ee-modal-success .ee-eyebrow { color: #0E8A4F; }
+
+html { scroll-behavior: smooth; }
+
+/* Smooth cross-document page transitions (Chromium 126+, Safari 18.2+) */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 220ms; }
+    .ee-pill { font-family: var(--ee-font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ee-blue); border: 1px solid var(--ee-blue); border-radius: var(--ee-r-pill); padding: 4px 10px; display: inline-block; white-space: nowrap; }
+    .abm-bullet { display: flex; gap: 11px; align-items: flex-start; }
+    .abm-bullet::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--ee-blue); margin-top: 7px; }
+    .abm-bullet span { font-family: var(--ee-font-sans); font-size: 14px; line-height: 1.5; color: var(--ee-ink-2); }
+    .abm-bullet b { color: var(--ee-ink); font-weight: 600; }
+    @media (max-width: 900px) {
+      .abm-phase-grid { grid-template-columns: 1fr !important; }
+      .abm-breaks-grid { grid-template-columns: 1fr !important; }
+      .abm-proof-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+<script src="/nav.js"></script>
+<!-- HERO -->
+<section class="ee-hero" id="top">
+  <div class="ee-container ee-hero-inner">
+    <div class="ee-eyebrow">Account-Based Marketing</div>
+    <h1 class="ee-display" style="max-width:16ch">Your revenue needs <span class="ee-accent">a target list.</span></h1>
+    <p class="ee-lede">You're chasing whoever fills out a form. Your revenue needs you chasing the <b style="color:var(--ee-ink);font-weight:700">120 accounts that actually move the number.</b> Demand gen measures clicks. ABM measures the buyers who can sign the check.</p>
+    <div class="ee-hero-cta">
+      <a href="#book" class="ee-btn ee-btn-primary ee-btn-lg">Book your strategy session <span aria-hidden="true">↗</span></a>
+      <a href="#system" class="ee-btn ee-btn-ghost ee-btn-lg">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="ee-testimonial">
+  <div class="ee-container">
+    <blockquote class="ee-quote">"Ryan didn't just run ads. He built the GTM engine that 10× pipeline in under three months."</blockquote>
+    <div class="ee-attrib">
+      <span class="ee-attrib-name">Lisa Nalewak</span>
+      <span class="ee-dot">·</span>
+      <span class="ee-attrib-role">Vice President</span>
+      <span class="ee-dot">·</span>
+      <span class="ee-attrib-role">RE-Target</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="ee-work" id="problem">
+  <div class="ee-container">
+    <div class="ee-eyebrow">The problem</div>
+    <h2 class="ee-h2">Most "ABM" is theater.</h2>
+    <p class="ee-sub">A spreadsheet of 2,000 logos isn't a target account list. It's an unfiltered TAM with a fancier name. Ads running against that list aren't ABM either. They're awareness spend with no ground game behind them. Here's what actually breaks ABM programs, in order:</p>
+    <div class="ee-work-grid abm-breaks-grid">
+      <article class="ee-work-card">
+        <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:12px">
+          <span style="font-family:var(--ee-font-mono);font-size:13px;color:var(--ee-blue);font-weight:600">01</span>
+          <h3 class="ee-work-title" style="font-size:22px;margin:0">No coverage.</h3>
+        </div>
+        <p class="ee-work-body" style="margin:0">One contact per account, and that contact is an individual contributor. You're running campaigns at companies that need six signers, and reaching the one person who can't sign anything.</p>
+      </article>
+      <article class="ee-work-card">
+        <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:12px">
+          <span style="font-family:var(--ee-font-mono);font-size:13px;color:var(--ee-blue);font-weight:600">02</span>
+          <h3 class="ee-work-title" style="font-size:22px;margin:0">No tiers.</h3>
+        </div>
+        <p class="ee-work-body" style="margin:0">Every account gets the same touch, the same budget, the same intensity. Best-fit accounts get under-served, worst-fit accounts get over-served, and the whole program reads as flat and unremarkable.</p>
+      </article>
+      <article class="ee-work-card">
+        <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:12px">
+          <span style="font-family:var(--ee-font-mono);font-size:13px;color:var(--ee-blue);font-weight:600">03</span>
+          <h3 class="ee-work-title" style="font-size:22px;margin:0">No alignment.</h3>
+        </div>
+        <p class="ee-work-body" style="margin:0">Marketing runs plays against accounts sales has already written off. Sales has its own list, in its own head, that nobody else can see. The feedback loop dies before it starts.</p>
+      </article>
+      <article class="ee-work-card">
+        <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:12px">
+          <span style="font-family:var(--ee-font-mono);font-size:13px;color:var(--ee-blue);font-weight:600">04</span>
+          <h3 class="ee-work-title" style="font-size:22px;margin:0">No system.</h3>
+        </div>
+        <p class="ee-work-body" style="margin:0">It worked because one person was good at their job. The day they leave, or get pulled onto something else, it stops working.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- DARK ANCHOR - the thesis -->
+<section class="ee-anchor">
+  <div class="ee-container">
+    <div class="ee-anchor-eyebrow">That last one is the point</div>
+    <p class="ee-anchor-quote">An ABM program that depends on a hero isn't a program. <span class="ee-accent-light">It's a habit one person has, with a quota attached.</span></p>
+    <div class="ee-anchor-sig">The reason most "ABM" can't survive a single resignation</div>
+  </div>
+</section>
+
+<!-- THE SYSTEM -->
+<section class="ee-process" id="system">
+  <div class="ee-container">
+    <div class="ee-eyebrow">What we actually build</div>
+    <h2 class="ee-h2">A signal-based revenue engine, <span class="ee-accent">not a campaign.</span></h2>
+    <p class="ee-sub">We don't sell ABM as a tactic. We install it as infrastructure: a system that scores accounts, watches for buying signals in real time, routes the right play to the right rep, and reports the lift in numbers your team can act on. Same Theory-of-Constraints approach as everything we build: find the leak, fix the leak, hand you the documentation.</p>
+
+    <div class="abm-phase-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px">
+
+      <!-- Phase 1 -->
+      <article class="ee-work-card" style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <span style="font-family:var(--ee-font-mono);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ee-ink-3)">Phase 1</span>
+          <span class="ee-pill">Days 1–30</span>
+        </div>
+        <h3 class="ee-work-title" style="font-size:26px;margin:0 0 6px">The Audit</h3>
+        <p style="font-family:var(--ee-font-sans);font-size:14px;line-height:1.5;color:var(--ee-ink-2);margin:0 0 20px">We find out who you're actually selling to.</p>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <div class="abm-bullet"><span>Pull your last 50–100 closed-won and closed-lost deals and find what <b>actually</b> separates them, not the ICP paragraph in your pitch deck.</span></div>
+          <div class="abm-bullet"><span>Audit the CRM for the silent killer: orphaned leads, missing committee contacts, one mapped person at a six-signer account.</span></div>
+          <div class="abm-bullet"><span>You get a real number: <b>what % of your "Tier 1" accounts have committee coverage today.</b></span></div>
+        </div>
+      </article>
+
+      <!-- Phase 2 -->
+      <article class="ee-work-card" style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <span style="font-family:var(--ee-font-mono);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ee-ink-3)">Phase 2</span>
+          <span class="ee-pill">Days 31–90</span>
+        </div>
+        <h3 class="ee-work-title" style="font-size:26px;margin:0 0 6px">The Build</h3>
+        <p style="font-family:var(--ee-font-sans);font-size:14px;line-height:1.5;color:var(--ee-ink-2);margin:0 0 20px">We install the engine. Built, not just designed.</p>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <div class="abm-bullet"><span><b>A real tiering model.</b> Fit, intent, and engagement scored separately, then combined, so high-fit/no-intent doesn't get chased while a real buyer goes cold.</span></div>
+          <div class="abm-bullet"><span><b>A signal layer.</b> Funding, leadership changes, hiring, pricing-page visits, wired to fire a specific play to a specific rep within hours.</span></div>
+          <div class="abm-bullet"><span><b>Coverage, enforced.</b> No budget against a Tier 1 account until it's multi-threaded: economic buyer, champion, evaluator.</span></div>
+          <div class="abm-bullet"><span><b>One shared list.</b> Sales and marketing work the same accounts, off the same definitions, in the same CRM fields.</span></div>
+          <div class="abm-bullet"><span><b>Orchestration across channels.</b> Outbound, LinkedIn, paid, and direct mail. Same message, same account, same week.</span></div>
+        </div>
+      </article>
+
+      <!-- Phase 3 -->
+      <article class="ee-work-card" style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <span style="font-family:var(--ee-font-mono);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ee-ink-3)">Phase 3</span>
+          <span class="ee-pill">Day 91+</span>
+        </div>
+        <h3 class="ee-work-title" style="font-size:26px;margin:0 0 6px">The Handover</h3>
+        <p style="font-family:var(--ee-font-sans);font-size:14px;line-height:1.5;color:var(--ee-ink-2);margin:0 0 20px">Your team owns the engine.</p>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <div class="abm-bullet"><span>The scoring logic, signal-to-play mapping, committee maps, and dashboard. <b>All documented and built into your stack.</b></span></div>
+          <div class="abm-bullet"><span>Not living in my head or a tool only I know how to operate. Your sales and marketing teams run it day to day.</span></div>
+          <div class="abm-bullet"><span>You don't need to <b>rehire this expertise</b> every time someone leaves.</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="ee-stats" id="proof" style="border-top:1px solid var(--ee-line)">
+  <div class="ee-container">
+    <div class="ee-eyebrow">The proof</div>
+    <h2 class="ee-h2">The proof is in the lift, <span class="ee-accent">not the activity.</span></h2>
+    <p class="ee-sub">We don't report engagement for engagement's sake. We report what actually moves revenue: win-rate lift on covered accounts versus everyone else.</p>
+    <div class="abm-proof-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:8px">
+      <div class="ee-stat">
+        <div class="ee-stat-num">40–50<span class="ee-stat-suffix">%</span></div>
+        <div style="font-family:var(--ee-font-display);font-weight:400;font-size:20px;color:var(--ee-blue);letter-spacing:-0.01em;margin:-4px 0 12px">Win rate</div>
+        <div class="ee-stat-label" style="font-size:15px">on covered accounts, up from the high teens, where most programs sit. The right people, the right message, the right moment.</div>
+      </div>
+      <div class="ee-stat">
+        <div class="ee-stat-num">30<span class="ee-stat-suffix">%</span></div>
+        <div style="font-family:var(--ee-font-display);font-weight:400;font-size:20px;color:var(--ee-blue);letter-spacing:-0.01em;margin:-4px 0 12px">Reduction</div>
+        <div class="ee-stat-label" style="font-size:15px">in Time to Close - because covered accounts aren't getting the same ad as everyone else. They're getting a play built for the committee.</div>
+      </div>
+    </div>
+    <p style="font-family:var(--ee-font-sans);font-size:18px;line-height:1.5;color:var(--ee-ink);max-width:60ch;margin:48px 0 0;font-weight:500">That's the difference between "we did some ABM" and <span class="ee-accent">"we built a machine that out-converts the rest of the pipeline, and we can prove it."</span></p>
+  </div>
+</section>
+
+<!-- CLOSING CTA + CALENDLY -->
+<section class="ee-cta" id="book" style="background:var(--ee-bg-soft);border-top:1px solid var(--ee-line);padding-bottom:80px">
+  <div class="ee-container">
+    <h2 class="ee-cta-title">Build the target list your pipeline is missing.</h2>
+    <p class="ee-cta-sub">Stop running a popularity contest with your pipeline. Start running a system that knows exactly which accounts matter, who needs to be in the room, and what to do the moment they show intent.</p>
+    <div style="max-width:780px;margin:8px auto 0">
+      <iframe src="https://calendly.com/ryan_carlin/30min?month=2026-06&amp;hide_gdpr_banner=1&amp;background_color=ffffff&amp;primary_color=1e54f2" title="Book a strategy session" style="width:100%;height:700px;border:1px solid var(--ee-line);border-radius:var(--ee-r-4);background:#fff" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="ee-faq" id="faq">
+  <div class="ee-container">
+    <h2 class="ee-h2">Things people ask first.</h2>
+    <div class="ee-faq-list">
+      <details open="">
+        <summary><span>We already have a target account list. Isn't that ABM?</span><span class="ee-faq-icon" aria-hidden="true">+</span></summary>
+        <div class="ee-faq-body">A list is a spreadsheet. ABM is what happens when that list is scored, watched for live signals, covered by mapped contacts, and worked by sales and marketing off the same definitions. Most companies have the spreadsheet. Almost none have the system.</div>
+      </details>
+      <details>
+        <summary><span>We're too small for ABM. Isn't this an enterprise thing?</span><span class="ee-faq-icon" aria-hidden="true">+</span></summary>
+        <div class="ee-faq-body">No. The principle scales down to 25–50 accounts and a founder-led sales motion just as well as it scales up to a 1,000-account enterprise program. What changes is the personalization budget, not the discipline.</div>
+      </details>
+      <details>
+        <summary><span>How is this different from just buying 6sense or Demandbase?</span><span class="ee-faq-icon" aria-hidden="true">+</span></summary>
+        <div class="ee-faq-body">A platform executes a motion you've already designed. Most companies buy the platform first and design the motion never. That's how you end up with an expensive tool and no actual program. We design the motion, prove it manually, then decide what you actually need to buy.</div>
+      </details>
+      <details>
+        <summary><span>How fast does this work?</span><span class="ee-faq-icon" aria-hidden="true">+</span></summary>
+        <div class="ee-faq-body">Same as everything else we build. We find the constraint in 30 days, and you have a working, instrumented program by day 90.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<script src="/footer.js"></script>
+
+<script>
+  // Smooth scroll already handled via CSS scroll-behavior.
+  // Single-open FAQ accordion.
+  (function () {
+    var all = Array.prototype.slice.call(document.querySelectorAll(".ee-faq details"));
+    all.forEach(function (d) {
+      d.addEventListener("toggle", function () {
+        if (d.open) all.forEach(function (o) { if (o !== d) o.open = false; });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
